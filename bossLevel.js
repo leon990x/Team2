@@ -22,12 +22,47 @@ var game = new Phaser.Game(config);
 
 function preload ()
 {
-    this.load.image('sky', 'Assets/Boss/Bossbackground.png');
-    this.load.image('ground', 'assets/Bossfloor.png');
-    this.load.image('star', 'assets/star.png');
-    this.load.image('bomb', 'assets/bomb.png');
-    this.load.spritesheet('dude', 
-        'assets/dude.png',
-        { frameWidth: 32, frameHeight: 48 }
+    this.load.image('environment', 'Assets/Boss/Bossbackground.png');
+    this.load.image('floor', 'Assets/Bossfloor.png');
+    this.load.image('corona', 'Assets/Boss/corona.png'); 
+    this.load.image('platform', 'Assets/Boss/platform.png');
+    this.load.spritesheet('player', 
+        'Assets/Players/whiteBC.png',
+        { frameWidth: 55, frameHeight: 84 }
 );
+
+}
+
+function create ()
+{
+   this.add.image(0, 0, 'environment') 
+}
+
+cursors = this.input.keyboard.createCursorKeys();
+function update()
+{
+    if (cursors.left.isDown)
+    {
+        player.setVelocityX(-160);
+
+        player.anims.play('left', true);
+    }
+    else if (cursors.right.isDown)
+    {
+        player.setVelocityX(160);
+
+        player.anims.play('right', true);
+    }
+    else
+    {
+        player.setVelocityX(0);
+
+        player.anims.play('turn');
+    }
+
+    if (cursors.up.isDown && player.body.touching.down)
+    {
+        player.setVelocityY(-330);
+    }
+
 }
