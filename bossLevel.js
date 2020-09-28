@@ -11,7 +11,7 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 300 },
+            gravity: { y: 500 },
             debug: false
         }
     },
@@ -19,8 +19,10 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
+
 var player;
 var ground;
+
 
 function preload ()
 {
@@ -28,6 +30,9 @@ function preload ()
     this.load.image('floor', 'Assets/Boss/Bossfloor.png');
     this.load.image('corona', 'Assets/Boss/corona.png');
     this.load.image('platform', 'Assets/Boss/platform.png');
+    this.load.image('red', 'Assets/Boss/redHealth.png');
+    this.load.image('statusbar', 'Assets/Boss/health.png');
+    this.load.image('laser', 'Assets/Boss/laser.png')
     this.load.spritesheet('whiteBC',
         'Assets/Players/whiteBC.png',
         { frameWidth: 55, frameHeight: 84 }
@@ -37,26 +42,57 @@ function preload ()
 
 function create ()
 {
-   background = this.add.image(960, 540, 'environment');
-   boss = this.add.image(780, 480, "corona");
-   cursors = this.input.keyboard.createCursorKeys();
+
+    background = this.add.image(960, 540, 'environment');
+    boss = this.add.image(780, 480, "corona");
+    cursors = this.input.keyboard.createCursorKeys();
+    redhealth = this.add.image(220, 60, 'red')
+    healthbar = this.add.image(220, 60, 'statusbar')
+    redhealth.setOrigin(0.45, 0.5)
+    healthbar.setOrigin(0.45, 0.5)
+    //Max 415
+    healthbar.displayWidth = 415
 
 
-   //Edge colliders
-   ground = this.physics.add.staticGroup();
-   ground.create(960, 950, "floor").setScale(2).refreshBody();
-   ground.create(400, 650, 'platform');
-   ground.create(800, 550, 'platform');
-   ground.create(1200, 650, 'platform');
+    //Edge colliders
+    ground = this.physics.add.staticGroup();
+    floors = this.physics.add.staticGroup();
+    floors.create(960, 950, "floor").setScale(2).refreshBody();
+    ground.create(400, 650, 'platform');
+    ground.create(800, 550, 'platform');
+    ground.create(1200, 650, 'platform');
 
-   // player code
-   player = this.physics.add.sprite(100, 700, "whiteBC");
-   player.setBounce(0.3);
-   player.setCollideWorldBounds(true);
-   this.physics.add.collider(player, ground);
-   player.body.setGravityY(1);
+    // player code
+    player = this.physics.add.sprite(100, 700, "whiteBC");
+    player.setBounce(0.3);
+    player.setCollideWorldBounds(true);
+    this.physics.add.collider(player, floors);
+    this.physics.add.collider(player, ground);
+    player.body.setGravityY(-200);
 
-   this.anims.create({
+    //Lasers
+    for(var i = 1; i < 10; i++)
+    {
+        
+        lasers = this.physics.add.group(
+            {
+                key: 'laser',
+                repeat: 16,
+                setXY: {x: 12, y: 0, stepX: 100}
+            }
+        );
+        setTimeout(function timer() {
+            console.log("hello world");
+          }, i * 3000);
+
+        
+        
+    }
+
+   
+
+
+    this.anims.create({
        key: "left",
        frames: this.anims.generateFrameNumbers("whiteBC", { start: 0, end: 0}),
        frameRate: 10,
@@ -105,3 +141,6 @@ function update()
     }
 
 }
+
+
+
