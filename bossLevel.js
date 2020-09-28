@@ -18,9 +18,12 @@ var config = {
     scene: [bossScene]
 };
 
+// game instance and global variables
 var game = new Phaser.Game(config);
 var player;
 var ground;
+var lookLeft = false;
+var acceleration = 0;
 
 function preload ()
 {
@@ -28,8 +31,15 @@ function preload ()
     this.load.image('floor', 'Assets/Boss/Bossfloor.png');
     this.load.image('corona', 'Assets/Boss/corona.png');
     this.load.image('platform', 'Assets/Boss/platform.png');
+    this.load.image('tentacle', 'Assets/Boss/tentacle.png');
+
+// SpriteSheets
     this.load.spritesheet('whiteBC',
-        'Assets/Players/whiteBC.png',
+        'Assets/Players/whiteBCSprite.png',
+        { frameWidth: 55, frameHeight: 84 }
+);
+    this.load.spritesheet('LwhiteBC',
+        'Assets/Players/LwhiteBCS.png',
         { frameWidth: 55, frameHeight: 84 }
 );
 
@@ -40,6 +50,7 @@ function create ()
    background = this.add.image(960, 540, 'environment');
    boss = this.add.image(780, 480, "corona");
    cursors = this.input.keyboard.createCursorKeys();
+   attackButton = this.input.keyboard.addKeys("Q,P");
 
 
    //Edge colliders
@@ -57,51 +68,139 @@ function create ()
    player.body.setGravityY(1);
 
    this.anims.create({
-       key: "left",
-       frames: this.anims.generateFrameNumbers("whiteBC", { start: 0, end: 0}),
+       key: "leftWalking",
+       frames: this.anims.generateFrameNumbers("LwhiteBC", { start: 1, end: 8}),
        frameRate: 10,
        repeat: -1
      });
 
      this.anims.create({
-       key: "turn",
+       key: "turnLeft",
+       frames: [ { key: "LwhiteBC", frame: 0 } ],
+       frameRate: 20
+     });
+
+     this.anims.create({
+       key: "turnRight",
        frames: [ { key: "whiteBC", frame: 0 } ],
        frameRate: 20
      });
 
      this.anims.create({
-       key: "right",
-       frames: this.anims.generateFrameNumbers("whiteBC", { start: 0, end: 7 }),
+       key: "rightWalking",
+       frames: this.anims.generateFrameNumbers("whiteBC", { start: 1, end: 8 }),
        frameRate: 10,
        repeat: -1
      });
-}
 
+     this.anims.create({
+       key: "jumpLeft",
+       frames: this.anims.generateFrameNumbers("LwhiteBC", { start: 8, end: 10 }),
+       frameRate: 10,
+       repeat: -1
+     });
+
+     this.anims.create({
+       key: "jumpRight",
+       frames: this.anims.generateFrameNumbers("whiteBC", { start: 8, end: 10 }),
+       frameRate: 10,
+       repeat: -1
+     });
+
+     this.anims.create({
+       key: "attackRight",
+       frames: this.anims.generateFrameNumbers("whiteBC", { start: 12, end: 14 }),
+       frameRate: 10,
+       repeat: -1
+     });
+
+     this.anims.create({
+       key: "attackLeft",
+       frames: this.anims.generateFrameNumbers("LwhiteBC", { start: 12, end: 14 }),
+       frameRate: 10,
+       repeat: -1
+     });
+
+     // boss code
+     tentacles = this.physics.add.group({
+       key:"tentacle",
+       repeat: 2,
+       setXY:{x: 600, y: 470, stepX: 500}
+     });
+     // tentacle = tentacles.create(960, 950, "tentacle");
+     this.physics.add.collider(tentacles, ground);
+     // this.physics.add.collider(tentacles, player);
+     // this.physics.add.overlap(player, tentacles, this.damage, null, this);
+   // tentacles.x += acceleration;
+   // ground.create(400, 650, '');
+   // ground.create(800, 550, 'platform');
+   // ground.create(1200, 650, 'platform');
+}
 
 function update()
 {
+
+  // walking
     if (cursors.left.isDown)
     {
         player.setVelocityX(-160);
 
-        player.anims.play('left', true);
+        player.anims.play('leftWalking', true);
+
+        lookLeft = true;
     }
     else if (cursors.right.isDown)
     {
         player.setVelocityX(160);
 
-        player.anims.play('right', true);
+        player.anims.play('rightWalking', true);
+
+        lookLeft = false;
     }
+
+    // Jumping
+    else if (cursors.up.isDown && player.body.touching.down)
+    {
+        player.setVelocityY(-330);
+
+        if (lookLeft == true){
+        player.anims.play('jumpLeft');
+      }
+
+      else{
+        player.anims.play('jumpRight');
+        lookLeft = false;
+      }
+    }
+
+    // attacking
+    else if (attackButton.Q.isDown)
+    {
+        player.setVelocityY(0);
+
+        if (lookLeft == true){
+        player.anims.play('attackLeft');
+      }
+
+      else{
+        player.anims.play('attackRight');
+        lookLeft = false;
+      }
+    }
+
+    // turn direction
     else
     {
         player.setVelocityX(0);
 
-        player.anims.play('turn');
-    }
+        if (lookLeft == true){
+        player.anims.play('turnLeft');
+      }
 
-    if (cursors.up.isDown && player.body.touching.down)
-    {
-        player.setVelocityY(-330);
+      else{
+        player.anims.play('turnRight');
+        lookLeft = false;
+      }
     }
 
 }
