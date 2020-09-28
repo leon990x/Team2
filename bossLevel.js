@@ -11,7 +11,6 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 500 },
             gravity: { y: 300 },
             debug: false
         }
@@ -55,6 +54,12 @@ function create ()
    boss = this.add.image(780, 480, "corona");
    cursors = this.input.keyboard.createCursorKeys();
    attackButton = this.input.keyboard.addKeys("Q,P");
+   redhealth = this.add.image(220, 60, 'red')
+   healthbar = this.add.image(220, 60, 'statusbar')
+   redhealth.setOrigin(0.45, 0.5)
+   healthbar.setOrigin(0.45, 0.5)
+   //Max 415
+   healthbar.displayWidth = 415
 
 
    //Edge colliders
@@ -70,6 +75,15 @@ function create ()
    player.setCollideWorldBounds(true);
    this.physics.add.collider(player, ground);
    player.body.setGravityY(1);
+
+   //Lasers
+   lasers = this.physics.add.group(
+    {
+        key: 'laser',
+        repeat: 16,
+        setXY: {x: 12, y: 0, stepX: 100}
+    }
+    );
 
    this.anims.create({
        key: "leftWalking",
@@ -126,11 +140,14 @@ function create ()
      });
 
      // boss code
-     tentacles = this.physics.add.group({
+      tentacles = this.physics.add.group({
        key:"tentacle",
        repeat: 2,
-       setXY:{x: 600, y: 470, stepX: 500}
+       setXY:{x: 100, y: 470, stepX: 10},
+       setScale: {x: .3, y: .3},
      });
+    tentacles.setVelocityX = -100;
+     moveTentacles(tentacles);
      // tentacle = tentacles.create(960, 950, "tentacle");
      this.physics.add.collider(tentacles, ground);
      // this.physics.add.collider(tentacles, player);
@@ -141,6 +158,12 @@ function create ()
    // ground.create(1200, 650, 'platform');
 }
 
+function moveTentacles(tentacles){
+  Phaser.Actions.Call(tentacles.getChildren(),
+function(move){
+  move.setVelocityX(100)
+})
+}
 
 function update()
 {
@@ -153,7 +176,56 @@ function update()
         player.anims.play('leftWalking', true);
 
         lookLeft = true;
+
+        // Jumping
+            if (cursors.up.isDown && player.body.touching.down)
+        {
+            player.setVelocityY(-330);
+
+            if (lookLeft == true){
+            player.anims.play('jumpLeft');
+        }
+
+        else{
+            player.anims.play('jumpRight');
+            lookLeft = false;
+        }
+        }
+
+        // attacking
+        else if (attackButton.Q.isDown)
+        {
+            // player.setVelocityY(0);
+
+            if (lookLeft == true){
+            player.anims.play('attackLeft');
+        }
+
+        else{
+            player.anims.play('attackRight');
+            lookLeft = false;
+        }
+        }
     }
+
+
+
+    // attacking
+    else if (attackButton.Q.isDown)
+    {
+        // player.setVelocityY(0);
+
+        if (lookLeft == true){
+        player.anims.play('attackLeft');
+      }
+
+      else{
+        player.anims.play('attackRight');
+        lookLeft = false;
+      }
+    }
+    //
+
     else if (cursors.right.isDown)
     {
         player.setVelocityX(160);
@@ -161,22 +233,39 @@ function update()
         player.anims.play('rightWalking', true);
 
         lookLeft = false;
+        // Jumping
+        if (cursors.up.isDown && player.body.touching.down)
+        {
+            player.setVelocityY(-330);
+
+            if (lookLeft == true){
+            player.anims.play('jumpLeft');
+        }
+
+        else{
+            player.anims.play('jumpRight');
+            lookLeft = false;
+        }
+        }
     }
+
+
+
 
     // Jumping
-    else if (cursors.up.isDown && player.body.touching.down)
-    {
-        player.setVelocityY(-330);
+    // else if (cursors.up.isDown && player.body.touching.down)
+    // {
+    //     player.setVelocityY(-330);
 
-        if (lookLeft == true){
-        player.anims.play('jumpLeft');
-      }
+    //     if (lookLeft == true){
+    //     player.anims.play('jumpLeft');
+    //   }
 
-      else{
-        player.anims.play('jumpRight');
-        lookLeft = false;
-      }
-    }
+    //   else{
+    //     player.anims.play('jumpRight');
+    //     lookLeft = false;
+    //   }
+    // }
 
     // attacking
     else if (attackButton.Q.isDown)
