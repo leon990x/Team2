@@ -22,7 +22,12 @@ var game = new Phaser.Game(config);
 
 var player;
 var ground;
-
+var heroHealth = 415;
+var villainHealth = 415;
+var heroTakingDamage = true;
+var villainTakingDamage = true;
+var heroDamageIntensity = 1;
+var villainDamageIntensity = 1;
 
 function preload ()
 {
@@ -61,6 +66,26 @@ function create ()
     ground.create(400, 650, 'platform');
     ground.create(800, 550, 'platform');
     ground.create(1200, 650, 'platform');
+
+    //villain
+    if (heroHealth < 1) {
+        return
+    }
+    if (villainHealth < 1) {
+        return
+    }
+    // Hero taking damage
+    if (heroTakingDamage) {
+        healthbar.x -= 0.43 * heroDamageIntensity
+        healthbar.displayWidth -= heroDamageIntensity
+        heroHealth -= heroDamageIntensity
+    }
+    // Villain taking damage
+    if (villainTakingDamage) {
+        villainHealthbar.x += 0.48 * villainDamageIntensity
+        villainHealthbar.displayWidth -= villainDamageIntensity
+        villainHealth -= villainDamageIntensity
+    }
 
     // player code
     player = this.physics.add.sprite(100, 700, "whiteBC");

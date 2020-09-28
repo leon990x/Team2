@@ -1,7 +1,8 @@
 bossScene = {
     preload: preload,
     create: create,
-    update: update
+    update: update,
+    key: "bossScene"
         }
 
 var config = {
@@ -24,6 +25,26 @@ var player;
 var ground;
 var lookLeft = false;
 var acceleration = 0;
+var heroHealth = 415;
+var villainHealth = 415;
+var heroTakingDamage = false;
+var villainTakingDamage = false;
+var heroDamageIntensity = 3;
+var villainDamageIntensity = 2;
+
+var fibonacci_series = function (n) 
+{
+  if (n===1) 
+  {
+    return [0, 1];
+  } 
+  else 
+  {
+    var s = fibonacci_series(n - 1);
+    s.push(s[s.length - 1] + s[s.length - 2]);
+    return s;
+  }
+};
 
 function preload ()
 {
@@ -35,6 +56,13 @@ function preload ()
     this.load.image('red', 'Assets/Boss/redHealth.png');
     this.load.image('statusbar', 'Assets/Boss/health.png');
     this.load.image('laser', 'Assets/Boss/laser.png')
+
+    this.load.image('wp1', 'Assets/Boss/wp1.png')
+    this.load.image('wp2', 'Assets/Boss/wp2.png')
+    this.load.image('wp3', 'Assets/Boss/wp3.png')
+    this.load.image('wp4', 'Assets/Boss/wp4.png')
+    this.load.image('wp5', 'Assets/Boss/wp5.png')
+    this.load.image('wp6', 'Assets/Boss/wp6.png')
 
 // SpriteSheets
     this.load.spritesheet('whiteBC',
@@ -60,7 +88,9 @@ function create ()
    healthbar.setOrigin(0.45, 0.5)
    //Max 415
    healthbar.displayWidth = 415
-
+   villainRedhealth = this.add.image(1700, 60, 'red')
+   villainHealthbar = this.add.image(1700, 60, 'statusbar')
+   villainHealthbar.displayWidth = 415
 
    //Edge colliders
    ground = this.physics.add.staticGroup();
@@ -76,14 +106,58 @@ function create ()
    this.physics.add.collider(player, ground);
    player.body.setGravityY(1);
 
+   // Boss weakpoints
+   theBoss = this.physics.add.staticGroup()
+   theBoss.create(640, 480, "wp1")
+   theBoss.create(525, 570, "wp1")
+   theBoss.create(470, 750, "wp2")
+
    //Lasers
    lasers = this.physics.add.group(
     {
         key: 'laser',
-        repeat: 16,
-        setXY: {x: 12, y: 0, stepX: 100}
+        repeat: 8,
+        setXY: {x: 12, y: 0, stepX: 140},
+        runChildUpdate: true
     }
     );
+
+
+    
+    lasers.children.iterate((child) => {
+      let y = Phaser.Math.Between(-200, -2000)
+      let x = Phaser.Math.Between(200, 1800)
+  
+      child.setY(y)
+      child.setX(x)
+      child.setMaxVelocity(500)
+  
+      child.update = function() {
+        if(this.y > 900) {
+          this.y=0;
+          
+        }
+      }
+  
+    });
+
+    var ct = 0;
+    
+
+    function resetter()
+    {
+      while(true)
+      {
+        ct = ct + 1
+        if(ct === 10){return true}
+        if(ct === 20){lasers.runChildUpdate = false}
+        if(ct === 30){ct = 0}
+      }
+    }
+
+    //Interactions players and boss
+    this.physics.add.overlap(player, lasers, player_damage, null, this);
+    this.physics.add.overlap(player, theBoss, boss_damage, null, this);
 
    this.anims.create({
        key: "leftWalking",
@@ -198,6 +272,21 @@ function update()
         }
     }
 
+    // Jumping
+    else if (cursors.up.isDown && player.body.touching.down)
+    {
+        player.setVelocityY(-330);
+
+        if (lookLeft == true){
+        player.anims.play('jumpLeft');
+    }
+
+    else{
+        player.anims.play('jumpRight');
+        lookLeft = false;
+    }
+    }
+
 
 
     // attacking
@@ -237,25 +326,8 @@ function update()
             lookLeft = false;
         }
         }
+
     }
-
-
-    
-
-    // Jumping
-    // else if (cursors.up.isDown && player.body.touching.down)
-    // {
-    //     player.setVelocityY(-330);
-
-    //     if (lookLeft == true){
-    //     player.anims.play('jumpLeft');
-    //   }
-
-    //   else{
-    //     player.anims.play('jumpRight');
-    //     lookLeft = false;
-    //   }
-    // }
 
     // attacking
     else if (attackButton.Q.isDown)
@@ -287,7 +359,58 @@ function update()
       }
     }
 
+    // ending game
+    if (heroHealth < 1) {
+        return
+    }
+    if (villainHealth < 1) {
+        return
+    }
+    // Hero taking damage
+    if (heroTakingDamage) {
+        healthbar.x -= 0.43 * heroDamageIntensity
+        healthbar.displayWidth -= heroDamageIntensity
+        heroHealth -= heroDamageIntensity
+    }
+    // Villain taking damage
+    if (villainTakingDamage) {
+        villainHealthbar.x += 0.48 * villainDamageIntensity
+        villainHealthbar.displayWidth -= villainDamageIntensity
+        villainHealth -= villainDamageIntensity
+  }
+
+
+
 }
 
+function player_damage(player, lasers)
+{
+  healthbar.x -= 0.43 * heroDamageIntensity
+  healthbar.displayWidth -= heroDamageIntensity
+  heroHealth -= heroDamageIntensity
+
+  if(heroHealth === 0)
+  {
+    bossScene.scene.restart()
+  }
+
+  //replay
+}
+
+function boss_damage(player, theBoss)
+{
+  if (attackButton.Q.isDown)
+  {
+    villainHealthbar.x += 0.48 * villainDamageIntensity
+    villainHealthbar.displayWidth -= villainDamageIntensity
+    villainHealth -= villainDamageIntensity
+
+    if(villainHealth === 0)
+    {
+      bossScene.scene.restart()
+    }
+  }
+
+}
 
 
