@@ -29,8 +29,11 @@ var heroHealth = 415;
 var villainHealth = 415;
 var heroTakingDamage = false;
 var villainTakingDamage = false;
-var heroDamageIntensity = 3;
+var heroDamageIntensity = 6;
 var villainDamageIntensity = 2;
+
+//For Powerups
+var heroHealIntensity = 42;
 
 var fibonacci_series = function (n)
 {
@@ -63,6 +66,8 @@ function preload ()
     this.load.image('wp4', 'Assets/Boss/wp4.png')
     this.load.image('wp5', 'Assets/Boss/wp5.png')
     this.load.image('wp6', 'Assets/Boss/wp6.png')
+
+    this.load.image('healthpack', 'Assets/Boss/heart.png')
 
 // Audio
   this.load.audio("attack", ["assets/Audio/attack.mp3"])
@@ -105,9 +110,9 @@ function create ()
    ground.create(1200, 650, 'platform');
 
    // sounds
-   this.attack = this.sound.add('attack')
-   this.damage = this.sound.add('damage')
-   this.jump = this.sound.add('jump')
+   attack = this.sound.add('attack')
+   damage = this.sound.add('damage')
+   jump = this.sound.add('jump')
 
    // player code
    player = this.physics.add.sprite(100, 700, "whiteBC");
@@ -116,11 +121,16 @@ function create ()
    this.physics.add.collider(player, ground);
    player.body.setGravityY(1);
 
+   //Powerups
+   healthpacks = this.physics.add.group();
+   this.physics.add.collider(healthpacks, ground);
+   this.physics.add.collider(player, healthpacks, getHealth, null, this);
+
    // Boss weakpoints
-   theBoss = this.physics.add.staticGroup()
-   theBoss.create(640, 480, "wp1")
-   theBoss.create(525, 570, "wp1")
-   theBoss.create(470, 750, "wp2")
+   theBoss = this.physics.add.staticGroup();
+   theBoss.create(640, 480, "wp1");
+   theBoss.create(525, 570, "wp1");
+   theBoss.create(470, 750, "wp2");
 
    //Lasers
    lasers = this.physics.add.group(
@@ -131,8 +141,6 @@ function create ()
         runChildUpdate: true
     }
     );
-
-
 
     lasers.children.iterate((child) => {
       let y = Phaser.Math.Between(-200, -2000)
@@ -152,6 +160,7 @@ function create ()
     });
 
     var ct = 0;
+
 
 
     function resetter()
@@ -284,12 +293,12 @@ function update()
 
             if (lookLeft == true){
             player.anims.play('jumpLeft');
-            this.jump.play();
+            this.sound.play("jump");
         }
 
         else{
             player.anims.play('jumpRight');
-            this.jump.play();
+            this.sound.play("jump");
             lookLeft = false;
         }
         }
@@ -301,10 +310,12 @@ function update()
 
             if (lookLeft == true){
             player.anims.play('attackLeft');
+            this.sound.play("attack")
         }
 
         else{
             player.anims.play('attackRight');
+            this.sound.play("attack")
             lookLeft = false;
         }
         }
@@ -317,10 +328,12 @@ function update()
 
         if (lookLeft == true){
         player.anims.play('jumpLeft');
+        this.sound.play("jump");
     }
 
     else{
         player.anims.play('jumpRight');
+        this.sound.play("jump");
         lookLeft = false;
     }
     }
@@ -334,10 +347,12 @@ function update()
 
         if (lookLeft == true){
         player.anims.play('attackLeft');
+        this.sound.play("attack")
       }
 
       else{
         player.anims.play('attackRight');
+        this.sound.play("attack")
         lookLeft = false;
       }
     }
@@ -357,10 +372,12 @@ function update()
 
             if (lookLeft == true){
             player.anims.play('jumpLeft');
+            this.sound.play("jump");
         }
 
         else{
             player.anims.play('jumpRight');
+            this.sound.play("jump");
             lookLeft = false;
         }
         }
@@ -374,10 +391,12 @@ function update()
 
         if (lookLeft == true){
         player.anims.play('attackLeft');
+        this.sound.play("attack")
       }
 
       else{
         player.anims.play('attackRight');
+        this.sound.play("attack")
         lookLeft = false;
       }
     }
@@ -427,6 +446,8 @@ function player_damage(player, lasers)
   healthbar.x -= 0.43 * heroDamageIntensity
   healthbar.displayWidth -= heroDamageIntensity
   heroHealth -= heroDamageIntensity
+  // var hp = healthpacks.create(100, 20, "healthpack");
+  this.sound.play("damage");
 
   if(heroHealth === 0)
   {
@@ -444,10 +465,20 @@ function boss_damage(player, theBoss)
     villainHealthbar.displayWidth -= villainDamageIntensity
     villainHealth -= villainDamageIntensity
 
-    if(villainHealth === 0)
+    if(villainHealth === 390)
     {
-      bossScene.scene.restart()
+      var hp = healthpacks.create(100, 20, "healthpack");
+      hp.setBounce(0.5);
+      hp.setCollideWorldBounds(true);
+      hp.setVelocity(Phaser.Math.Between(-200, 200), 20);
     }
   }
 
+}
+
+function getHealth(player, healthpack)
+{
+  healthbar.x += 0.43 * heroHealIntensity
+  healthbar.displayWidth += heroHealIntensity
+  heroHealth += heroHealIntensity
 }
