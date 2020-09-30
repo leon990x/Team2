@@ -29,7 +29,7 @@ var heroHealth = 415;
 var villainHealth = 415;
 var heroTakingDamage = false;
 var villainTakingDamage = false;
-var heroDamageIntensity = 6;
+var heroDamageIntensity = 2;
 var villainDamageIntensity = 2;
 
 //For Powerups
@@ -124,7 +124,7 @@ function create ()
    //Powerups
    healthpacks = this.physics.add.group();
    this.physics.add.collider(healthpacks, ground);
-   this.physics.add.collider(player, healthpacks, getHealth, null, this);
+   this.physics.add.overlap(player, healthpacks, getHealth, null, this);
 
    // Boss weakpoints
    theBoss = this.physics.add.staticGroup();
@@ -461,12 +461,12 @@ function player_damage(player, lasers)
   healthbar.x -= 0.43 * heroDamageIntensity
   healthbar.displayWidth -= heroDamageIntensity
   heroHealth -= heroDamageIntensity
-  // var hp = healthpacks.create(100, 20, "healthpack");
   this.sound.play("damage");
 
   if(heroHealth < 0)
   {
     heroHealth = 415;
+    villainHealth = 415;
     this.scene.start("bossScene");
   }
 
@@ -481,12 +481,19 @@ function boss_damage(player, theBoss)
     villainHealthbar.displayWidth -= villainDamageIntensity
     villainHealth -= villainDamageIntensity
 
-    if(villainHealth === 390)
-    {
-      var hp = healthpacks.create(100, 20, "healthpack");
-      hp.setBounce(0.5);
-      hp.setCollideWorldBounds(true);
-      hp.setVelocity(Phaser.Math.Between(-200, 200), 20);
+  if(villainHealth <= 280 && villainHealth > 270)  
+  {
+    var hp = healthpacks.create(100, 20, "healthpack");
+    hp.setBounce(0.5);
+    hp.setCollideWorldBounds(true);
+    hp.setVelocity(Phaser.Math.Between(-200, 200), 20);
+  }
+
+  if(villainHealth < 0)
+  {
+    heroHealth = 415;
+    villainHealth = 415;
+    this.scene.start("bossScene");
     }
   }
 
@@ -494,7 +501,12 @@ function boss_damage(player, theBoss)
 
 function getHealth(player, healthpack)
 {
-  healthbar.x += 0.43 * heroHealIntensity
-  healthbar.displayWidth += heroHealIntensity
-  heroHealth += heroHealIntensity
+  if(heroHealth < 415)
+  {
+    healthbar.x += 0.43 * 20
+    healthbar.displayWidth += 20
+    heroHealth += 20
+    healthpack.disableBody(true, true);
+  }
+
 }
