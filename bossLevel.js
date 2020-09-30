@@ -104,7 +104,7 @@ function create ()
 
    //Edge colliders
    ground = this.physics.add.staticGroup();
-   ground.create(960, 950, "floor").setScale(2).refreshBody();
+   floor = ground.create(960, 950, "floor").setScale(2).refreshBody();
    ground.create(400, 650, 'platform');
    ground.create(800, 550, 'platform');
    ground.create(1200, 650, 'platform');
@@ -234,43 +234,45 @@ function create ()
 
      // boss code
      tentacles = this.physics.add.group({
+       delay: 200,
        key:"tentacle",
        repeat: 2,
-       setXY:{x: 600, y: 470, stepX: 500}
+       setXY:{x: 1900, y: 870, stepX: 700},
+       setScale: {x: .5, y: .5},
+       runChildUpdate: true,
      });
-     time = this.time.addEvent({ startAt: 1, delay: 500, callback: moveTentacles(tentacles), callbackScope: this, loop: true});
+
+     Phaser.Actions.SetXY(tentacles.getChildren(), 1950, 600, 300);
+     Phaser.Actions.Call(tentacles.getChildren(),
+
+     function moveT(move){
+       move.setVelocityX(-150)
+       // reset Tentacle attack
+       tentacles.children.iterate((child) =>{
+         let x= Phaser.Math.Between(1910, 0);
+         // let y= Phaser.Math.Between(0, -200);
+         child.setX(x);
+         // child.setY(y);
+
+         child.update = function(){
+           console.log("please")
+           if(this.x <= 0) {
+             console.log(this.x, "ok");
+             this.x = 1900;
+           }
+         };
+       })
+     })
+
+     // time = this.time.addEvent({ startAt: 1, delay: 500, callback: moveT(move), callbackScope: this, loop: true});
      // tentacle = tentacles.create(960, 950, "tentacle");
-     this.physics.add.collider(tentacles, ground);
+     this.physics.add.collider(tentacles, floor);
      // this.physics.add.collider(tentacles, player);
-     // this.physics.add.overlap(player, tentacles, this.damage, null, this);
-   // tentacles.x += acceleration;
-   // ground.create(400, 650, '');
-   // ground.create(800, 550, 'platform');
-   // ground.create(1200, 650, 'platform');
+     this.physics.add.overlap(player, tentacles, tentacle_damage, null, this);
 }
 
 // function to move all spawns of tentacles
 function moveTentacles(tentacles){
-  Phaser.Actions.SetXY(tentacles.getChildren(), 1920, 500, 200);
-  Phaser.Actions.Call(tentacles.getChildren(),
-
-function(move){
-  move.setVelocityX(-300)
-  // reset Tentacle attack
-  tentacles.children.iterate((child) =>{
-    let x= Phaser.Math.Between(1920, 0);
-    // let y= Phaser.Math.Between(0, -200);
-    child.setX(x);
-    // child.setY(y);
-
-    child.update = function(){
-      console.log("please")
-    if(this.x == 0 && y==0) {
-      this.x = 1900;
-    }
-  };
-})
-})
 
 }
 
@@ -428,7 +430,7 @@ function update()
         healthbar.x -= 0.43 * heroDamageIntensity
         healthbar.displayWidth -= heroDamageIntensity
         heroHealth -= heroDamageIntensity
-        this.damage.play();
+        this.sound.play("damage");
     }
     // Villain taking damage
     if (villainTakingDamage) {
@@ -441,6 +443,19 @@ function update()
 
 }
 
+function tentacle_damage(player, tentacles)
+{
+  healthbar.x -= 0.43 * 2
+  healthbar.displayWidth -= 2
+  heroHealth -= 2
+
+  if(heroHealth < 0)
+  {
+    heroHealth = 415;
+    this.scene.start("bossScene");
+  }
+}
+
 function player_damage(player, lasers)
 {
   healthbar.x -= 0.43 * heroDamageIntensity
@@ -449,9 +464,10 @@ function player_damage(player, lasers)
   // var hp = healthpacks.create(100, 20, "healthpack");
   this.sound.play("damage");
 
-  if(heroHealth === 0)
+  if(heroHealth < 0)
   {
-    bossScene.scene.restart()
+    heroHealth = 415;
+    this.scene.start("bossScene");
   }
 
   //replay
