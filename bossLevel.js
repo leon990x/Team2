@@ -32,13 +32,13 @@ var villainTakingDamage = false;
 var heroDamageIntensity = 3;
 var villainDamageIntensity = 2;
 
-var fibonacci_series = function (n) 
+var fibonacci_series = function (n)
 {
-  if (n===1) 
+  if (n===1)
   {
     return [0, 1];
-  } 
-  else 
+  }
+  else
   {
     var s = fibonacci_series(n - 1);
     s.push(s[s.length - 1] + s[s.length - 2]);
@@ -63,6 +63,11 @@ function preload ()
     this.load.image('wp4', 'Assets/Boss/wp4.png')
     this.load.image('wp5', 'Assets/Boss/wp5.png')
     this.load.image('wp6', 'Assets/Boss/wp6.png')
+
+// Audio
+  this.load.audio("attack", ["assets/Audio/attack.mp3"])
+  this.load.audio("jump", ["assets/Audio/jump.wav"])
+  this.load.audio("damage", ["assets/Audio/damage.mp3"])
 
 // SpriteSheets
     this.load.spritesheet('whiteBC',
@@ -99,6 +104,11 @@ function create ()
    ground.create(800, 550, 'platform');
    ground.create(1200, 650, 'platform');
 
+   // sounds
+   this.attack = this.sound.add('attack')
+   this.damage = this.sound.add('damage')
+   this.jump = this.sound.add('jump')
+
    // player code
    player = this.physics.add.sprite(100, 700, "whiteBC");
    player.setBounce(0.3);
@@ -123,26 +133,26 @@ function create ()
     );
 
 
-    
+
     lasers.children.iterate((child) => {
       let y = Phaser.Math.Between(-200, -2000)
       let x = Phaser.Math.Between(200, 1800)
-  
+
       child.setY(y)
       child.setX(x)
       child.setMaxVelocity(500)
-  
+
       child.update = function() {
         if(this.y > 900) {
           this.y=0;
-          
+
         }
       }
-  
+
     });
 
     var ct = 0;
-    
+
 
     function resetter()
     {
@@ -219,6 +229,7 @@ function create ()
        repeat: 2,
        setXY:{x: 600, y: 470, stepX: 500}
      });
+     time = this.time.addEvent({ startAt: 1, delay: 500, callback: moveTentacles(tentacles), callbackScope: this, loop: true});
      // tentacle = tentacles.create(960, 950, "tentacle");
      this.physics.add.collider(tentacles, ground);
      // this.physics.add.collider(tentacles, player);
@@ -227,6 +238,31 @@ function create ()
    // ground.create(400, 650, '');
    // ground.create(800, 550, 'platform');
    // ground.create(1200, 650, 'platform');
+}
+
+// function to move all spawns of tentacles
+function moveTentacles(tentacles){
+  Phaser.Actions.SetXY(tentacles.getChildren(), 1920, 500, 200);
+  Phaser.Actions.Call(tentacles.getChildren(),
+
+function(move){
+  move.setVelocityX(-300)
+  // reset Tentacle attack
+  tentacles.children.iterate((child) =>{
+    let x= Phaser.Math.Between(1920, 0);
+    // let y= Phaser.Math.Between(0, -200);
+    child.setX(x);
+    // child.setY(y);
+
+    child.update = function(){
+      console.log("please")
+    if(this.x == 0 && y==0) {
+      this.x = 1900;
+    }
+  };
+})
+})
+
 }
 
 function update()
@@ -248,10 +284,12 @@ function update()
 
             if (lookLeft == true){
             player.anims.play('jumpLeft');
+            this.jump.play();
         }
 
         else{
             player.anims.play('jumpRight');
+            this.jump.play();
             lookLeft = false;
         }
         }
@@ -371,6 +409,7 @@ function update()
         healthbar.x -= 0.43 * heroDamageIntensity
         healthbar.displayWidth -= heroDamageIntensity
         heroHealth -= heroDamageIntensity
+        this.damage.play();
     }
     // Villain taking damage
     if (villainTakingDamage) {
@@ -412,5 +451,3 @@ function boss_damage(player, theBoss)
   }
 
 }
-
-
