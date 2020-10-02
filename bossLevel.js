@@ -8,6 +8,7 @@ bossScene = {
         }
 
 respiratory = new Phaser.Scene('respiratory1');
+gameOver = new Phaser.Scene('gameOver1');
 
 var config = {
     type: Phaser.AUTO,
@@ -20,7 +21,7 @@ var config = {
             debug: false
         }
     },
-    scene: [bossScene, respiratory]
+    scene: [bossScene, respiratory, gameOver]
 };
 
 // game instance and global variables
@@ -475,6 +476,7 @@ function tentacle_damage(player, tentacles)
   {
     heroHealth = 415;
     this.scene.start(respiratory);
+    this.scene.start(gameOver);
   }
 }
 
@@ -491,6 +493,7 @@ function player_damage(player, lasers)
     heroHealth = 415;
     villainHealth = 415;
     this.scene.start(respiratory);
+    this.scene.start(gameOver);
   }
 
   //replay
