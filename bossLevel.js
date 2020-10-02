@@ -29,7 +29,7 @@ var heroHealth = 415;
 var villainHealth = 415;
 var heroTakingDamage = false;
 var villainTakingDamage = false;
-var heroDamageIntensity = 3;
+var heroDamageIntensity = 2;
 var villainDamageIntensity = 2;
 
 //For Powerups
@@ -110,9 +110,9 @@ function create ()
    ground.create(1200, 650, 'platform');
 
    // sounds
-   this.attack = this.sound.add('attack')
-   this.damage = this.sound.add('damage')
-   this.jump = this.sound.add('jump')
+   attack = this.sound.add('attack')
+   damage = this.sound.add('damage')
+   jump = this.sound.add('jump')
 
    // player code
    player = this.physics.add.sprite(100, 700, "whiteBC");
@@ -127,10 +127,10 @@ function create ()
    this.physics.add.overlap(player, healthpacks, getHealth, null, this);
 
    // Boss weakpoints
-   theBoss = this.physics.add.staticGroup()
-   theBoss.create(640, 480, "wp1")
-   theBoss.create(525, 570, "wp1")
-   theBoss.create(470, 750, "wp2")
+   theBoss = this.physics.add.staticGroup();
+   theBoss.create(640, 480, "wp1");
+   theBoss.create(525, 570, "wp1");
+   theBoss.create(470, 750, "wp2");
 
    //Lasers
    lasers = this.physics.add.group(
@@ -141,8 +141,6 @@ function create ()
         runChildUpdate: true
     }
     );
-
-
 
     lasers.children.iterate((child) => {
       let y = Phaser.Math.Between(-200, -2000)
@@ -162,6 +160,7 @@ function create ()
     });
 
     var ct = 0;
+
 
 
     function resetter()
@@ -496,6 +495,7 @@ function player_damage(player, lasers)
   if(heroHealth < 0)
   {
     heroHealth = 415;
+    villainHealth = 415;
     this.scene.start("bossScene");
   }
 
@@ -519,11 +519,19 @@ function boss_damage(player, theBoss)
     hp.setVelocity(Phaser.Math.Between(-200, 200), 20);
   }
 
-    if(villainHealth < 0)
-    {
-      heroHealth = 415;
-      villainHealth = 415;
-      this.scene.start("bossScene");
+  if(villainHealth <= 280 && villainHealth > 270)
+  {
+    var hp = healthpacks.create(100, 20, "healthpack");
+    hp.setBounce(0.5);
+    hp.setCollideWorldBounds(true);
+    hp.setVelocity(Phaser.Math.Between(-200, 200), 20);
+  }
+
+  if(villainHealth < 0)
+  {
+    heroHealth = 415;
+    villainHealth = 415;
+    this.scene.start("bossScene");
     }
   }
 
