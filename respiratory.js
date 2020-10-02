@@ -1,58 +1,17 @@
-
-bossScene = {
+respiratory = {
     preload: preload,
     create: create,
     update: update,
-    key: "bossScene"
+    key: "respiratory"
         }
-
-var config = {
-    type: Phaser.AUTO,
-    width: 1920,
-    height: 1080,
-    physics: {
-        default: 'arcade',
-        arcade: {
-            gravity: { y: 300 },
-            debug: false
-        }
-    },
-    scene: [bossScene, respiratory]
-};
-
-// game instance and global variables
-var game = new Phaser.Game(config);
-var player;
-var ground;
-var lookLeft = false;
-var acceleration = 0;
-var heroHealth = 415;
-var villainHealth = 415;
-var heroTakingDamage = false;
-var villainTakingDamage = false;
-var heroDamageIntensity = 2;
-var villainDamageIntensity = 2;
-
-//For Powerups
-var heroHealIntensity = 42;
 
 function preload ()
 {
     this.load.image('environment', 'Assets/Boss/Bossbackground.png');
     this.load.image('floor', 'Assets/Boss/Bossfloor.png');
-    this.load.image('corona', 'Assets/Boss/corona.png');
     this.load.image('platform', 'Assets/Boss/platform.png');
-    this.load.image('tentacle', 'Assets/Boss/tentacle.png');
     this.load.image('red', 'Assets/Boss/redHealth.png');
     this.load.image('statusbar', 'Assets/Boss/health.png');
-    this.load.image('laser', 'Assets/Boss/laser.png')
-
-    this.load.image('wp1', 'Assets/Boss/wp1.png')
-    this.load.image('wp2', 'Assets/Boss/wp2.png')
-    this.load.image('wp3', 'Assets/Boss/wp3.png')
-    this.load.image('wp4', 'Assets/Boss/wp4.png')
-    this.load.image('wp5', 'Assets/Boss/wp5.png')
-    this.load.image('wp6', 'Assets/Boss/wp6.png')
 
     this.load.image('healthpack', 'Assets/Boss/heart.png')
 
@@ -76,7 +35,6 @@ function preload ()
 function create ()
 {
    background = this.add.image(960, 540, 'environment');
-   boss = this.add.image(780, 480, "corona");
    cursors = this.input.keyboard.createCursorKeys();
    attackButton = this.input.keyboard.addKeys("Q,P");
    redhealth = this.add.image(220, 60, 'red')
@@ -92,15 +50,6 @@ function create ()
    //Edge colliders
    ground = this.physics.add.staticGroup();
    floor = ground.create(960, 950, "floor").setScale(2).refreshBody();
-   ground.create(400, 650, 'platform');
-   ground.create(800, 550, 'platform');
-   ground.create(1200, 650, 'platform');
-
-   ground.create(400, 380, 'platform');
-   ground.create(800, 200, 'platform');
-   ground.create(1200, 380, 'platform');
-
-   ground.create(1600, 510, 'platform');
 
    // sounds
    attack = this.sound.add('attack')
@@ -118,56 +67,6 @@ function create ()
    healthpacks = this.physics.add.group();
    this.physics.add.collider(healthpacks, ground);
    this.physics.add.overlap(player, healthpacks, getHealth, null, this);
-
-   // Boss weakpoints
-   theBoss = this.physics.add.staticGroup();
-    //left shoulder
-   theBoss.create(640, 480, "wp1");
-   theBoss.create(525, 570, "wp1");
-   theBoss.create(470, 750, "wp2");
-    //right shoulder
-   theBoss.create(970, 500, "wp4");
-   theBoss.create(1050, 570, "wp5");
-   theBoss.create(1090, 750, "wp5");
-    //left head
-    theBoss.create(570, 270, "wp2");
-    theBoss.create(610, 90, "wp1");
-    //right head
-    theBoss.create(990, 270, "wp5");
-    theBoss.create(955, 90, "wp4");
-
-   //Lasers
-   lasers = this.physics.add.group(
-    {
-        key: 'laser',
-        repeat: 8,
-        setXY: {x: 12, y: 0, stepX: 140},
-        runChildUpdate: true
-    }
-    );
-
-    lasers.children.iterate((child) => {
-      let y = Phaser.Math.Between(-200, -2000)
-      let x = Phaser.Math.Between(200, 1800)
-
-      child.setY(y)
-      child.setX(x)
-      child.setMaxVelocity(500)
-
-      child.update = function() {
-        if(this.y > 900) {
-          this.y=0;
-
-        }
-      }
-
-    });
-
-    var ct = 0;
-
-    //Interactions players and boss
-    this.physics.add.overlap(player, lasers, player_damage, null, this);
-    this.physics.add.overlap(player, theBoss, boss_damage, null, this);
 
    this.anims.create({
        key: "leftWalking",
@@ -222,49 +121,6 @@ function create ()
        frameRate: 10,
        repeat: -1
      });
-
-     // boss code
-     tentacles = this.physics.add.group({
-       delay: 200,
-       key:"tentacle",
-       repeat: 2,
-       setXY:{x: 1900, y: 870, stepX: 700},
-       setScale: {x: .5, y: .5},
-       runChildUpdate: true,
-     });
-
-     Phaser.Actions.SetXY(tentacles.getChildren(), 1950, 600, 300);
-     Phaser.Actions.Call(tentacles.getChildren(),
-
-     function moveT(move){
-       move.setVelocityX(-150)
-       // reset Tentacle attack
-       tentacles.children.iterate((child) =>{
-         let x= Phaser.Math.Between(1910, 0);
-         // let y= Phaser.Math.Between(0, -200);
-         child.setX(x);
-         // child.setY(y);
-
-         child.update = function(){
-           console.log("please")
-           if(this.x <= 0) {
-             console.log(this.x, "ok");
-             this.x = 1900;
-           }
-         };
-       })
-     })
-
-     // time = this.time.addEvent({ startAt: 1, delay: 500, callback: moveT(move), callbackScope: this, loop: true});
-     // tentacle = tentacles.create(960, 950, "tentacle");
-     this.physics.add.collider(tentacles, floor);
-     // this.physics.add.collider(tentacles, player);
-     this.physics.add.overlap(player, tentacles, tentacle_damage, null, this);
-}
-
-// function to move all spawns of tentacles
-function moveTentacles(tentacles){
-
 }
 
 function update()
@@ -413,8 +269,7 @@ function update()
     if (heroHealth < 1) {
         return
     }
-    if (villainHealth < 1) {
-        return
+
     }
     // Hero taking damage
     if (heroTakingDamage) {
@@ -423,28 +278,9 @@ function update()
         heroHealth -= heroDamageIntensity
         this.sound.play("damage");
     }
-    // Villain taking damage
-    if (villainTakingDamage) {
-        villainHealthbar.x += 0.48 * villainDamageIntensity
-        villainHealthbar.displayWidth -= villainDamageIntensity
-        villainHealth -= villainDamageIntensity
-  }
 
 
 
-}
-
-function tentacle_damage(player, tentacles)
-{
-  healthbar.x -= 0.43 * 2
-  healthbar.displayWidth -= 2
-  heroHealth -= 2
-
-  if(heroHealth < 0)
-  {
-    heroHealth = 415;
-    this.scene.start("bossScene");
-  }
 }
 
 function player_damage(player, lasers)
@@ -459,45 +295,6 @@ function player_damage(player, lasers)
     heroHealth = 415;
     villainHealth = 415;
     this.scene.start("bossScene");
-  }
-
-  //replay
-}
-
-function boss_damage(player, theBoss)
-{
-  if (attackButton.Q.isDown)
-  {
-    villainHealthbar.x += 0.48 * villainDamageIntensity
-    villainHealthbar.displayWidth -= villainDamageIntensity
-    villainHealth -= villainDamageIntensity
-
-  if(villainHealth <= 280 && villainHealth > 270)  
-  {
-    var hp = healthpacks.create(960, 20, "healthpack");
-    hp.setBounce(0.5);
-    hp.setCollideWorldBounds(true);
-    hp.setVelocity(Phaser.Math.Between(-200, 200), 20);
-  }
-
-  if(villainHealth < 0)
-  {
-    heroHealth = 415;
-    villainHealth = 415;
-    this.scene.start("bossScene");
-    }
-  }
-
-}
-
-function getHealth(player, healthpack)
-{
-  if(heroHealth < 415)
-  {
-    healthbar.x += 0.43 * 20
-    healthbar.displayWidth += 20
-    heroHealth += 20
-    healthpack.disableBody(true, true);
   }
 
 }
