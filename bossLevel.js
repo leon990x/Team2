@@ -32,6 +32,9 @@ var villainTakingDamage = false;
 var heroDamageIntensity = 3;
 var villainDamageIntensity = 2;
 
+//For Powerups
+var heroHealIntensity = 42;
+
 var fibonacci_series = function (n)
 {
   if (n===1)
@@ -64,6 +67,8 @@ function preload ()
     this.load.image('wp5', 'Assets/Boss/wp5.png')
     this.load.image('wp6', 'Assets/Boss/wp6.png')
 
+    this.load.image('healthpack', 'Assets/Boss/heart.png')
+
 // Audio
   this.load.audio("attack", ["assets/Audio/attack.mp3"])
   this.load.audio("jump", ["assets/Audio/jump.wav"])
@@ -93,8 +98,8 @@ function create ()
    healthbar.setOrigin(0.45, 0.5)
    //Max 415
    healthbar.displayWidth = 415
-   villainRedhealth = this.add.image(1700, 60, 'red')
-   villainHealthbar = this.add.image(1700, 60, 'statusbar')
+   villainRedhealth = this.add.image(1700, 50, 'red')
+   villainHealthbar = this.add.image(1700, 50, 'statusbar')
    villainHealthbar.displayWidth = 415
 
    //Edge colliders
@@ -115,6 +120,11 @@ function create ()
    player.setCollideWorldBounds(true);
    this.physics.add.collider(player, ground);
    player.body.setGravityY(1);
+
+   //Powerups
+   healthpacks = this.physics.add.group();
+   this.physics.add.collider(healthpacks, ground);
+   this.physics.add.overlap(player, healthpacks, getHealth, null, this);
 
    // Boss weakpoints
    theBoss = this.physics.add.staticGroup()
@@ -279,6 +289,9 @@ function update()
 
         lookLeft = true;
 
+        player.clearTint();
+        boss.clearTint();
+
         // Jumping
             if (cursors.up.isDown && player.body.touching.down)
         {
@@ -286,12 +299,16 @@ function update()
 
             if (lookLeft == true){
             player.anims.play('jumpLeft');
-            this.jump.play();
+            this.sound.play("jump");
+            player.clearTint();
+            boss.clearTint();
         }
 
         else{
             player.anims.play('jumpRight');
-            this.jump.play();
+            this.sound.play("jump")
+            player.clearTint();
+            boss.clearTint();
             lookLeft = false;
         }
         }
@@ -303,11 +320,17 @@ function update()
 
             if (lookLeft == true){
             player.anims.play('attackLeft');
+            this.sound.play("attack");
+            player.clearTint();
+            boss.clearTint();
         }
 
         else{
             player.anims.play('attackRight');
+            this.sound.play("attack");
             lookLeft = false;
+            player.clearTint();
+            boss.clearTint();
         }
         }
     }
@@ -319,10 +342,16 @@ function update()
 
         if (lookLeft == true){
         player.anims.play('jumpLeft');
+        this.sound.play("jump");
+        player.clearTint();
+        boss.clearTint();
     }
 
     else{
         player.anims.play('jumpRight');
+        this.sound.play("jump");
+        player.clearTint();
+        boss.clearTint();
         lookLeft = false;
     }
     }
@@ -336,10 +365,14 @@ function update()
 
         if (lookLeft == true){
         player.anims.play('attackLeft');
+        this.sound.play("attack");
+        player.clearTint();
       }
 
       else{
         player.anims.play('attackRight');
+        this.sound.play("attack");
+        player.clearTint();
         lookLeft = false;
       }
     }
@@ -350,6 +383,8 @@ function update()
         player.setVelocityX(160);
 
         player.anims.play('rightWalking', true);
+        player.clearTint();
+        boss.clearTint();
 
         lookLeft = false;
         // Jumping
@@ -359,10 +394,16 @@ function update()
 
             if (lookLeft == true){
             player.anims.play('jumpLeft');
+            this.sound.play("jump");
+            player.clearTint();
+            boss.clearTint();
         }
 
         else{
             player.anims.play('jumpRight');
+            this.sound.play("jump");
+            player.clearTint();
+            boss.clearTint();
             lookLeft = false;
         }
         }
@@ -376,10 +417,14 @@ function update()
 
         if (lookLeft == true){
         player.anims.play('attackLeft');
+        this.sound.play("attack");
+        player.clearTint();
       }
 
       else{
         player.anims.play('attackRight');
+        this.sound.play("attack");
+        player.clearTint();
         lookLeft = false;
       }
     }
@@ -429,6 +474,9 @@ function tentacle_damage(player, tentacles)
   healthbar.x -= 0.43 * 2
   healthbar.displayWidth -= 2
   heroHealth -= 2
+  player.setTint(0xff0000);
+  this.sound.play("damage");
+
 
   if(heroHealth < 0)
   {
@@ -442,6 +490,8 @@ function player_damage(player, lasers)
   healthbar.x -= 0.43 * heroDamageIntensity
   healthbar.displayWidth -= heroDamageIntensity
   heroHealth -= heroDamageIntensity
+  this.sound.play("damage");
+  player.setTint(0xff0000);
 
   if(heroHealth < 0)
   {
@@ -459,11 +509,35 @@ function boss_damage(player, theBoss)
     villainHealthbar.x += 0.48 * villainDamageIntensity
     villainHealthbar.displayWidth -= villainDamageIntensity
     villainHealth -= villainDamageIntensity
+    boss.setTint(0xff0000)
 
-    if(villainHealth === 0)
+  if(villainHealth <= 280 && villainHealth > 270)
+  {
+    var hp = healthpacks.create(100, 20, "healthpack");
+    hp.setBounce(0.5);
+    hp.setCollideWorldBounds(true);
+    hp.setVelocity(Phaser.Math.Between(-200, 200), 20);
+  }
+
+    if(villainHealth < 0)
     {
-      bossScene.scene.restart()
+      heroHealth = 415;
+      villainHealth = 415;
+      this.scene.start("bossScene");
     }
+  }
+
+}
+
+function getHealth(player, healthpack)
+{
+  if(heroHealth < 415)
+  {
+    healthbar.x += 0.43 * 20
+    healthbar.displayWidth += 20
+    heroHealth += 20
+    player.setTint(0x00ff00)
+    healthpack.disableBody(true, true);
   }
 
 }
