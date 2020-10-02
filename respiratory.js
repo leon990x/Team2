@@ -1,18 +1,29 @@
-respiratory = {
-    preload: preload,
-    create: create,
-    update: update,
-    key: "respiratory"
-        }
+// let respiratory = new Phaser.Scene("respiratory");
 
-function preload ()
+respiratory.preload = p1
+respiratory.create = c1
+respiratory.update = u1
+
+var player;
+var ground;
+var lookLeft = false;
+var acceleration = 0;
+var heroHealth = 415;
+var villainHealth = 415;
+var heroTakingDamage = false;
+var villainTakingDamage = false;
+var heroDamageIntensity = 2;
+var villainDamageIntensity = 2;
+
+//For Powerups
+var heroHealIntensity = 42;
+function p1()
 {
     this.load.image('environment', 'Assets/Boss/Bossbackground.png');
     this.load.image('floor', 'Assets/Boss/Bossfloor.png');
     this.load.image('platform', 'Assets/Boss/platform.png');
     this.load.image('red', 'Assets/Boss/redHealth.png');
     this.load.image('statusbar', 'Assets/Boss/health.png');
-
     this.load.image('healthpack', 'Assets/Boss/heart.png')
 
 // Audio
@@ -32,7 +43,7 @@ function preload ()
 
 }
 
-function create ()
+function c1()
 {
    background = this.add.image(960, 540, 'environment');
    cursors = this.input.keyboard.createCursorKeys();
@@ -123,7 +134,7 @@ function create ()
      });
 }
 
-function update()
+function u1()
 {
 
   // walking
@@ -270,7 +281,6 @@ function update()
         return
     }
 
-    }
     // Hero taking damage
     if (heroTakingDamage) {
         healthbar.x -= 0.43 * heroDamageIntensity
@@ -278,9 +288,6 @@ function update()
         heroHealth -= heroDamageIntensity
         this.sound.play("damage");
     }
-
-
-
 }
 
 function player_damage(player, lasers)
@@ -294,7 +301,7 @@ function player_damage(player, lasers)
   {
     heroHealth = 415;
     villainHealth = 415;
-    this.scene.start("bossScene");
+    this.scene.start("respiratory");
   }
 
 }

@@ -1,10 +1,13 @@
 
+
 bossScene = {
     preload: preload,
     create: create,
     update: update,
     key: "bossScene"
         }
+
+respiratory = new Phaser.Scene('respiratory1');
 
 var config = {
     type: Phaser.AUTO,
@@ -471,7 +474,7 @@ function tentacle_damage(player, tentacles)
   if(heroHealth < 0)
   {
     heroHealth = 415;
-    this.scene.start("bossScene");
+    this.scene.start(respiratory);
   }
 }
 
@@ -487,7 +490,7 @@ function player_damage(player, lasers)
   {
     heroHealth = 415;
     villainHealth = 415;
-    this.scene.start("bossScene");
+    this.scene.start(respiratory);
   }
 
   //replay
