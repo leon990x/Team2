@@ -5,6 +5,8 @@ bossScene = {
     key: "bossScene"
         }
 
+gameOver = new Phaser.Scene("gameoverScreen");
+
 var config = {
     type: Phaser.AUTO,
     width: 1920,
@@ -16,7 +18,7 @@ var config = {
             debug: false
         }
     },
-    scene: [bossScene]
+    scene: [bossScene, gameOver]
 };
 
 // game instance and global variables
@@ -445,7 +447,7 @@ function update()
 
     // ending game
     if (heroHealth < 1) {
-        return
+        this.scene.start(gameOver);
     }
     if (villainHealth < 1) {
         return
@@ -480,7 +482,7 @@ function tentacle_damage(player, tentacles)
   if(heroHealth < 0)
   {
     heroHealth = 415;
-    this.scene.start("bossScene");
+    this.scene.start(gameOver);
   }
 }
 
@@ -496,7 +498,7 @@ function player_damage(player, lasers)
   {
     heroHealth = 415;
     villainHealth = 415;
-    this.scene.start("bossScene");
+    this.scene.start(gameOver);
   }
 
   //replay
