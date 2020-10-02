@@ -85,8 +85,8 @@ function create ()
    healthbar.setOrigin(0.45, 0.5)
    //Max 415
    healthbar.displayWidth = 415
-   villainRedhealth = this.add.image(1700, 60, 'red')
-   villainHealthbar = this.add.image(1700, 60, 'statusbar')
+   villainRedhealth = this.add.image(1700, 50, 'red')
+   villainHealthbar = this.add.image(1700, 50, 'statusbar')
    villainHealthbar.displayWidth = 415
 
    //Edge colliders
@@ -279,6 +279,9 @@ function update()
 
         lookLeft = true;
 
+        player.clearTint();
+        boss.clearTint();
+
         // Jumping
             if (cursors.up.isDown && player.body.touching.down)
         {
@@ -287,11 +290,15 @@ function update()
             if (lookLeft == true){
             player.anims.play('jumpLeft');
             this.sound.play("jump");
+            player.clearTint();
+            boss.clearTint();
         }
 
         else{
             player.anims.play('jumpRight');
-            this.sound.play("jump");
+            this.sound.play("jump")
+            player.clearTint();
+            boss.clearTint();
             lookLeft = false;
         }
         }
@@ -303,13 +310,17 @@ function update()
 
             if (lookLeft == true){
             player.anims.play('attackLeft');
-            this.sound.play("attack")
+            this.sound.play("attack");
+            player.clearTint();
+            boss.clearTint();
         }
 
         else{
             player.anims.play('attackRight');
-            this.sound.play("attack")
+            this.sound.play("attack");
             lookLeft = false;
+            player.clearTint();
+            boss.clearTint();
         }
         }
     }
@@ -322,11 +333,15 @@ function update()
         if (lookLeft == true){
         player.anims.play('jumpLeft');
         this.sound.play("jump");
+        player.clearTint();
+        boss.clearTint();
     }
 
     else{
         player.anims.play('jumpRight');
         this.sound.play("jump");
+        player.clearTint();
+        boss.clearTint();
         lookLeft = false;
     }
     }
@@ -340,12 +355,14 @@ function update()
 
         if (lookLeft == true){
         player.anims.play('attackLeft');
-        this.sound.play("attack")
+        this.sound.play("attack");
+        player.clearTint();
       }
 
       else{
         player.anims.play('attackRight');
-        this.sound.play("attack")
+        this.sound.play("attack");
+        player.clearTint();
         lookLeft = false;
       }
     }
@@ -356,6 +373,8 @@ function update()
         player.setVelocityX(160);
 
         player.anims.play('rightWalking', true);
+        player.clearTint();
+        boss.clearTint();
 
         lookLeft = false;
         // Jumping
@@ -366,11 +385,15 @@ function update()
             if (lookLeft == true){
             player.anims.play('jumpLeft');
             this.sound.play("jump");
+            player.clearTint();
+            boss.clearTint();
         }
 
         else{
             player.anims.play('jumpRight');
             this.sound.play("jump");
+            player.clearTint();
+            boss.clearTint();
             lookLeft = false;
         }
         }
@@ -384,12 +407,14 @@ function update()
 
         if (lookLeft == true){
         player.anims.play('attackLeft');
-        this.sound.play("attack")
+        this.sound.play("attack");
+        player.clearTint();
       }
 
       else{
         player.anims.play('attackRight');
-        this.sound.play("attack")
+        this.sound.play("attack");
+        player.clearTint();
         lookLeft = false;
       }
     }
@@ -439,6 +464,9 @@ function tentacle_damage(player, tentacles)
   healthbar.x -= 0.43 * 2
   healthbar.displayWidth -= 2
   heroHealth -= 2
+  player.setTint(0xff0000);
+  this.sound.play("damage");
+
 
   if(heroHealth < 0)
   {
@@ -453,6 +481,7 @@ function player_damage(player, lasers)
   healthbar.displayWidth -= heroDamageIntensity
   heroHealth -= heroDamageIntensity
   this.sound.play("damage");
+  player.setTint(0xff0000);
 
   if(heroHealth < 0)
   {
@@ -471,8 +500,17 @@ function boss_damage(player, theBoss)
     villainHealthbar.x += 0.48 * villainDamageIntensity
     villainHealthbar.displayWidth -= villainDamageIntensity
     villainHealth -= villainDamageIntensity
+    boss.setTint(0xff0000)
 
-  if(villainHealth <= 280 && villainHealth > 270)  
+  if(villainHealth <= 280 && villainHealth > 270)
+  {
+    var hp = healthpacks.create(100, 20, "healthpack");
+    hp.setBounce(0.5);
+    hp.setCollideWorldBounds(true);
+    hp.setVelocity(Phaser.Math.Between(-200, 200), 20);
+  }
+
+  if(villainHealth <= 280 && villainHealth > 270)
   {
     var hp = healthpacks.create(960, 20, "healthpack");
     hp.setBounce(0.5);
@@ -497,6 +535,7 @@ function getHealth(player, healthpack)
     healthbar.x += 0.43 * 20
     healthbar.displayWidth += 20
     heroHealth += 20
+    player.setTint(0x00ff00)
     healthpack.disableBody(true, true);
   }
 
