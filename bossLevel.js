@@ -8,7 +8,11 @@ bossScene = {
         }
 
 respiratory = new Phaser.Scene('respiratory1');
+<<<<<<< HEAD
 gameOver = new Phaser.Scene('go');
+=======
+gameOver = new Phaser.Scene('gameOver1');
+>>>>>>> aa439a46aadd4dbeb6250942b8816ecde3497090
 
 var config = {
     type: Phaser.AUTO,
@@ -469,7 +473,7 @@ function update()
 
     // ending game
     if (heroHealth < 1) {
-        return
+        this.scene.start(gameOver);
     }
     if (villainHealth < 1) {
         return
@@ -505,6 +509,10 @@ function laser_damage(player, lasers)
   if(heroHealth < 0)
   {
     heroHealth = 415;
+<<<<<<< HEAD
+=======
+    this.scene.start(respiratory);
+>>>>>>> aa439a46aadd4dbeb6250942b8816ecde3497090
     this.scene.start(gameOver);
   }
 }
@@ -521,6 +529,11 @@ function tentacle_damage(player, tentacles)
   if(heroHealth < 0)
   {
     heroHealth = 415;
+<<<<<<< HEAD
+=======
+    villainHealth = 415;
+    this.scene.start(respiratory);
+>>>>>>> aa439a46aadd4dbeb6250942b8816ecde3497090
     this.scene.start(gameOver);
   }
 }
