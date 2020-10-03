@@ -8,6 +8,7 @@ bossScene = {
         }
 
 respiratory = new Phaser.Scene('respiratory1');
+gameOver = new Phaser.Scene('go');
 
 var config = {
     type: Phaser.AUTO,
@@ -20,7 +21,7 @@ var config = {
             debug: false
         }
     },
-    scene: [bossScene, respiratory]
+    scene: [bossScene, respiratory, gameOver]
 };
 
 // game instance and global variables
@@ -38,6 +39,12 @@ var villainDamageIntensity = 2;
 
 //For Powerups
 var heroHealIntensity = 42;
+function toGameover()
+{
+  console.log("inside Function")
+  heroHealth = 415;
+  game.scene.start(gameOver);
+}
 
 function preload ()
 {
@@ -57,7 +64,8 @@ function preload ()
     this.load.image('wp5', 'Assets/Boss/wp5.png')
     this.load.image('wp6', 'Assets/Boss/wp6.png')
 
-    this.load.image('healthpack', 'Assets/Boss/heart.png')
+    this.load.image('healthpack', 'Assets/Powers/heart.png')
+    this.load.image('antibody', 'Assets/Powers/antibody.png')
 
 // Audio
   this.load.audio("attack", ["assets/Audio/attack.mp3"])
@@ -121,6 +129,21 @@ function create ()
    healthpacks = this.physics.add.group();
    this.physics.add.collider(healthpacks, ground);
    this.physics.add.overlap(player, healthpacks, getHealth, null, this);
+   antibodyStorm = this.physics.add.group({
+        key: 'antibody',
+        repeat: 300,
+        immovable: true,
+        allowGravity: false
+    });
+    antibodyStorm.children.iterate(function (child) {
+        //  Give each star a slightly different bounce
+        child.setScale(0.1);
+        child.angle = (Phaser.Math.FloatBetween(0, 359));
+        child.setVelocityY(0);
+        child.setVelocityX(400);
+        child.setX(Phaser.Math.FloatBetween(-500, 0));
+        child.setY(Phaser.Math.FloatBetween(50, 950));
+    });
 
    // Boss weakpoints
    theBoss = this.physics.add.staticGroup();
@@ -140,37 +163,13 @@ function create ()
     theBoss.create(955, 90, "wp4");
 
    //Lasers
-   lasers = this.physics.add.group(
-    {
-        key: 'laser',
-        repeat: 8,
-        setXY: {x: 12, y: 0, stepX: 140},
-        runChildUpdate: true
-    }
-    );
 
-    lasers.children.iterate((child) => {
-      let y = Phaser.Math.Between(-200, -2000)
-      let x = Phaser.Math.Between(200, 1800)
-
-      child.setY(y)
-      child.setX(x)
-      child.setMaxVelocity(500)
-
-      child.update = function() {
-        if(this.y > 900) {
-          this.y=0;
-
-        }
-      }
-
-    });
 
     var ct = 0;
 
-    //Interactions players and boss
-    this.physics.add.overlap(player, lasers, player_damage, null, this);
-    this.physics.add.overlap(player, theBoss, boss_damage, null, this);
+    // //Interactions players and boss
+    // this.physics.add.overlap(player, lasers, tentacle_damage, null, this);
+    // this.physics.add.overlap(player, theBoss, boss_damage, null, this);
 
    this.anims.create({
        key: "leftWalking",
@@ -227,6 +226,32 @@ function create ()
      });
 
      // boss code
+     lasers = this.physics.add.group(
+      {
+          key: 'laser',
+          repeat: 8,
+          setXY: {x: 12, y: 0, stepX: 140},
+          runChildUpdate: true
+      }
+      );
+
+      lasers.children.iterate((child) => {
+        let y = Phaser.Math.Between(-200, -2000)
+        let x = Phaser.Math.Between(200, 1800)
+
+        child.setY(y)
+        child.setX(x)
+        child.setMaxVelocity(500)
+
+        child.update = function() {
+          if(this.y > 900) {
+            this.y=0;
+
+          }
+        }
+
+      });
+
      tentacles = this.physics.add.group({
        delay: 200,
        key:"tentacle",
@@ -249,9 +274,9 @@ function create ()
          // child.setY(y);
 
          child.update = function(){
-           console.log("please")
+           // console.log("please")
            if(this.x <= 0) {
-             console.log(this.x, "ok");
+             // console.log(this.x, "ok");
              this.x = 1900;
            }
          };
@@ -261,8 +286,13 @@ function create ()
      // time = this.time.addEvent({ startAt: 1, delay: 500, callback: moveT(move), callbackScope: this, loop: true});
      // tentacle = tentacles.create(960, 950, "tentacle");
      this.physics.add.collider(tentacles, floor);
+
      // this.physics.add.collider(tentacles, player);
+     //Interactions players and boss
+
+     this.physics.add.overlap(player, theBoss, boss_damage, null, this);
      this.physics.add.overlap(player, tentacles, tentacle_damage, null, this);
+     this.physics.add.overlap(player, lasers, laser_damage, null, this);
 }
 
 // function to move all spawns of tentacles
@@ -445,12 +475,12 @@ function update()
         return
     }
     // Hero taking damage
-    if (heroTakingDamage) {
-        healthbar.x -= 0.43 * heroDamageIntensity
-        healthbar.displayWidth -= heroDamageIntensity
-        heroHealth -= heroDamageIntensity
-        this.sound.play("damage");
-    }
+    // if (heroTakingDamage) {
+    //     healthbar.x -= 0.43 * heroDamageIntensity
+    //     healthbar.displayWidth -= heroDamageIntensity
+    //     heroHealth -= heroDamageIntensity
+    //     this.sound.play("damage");
+    // }
     // Villain taking damage
     if (villainTakingDamage) {
         villainHealthbar.x += 0.48 * villainDamageIntensity
@@ -460,6 +490,23 @@ function update()
 
 
 
+}
+
+function laser_damage(player, lasers)
+{
+  //change all 3 damage intensities when adjusting intensity
+  healthbar.x -= 0.43 * 10;
+  healthbar.displayWidth -= 10;
+  heroHealth -= 10;
+  player.setTint(0xff0000);
+  this.sound.play("damage");
+  console.log("inside if player damage")
+
+  if(heroHealth < 0)
+  {
+    heroHealth = 415;
+    this.scene.start(gameOver);
+  }
 }
 
 function tentacle_damage(player, tentacles)
@@ -474,27 +521,12 @@ function tentacle_damage(player, tentacles)
   if(heroHealth < 0)
   {
     heroHealth = 415;
-    this.scene.start(respiratory);
+    this.scene.start(gameOver);
   }
 }
-
-function player_damage(player, lasers)
-{
-  healthbar.x -= 0.43 * heroDamageIntensity
-  healthbar.displayWidth -= heroDamageIntensity
-  heroHealth -= heroDamageIntensity
-  this.sound.play("damage");
-  player.setTint(0xff0000);
-
-  if(heroHealth < 0)
-  {
-    heroHealth = 415;
-    villainHealth = 415;
-    this.scene.start(respiratory);
-  }
 
   //replay
-}
+
 
 function boss_damage(player, theBoss)
 {

@@ -24,7 +24,8 @@ function p1()
     this.load.image('platform', 'Assets/Boss/platform.png');
     this.load.image('red', 'Assets/Boss/redHealth.png');
     this.load.image('statusbar', 'Assets/Boss/health.png');
-    this.load.image('healthpack', 'Assets/Boss/heart.png')
+    this.load.image('healthpack', 'Assets/Boss/heart.png');
+    this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
 // Audio
   this.load.audio("attack", ["assets/Audio/attack.mp3"])
@@ -73,6 +74,13 @@ function c1()
    player.setCollideWorldBounds(true);
    this.physics.add.collider(player, ground);
    player.body.setGravityY(1);
+
+   //TB Enemy
+   tb_enemy = this.physics.add.sprite(1100, 900, "tb");
+   tb_enemy.setBounce(0.3);
+   tb_enemy.setCollideWorldBounds(true);
+   this.physics.add.collider(tb_enemy, ground);
+   tb_enemy.body.setGravityY(1);
 
    //Powerups
    healthpacks = this.physics.add.group();
