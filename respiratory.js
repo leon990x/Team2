@@ -72,14 +72,14 @@ function c1()
    player = this.physics.add.sprite(100, 700, "whiteBC");
    player.setBounce(0.3);
    player.setCollideWorldBounds(true);
-   this.physics.add.collider(player, ground);
+   this.physics.add.collider(player, floor);
    player.body.setGravityY(1);
 
    //TB Enemy
-   tb_enemy = this.physics.add.sprite(1100, 900, "tb");
-   tb_enemy.setBounce(0.3);
+   tb_enemy = this.physics.add.sprite(1900, 650, "tb");
+   tb_enemy.setBounce(0);
    tb_enemy.setCollideWorldBounds(true);
-   this.physics.add.collider(tb_enemy, ground);
+   this.physics.add.collider(tb_enemy, floor);
    tb_enemy.body.setGravityY(1);
 
    //Powerups
@@ -144,6 +144,61 @@ function c1()
 
 function u1()
 {
+      if (player.x < tb_enemy.x && player.body.velocity.x < 0) {
+              console.log("p left of e, mv left")
+              // tb_enemy.body.velocity.x = 0;
+              tb_enemy.body.velocity.x = -150;
+
+          }
+      // if (player.x > tb_enemy.x && player.body.velocity.x > 0) {
+      //         console.log("p right of e, mv right")
+      //         // tb_enemy.body.velocity.x = 0;
+      //         tb_enemy.body.velocity.x *= -1;
+      //     }
+
+////////////////////////////////////////////////////////////////////
+      if (player.x < tb_enemy.x && player.body.velocity.x === 0) {
+              console.log("p left of e, stopped")
+              // tb_enemy.body.velocity.x = 0;
+              tb_enemy.body.velocity.x = -100;
+          }
+
+      console.log(tb_enemy.x)
+
+      // if (player.x >= tb_enemy.x && player.body.velocity.x === 0) {
+      //         console.log("p right of e, stopped")
+      //         tb_enemy.body.velocity.x *= -1;
+      //         }
+//////////////////////////////////////////////////////////////////
+      if(tb_enemy.x < 480)
+      {
+        tb_enemy.body.velocity.x = 100;
+      }
+
+
+
+      if (player.x < tb_enemy.x && player.body.velocity.x > 0) {
+              console.log("p left of e, mv right")
+              // tb_enemy.body.velocity.x = 0;
+              tb_enemy.body.velocity.x = -150;
+
+          }
+      if (player.x > tb_enemy.x && player.body.velocity.x < 0) {
+              console.log("p right of e, mv left")
+              // tb_enemy.body.velocity.x = 0;
+              tb_enemy.body.velocity.x = 150;
+          }
+
+      //     console.log("p stopped")
+      //     if (player.x < tb_enemy.x){tb_enemy.body.velocity.x = -150;}
+      //     if (player.x === tb_enemy.x){tb_enemy.body.velocity.x = 0;}
+      //     if (player.x > tb_enemy.x){tb_enemy.body.velocity.x = 150;}
+      //     if (player.x === tb_enemy.x){tb_enemy.body.velocity.x = 0;}
+      //     }
+      // if (player.x === tb_enemy.x && player.body.velocity.x === 0) {
+      //         tb_enemy.body.velocity.x = 0;
+      //     }
+
 
   // walking
     if (cursors.left.isDown)
@@ -285,9 +340,9 @@ function u1()
     }
 
     // ending game
-    if (heroHealth < 1) {
-        return
-    }
+    // if (heroHealth < 1) {
+    //     return
+    // }
 
     // Hero taking damage
     if (heroTakingDamage) {
