@@ -68,7 +68,7 @@ function c1()
 
    //Edge colliders
    ground = this.physics.add.staticGroup();
-   floor = ground.create(960, 950, "floor").setScale(2).refreshBody();
+   floor = ground.create(960, 1050, "floor").setScale(1).refreshBody();
 
    // sounds
    attack = this.sound.add('attack')
@@ -93,14 +93,14 @@ function c1()
    this.physics.add.overlap(tb_enemy, player, tb_damage, null, this);
 
    // Flu MiniBoss
-   flu_enemy = this.physics.add.sprite(1910, 650, "flu");
+   flu_enemy = this.physics.add.sprite(1910, 820, "flu");
    flu_enemy.setScale(4);
    flu_enemy.setCollideWorldBounds(true);
    flu_enemy.setOrigin(0.5);
    flu_enemy.body.allowGravity = false;
    flu_enemy.body.immovable = true; //Makes it so nothing moves it
    this.physics.add.collider(flu_enemy, floor);
-   this.physics.add.overlap(flu_enemy, player, tb_damage, null, this);
+   this.physics.add.overlap(flu_enemy, player, flu_damage, null, this);
 
    this.tweens.add({
      targets: flu_enemy,
@@ -154,6 +154,7 @@ function c1()
    healthpacks = this.physics.add.group();
    this.physics.add.collider(healthpacks, ground);
    this.physics.add.overlap(player, healthpacks, getHealth, null, this);
+
 
    this.anims.create({
        key: "leftWalking",
@@ -429,6 +430,20 @@ function tb_damage(player, tb_enemy){
     villainHealthbar.displayWidth -= villainDamageIntensity
     villainHealth -= villainDamageIntensity
     this.sound.play("damage");
+  }
+}
+
+function flu_damage(player, tb_enemy){
+  if (attackButton.Q.isDown){
+    villainHealthbar.x -= 0.43 * 4
+    villainHealthbar.displayWidth -= 4
+    villainHealth -= 4
+    this.sound.play("damage");
+  }
+
+  if (villainHealth < 0)
+  {
+    this.scene.start("bossScene");
   }
 }
 
