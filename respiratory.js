@@ -24,7 +24,10 @@ function p1()
     this.load.image('platform', 'Assets/Boss/platform.png');
     this.load.image('red', 'Assets/Boss/redHealth.png');
     this.load.image('statusbar', 'Assets/Boss/health.png');
-    this.load.image('healthpack', 'Assets/Boss/heart.png')
+    this.load.image('healthpack', 'Assets/Boss/heart.png');
+    this.load.image('flu', 'Assets/Enemy/Flu.png');
+    this.load.image('flaser', 'Assets/Enemy/flu_laser.png');
+    // this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
 // Audio
   this.load.audio("attack", ["assets/Audio/attack.mp3"])
@@ -39,6 +42,11 @@ function p1()
     this.load.spritesheet('LwhiteBC',
         'Assets/Players/LwhiteBCS.png',
         { frameWidth: 55, frameHeight: 84 }
+);
+  // Enemy SpriteSheets
+  this.load.spritesheet('tb',
+    'Assets/Respiratory/TBSprite.png',
+    { frameWidth: 188, frameHeight: 204 }
 );
 
 }
@@ -71,8 +79,76 @@ function c1()
    player = this.physics.add.sprite(100, 700, "whiteBC");
    player.setBounce(0.3);
    player.setCollideWorldBounds(true);
-   this.physics.add.collider(player, ground);
+   this.physics.add.collider(player, floor);
    player.body.setGravityY(1);
+
+   //TB Enemy
+   tb_enemy = this.physics.add.sprite(1900, 650, "tb");
+   tb_enemy.setBounce(0);
+   tb_enemy.setScale(.5);
+   tb_enemy.setCollideWorldBounds(true);
+   this.physics.add.collider(tb_enemy, floor);
+   tb_enemy.body.setGravityY(1);
+   this.physics.add.overlap(tb_enemy, player, player_damage, null, this);
+   this.physics.add.overlap(tb_enemy, player, tb_damage, null, this);
+
+   // Flu MiniBoss
+   flu_enemy = this.physics.add.sprite(1910, 650, "flu");
+   flu_enemy.setScale(4);
+   flu_enemy.setCollideWorldBounds(true);
+   flu_enemy.setOrigin(0.5);
+   flu_enemy.body.allowGravity = false;
+   flu_enemy.body.immovable = true; //Makes it so nothing moves it
+   this.physics.add.collider(flu_enemy, floor);
+   this.physics.add.overlap(flu_enemy, player, tb_damage, null, this);
+
+   this.tweens.add({
+     targets: flu_enemy,
+     x:1910,
+     y: flu_enemy.y-40,
+     duration: 2000,
+     ease:"Linear",
+     callbackScope: this,
+     loop: -1,
+     yoyo: true,
+   });
+
+   // Flu laser group
+   flasers = this.physics.add.group({
+     delay: 200,
+     key:"flaser",
+     repeat: 10,
+     setXY:{x: 1900, y: 870, stepX: 700},
+     setScale: {x: .5, y: .5},
+     immovable: true,
+     allowGravity: false,
+     runChildUpdate: true,
+   });
+
+   Phaser.Actions.SetXY(flasers.getChildren(), 1950, 600, 300);
+   Phaser.Actions.Call(flasers.getChildren(),
+
+   function moveT(move){
+     move.setVelocityX(-250)
+     // reset Tentacle attack
+     flasers.children.iterate((child) =>{
+       let x= Phaser.Math.Between(1910, 0);
+       let y= Phaser.Math.Between(flu_enemy.y, 800);
+       child.setX(x);
+       child.setY(y);
+
+       child.update = function(){
+         // console.log("please")
+         if(this.x <= 0 || this.y >= 1080) {
+           // console.log(this.x, "ok");
+           this.x = flu_enemy.x;
+           this.y = Phaser.Math.Between(flu_enemy.y, 800);
+         }
+       };
+     })
+   })
+
+    this.physics.add.overlap(flasers, player, player_damage, null, this);
 
    //Powerups
    healthpacks = this.physics.add.group();
@@ -136,6 +212,63 @@ function c1()
 
 function u1()
 {
+    if (tb_enemy != undefined){
+      if (player.x < tb_enemy.x && player.body.velocity.x < 0) {
+              console.log("p left of e, mv left")
+              // tb_enemy.body.velocity.x = 0;
+              tb_enemy.body.velocity.x = -150;
+
+          }
+      // if (player.x > tb_enemy.x && player.body.velocity.x > 0) {
+      //         console.log("p right of e, mv right")
+      //         // tb_enemy.body.velocity.x = 0;
+      //         tb_enemy.body.velocity.x *= -1;
+      //     }
+
+////////////////////////////////////////////////////////////////////
+      if (player.x < tb_enemy.x && player.body.velocity.x === 0) {
+              console.log("p left of e, stopped")
+              // tb_enemy.body.velocity.x = 0;
+              tb_enemy.body.velocity.x = -100;
+          }
+
+      console.log(tb_enemy.x)
+
+      // if (player.x >= tb_enemy.x && player.body.velocity.x === 0) {
+      //         console.log("p right of e, stopped")
+      //         tb_enemy.body.velocity.x *= -1;
+      //         }
+//////////////////////////////////////////////////////////////////
+      if(tb_enemy.x < 480)
+      {
+        tb_enemy.body.velocity.x = 100;
+      }
+
+
+
+      if (player.x < tb_enemy.x && player.body.velocity.x > 0) {
+              console.log("p left of e, mv right")
+              // tb_enemy.body.velocity.x = 0;
+              tb_enemy.body.velocity.x = -150;
+
+          }
+      if (player.x > tb_enemy.x && player.body.velocity.x < 0) {
+              console.log("p right of e, mv left")
+              // tb_enemy.body.velocity.x = 0;
+              tb_enemy.body.velocity.x = 150;
+          }
+      }
+
+      //     console.log("p stopped")
+      //     if (player.x < tb_enemy.x){tb_enemy.body.velocity.x = -150;}
+      //     if (player.x === tb_enemy.x){tb_enemy.body.velocity.x = 0;}
+      //     if (player.x > tb_enemy.x){tb_enemy.body.velocity.x = 150;}
+      //     if (player.x === tb_enemy.x){tb_enemy.body.velocity.x = 0;}
+      //     }
+      // if (player.x === tb_enemy.x && player.body.velocity.x === 0) {
+      //         tb_enemy.body.velocity.x = 0;
+      //     }
+
 
   // walking
     if (cursors.left.isDown)
@@ -290,18 +423,27 @@ function u1()
     }
 }
 
-function player_damage(player, lasers)
+function tb_damage(player, tb_enemy){
+  if (attackButton.Q.isDown){
+    villainHealthbar.x -= 0.43 * villainDamageIntensity
+    villainHealthbar.displayWidth -= villainDamageIntensity
+    villainHealth -= villainDamageIntensity
+    this.sound.play("damage");
+  }
+}
+
+function player_damage(player, tb_enemy)
 {
-  healthbar.x -= 0.43 * heroDamageIntensity
-  healthbar.displayWidth -= heroDamageIntensity
-  heroHealth -= heroDamageIntensity
+  healthbar.x -= 0.43 * .5
+  healthbar.displayWidth -= .5
+  heroHealth -= .5
   this.sound.play("damage");
 
   if(heroHealth < 0)
   {
     heroHealth = 415;
     villainHealth = 415;
-    this.scene.start("respiratory");
+    this.scene.start(gameOver);
   }
 
 }
