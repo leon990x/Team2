@@ -19,7 +19,7 @@ var config = {
             debug: false
         }
     },
-    scene: [bossScene, respiratory, gameOver]
+    scene: [respiratory, bossScene, gameOver]
 };
 
 // game instance and global variables
@@ -65,6 +65,7 @@ function preload ()
 
     this.load.image('healthpack', 'Assets/Powers/heart.png')
     this.load.image('antibody', 'Assets/Powers/antibody.png')
+    this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png')
 
 // Audio
   this.load.audio("attack", ["assets/Audio/attack.mp3"])
@@ -124,26 +125,6 @@ function create ()
    this.physics.add.collider(player, ground);
    player.body.setGravityY(1);
 
-   //Powerups
-   healthpacks = this.physics.add.group();
-   this.physics.add.collider(healthpacks, ground);
-   this.physics.add.overlap(player, healthpacks, getHealth, null, this);
-   antibodyStorm = this.physics.add.group({
-        key: 'antibody',
-        repeat: 300,
-        immovable: true,
-        allowGravity: false
-    });
-    antibodyStorm.children.iterate(function (child) {
-        //  Give each star a slightly different bounce
-        child.setScale(0.1);
-        child.angle = (Phaser.Math.FloatBetween(0, 359));
-        child.setVelocityY(0);
-        child.setVelocityX(400);
-        child.setX(Phaser.Math.FloatBetween(-500, 0));
-        child.setY(Phaser.Math.FloatBetween(50, 950));
-    });
-
    // Boss weakpoints
    theBoss = this.physics.add.staticGroup();
     //left shoulder
@@ -161,6 +142,34 @@ function create ()
     theBoss.create(990, 270, "wp5");
     theBoss.create(955, 90, "wp4");
 
+   //Powerups
+   healthpacks = this.physics.add.group();
+   this.physics.add.collider(healthpacks, ground);
+   this.physics.add.overlap(player, healthpacks, getHealth, null, this);
+   // antibodyStorm = this.physics.add.group({
+   //      key: 'antibody',
+   //      repeat: 300,
+   //      immovable: true,
+   //      allowGravity: false
+   //  });
+   //  antibodyStorm.children.iterate(function (child) {
+   //      //  Give each star a slightly different bounce
+   //      child.setScale(0.1);
+   //      child.angle = (Phaser.Math.FloatBetween(0, 359));
+   //      child.setVelocityY(0);
+   //      child.setVelocityX(400);
+   //      child.setX(Phaser.Math.FloatBetween(-500, 0));
+   //      child.setY(Phaser.Math.FloatBetween(50, 950));
+   //  });
+
+    antibodyPowerup = this.physics.add.group();
+    antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
+    this.physics.add.collider(antibodyPowerup, ground);
+    this.physics.add.overlap(player, antibodyPowerup, getAntibodyPowerup, null, this);
+    this.physics.add.overlap(antibodyStorm, theBoss, boss_antibody_damage, null, this);
+    this.physics.add.overlap(player, theBoss, boss_damage, null, this);
+
+
    //Lasers
 
 
@@ -168,7 +177,7 @@ function create ()
 
     // //Interactions players and boss
     // this.physics.add.overlap(player, lasers, tentacle_damage, null, this);
-    // this.physics.add.overlap(player, theBoss, boss_damage, null, this);
+
 
    this.anims.create({
        key: "leftWalking",
@@ -289,7 +298,7 @@ function create ()
      // this.physics.add.collider(tentacles, player);
      //Interactions players and boss
 
-     this.physics.add.overlap(player, theBoss, boss_damage, null, this);
+     this.physics.add.overlap(player, theBoss, attack_boss, null, this);
      this.physics.add.overlap(player, tentacles, tentacle_damage, null, this);
      this.physics.add.overlap(player, lasers, laser_damage, null, this);
 }
@@ -494,8 +503,8 @@ function update()
 function laser_damage(player, lasers)
 {
   //change all 3 damage intensities when adjusting intensity
-  healthbar.x -= 0.43 * 10;
-  healthbar.displayWidth -= 10;
+  healthbar.x -= 0.43 * 3;
+  healthbar.displayWidth -= 3;
   heroHealth -= 10;
   player.setTint(0xff0000);
   this.sound.play("damage");
@@ -504,7 +513,7 @@ function laser_damage(player, lasers)
   if(heroHealth < 0)
   {
     heroHealth = 415;
-    this.scene.start(respiratory);
+    this.scene.start(gameOver);
   }
 }
 
@@ -520,17 +529,18 @@ function tentacle_damage(player, tentacles)
   if(heroHealth < 0)
   {
     heroHealth = 415;
-    this.scene.start(respiratory);
+    this.scene.start(gameOver);
   }
 }
 
   //replay
 
 
-function boss_damage(player, theBoss)
+function attack_boss(player, theBoss)
 {
   if (attackButton.Q.isDown)
   {
+    console.log("player attacks boss")
     villainHealthbar.x += 0.48 * villainDamageIntensity
     villainHealthbar.displayWidth -= villainDamageIntensity
     villainHealth -= villainDamageIntensity
@@ -574,3 +584,44 @@ function getHealth(player, healthpack)
   }
 
 }
+
+function boss_damage(player, theBoss, storm){
+  if(villainHealth <= 180 && villainHealth > 178)
+    {
+      var ap = antibodyPowerup.create(960, 20, "antibodyPowerup").setScale(0.25);
+      ap.setBounce(0.5);
+      ap.setCollideWorldBounds(true);
+      ap.setVelocity(Phaser.Math.Between(-200, 200), 20);
+    }
+  }
+
+  function boss_antibody_damage(antibodyStorm, theBoss)
+{
+    villainDamageIntensity = .02
+    villainHealthbar.x += 0.48 * villainDamageIntensity
+    villainHealthbar.displayWidth -= villainDamageIntensity
+    villainHealth -= villainDamageIntensity
+    boss.setTint(0xff0000)
+    villainDamageIntensity = 2
+    this.sound.play("attack");
+  if(villainHealth < 0)
+  {
+    heroHealth = 415;
+    villainHealth = 415;
+    this.scene.start("bossScene");
+    }
+  }
+
+  function getAntibodyPowerup(player, antibodyPowerup)
+  {
+    var i;
+    for (i = 0; i < 500; i++)
+        {
+        var storm = antibodyStorm.create(Phaser.Math.FloatBetween(-500, 0), Phaser.Math.FloatBetween(350, 750), "antibody");
+        storm.setScale(0.1);
+        storm.angle = (Phaser.Math.FloatBetween(0, 359));
+        storm.setVelocityY(0);
+        storm.setVelocityX(400);
+        antibodyPowerup.disableBody(true, true);
+        }
+  }

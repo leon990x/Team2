@@ -100,7 +100,7 @@ function c1()
    flu_enemy.body.allowGravity = false;
    flu_enemy.body.immovable = true; //Makes it so nothing moves it
    this.physics.add.collider(flu_enemy, floor);
-   this.physics.add.overlap(flu_enemy, player, tb_damage, null, this);
+   this.physics.add.overlap(flu_enemy, player, flu_damage, null, this);
 
    this.tweens.add({
      targets: flu_enemy,
@@ -154,6 +154,7 @@ function c1()
    healthpacks = this.physics.add.group();
    this.physics.add.collider(healthpacks, ground);
    this.physics.add.overlap(player, healthpacks, getHealth, null, this);
+
 
    this.anims.create({
        key: "leftWalking",
@@ -429,6 +430,20 @@ function tb_damage(player, tb_enemy){
     villainHealthbar.displayWidth -= villainDamageIntensity
     villainHealth -= villainDamageIntensity
     this.sound.play("damage");
+  }
+}
+
+function flu_damage(player, tb_enemy){
+  if (attackButton.Q.isDown){
+    villainHealthbar.x -= 0.43 * 4
+    villainHealthbar.displayWidth -= 4
+    villainHealth -= 4
+    this.sound.play("damage");
+  }
+
+  if (villainHealth < 0)
+  {
+    this.scene.start("bossScene");
   }
 }
 
