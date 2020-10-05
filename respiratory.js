@@ -212,7 +212,6 @@ function c1()
 
 function u1()
 {
-    if (tb_enemy != undefined){
       if (player.x < tb_enemy.x && player.body.velocity.x < 0) {
               console.log("p left of e, mv left")
               // tb_enemy.body.velocity.x = 0;
@@ -410,9 +409,9 @@ function u1()
     }
 
     // ending game
-    if (heroHealth < 1) {
-        return
-    }
+    // if (heroHealth < 1) {
+    //     return
+    // }
 
     // Hero taking damage
     if (heroTakingDamage) {
