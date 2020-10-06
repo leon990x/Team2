@@ -1,43 +1,8 @@
-bossScene = {
-    preload: preload,
-    create: create,
-    update: update,
-    key: "bossScene"
-        }
 
-respiratory = new Phaser.Scene('respiratory1');
-gameOver = new Phaser.Scene('gameOver1');
+bossScene.preload = preload;
+bossScene.create = create;
+bossScene.update = update;
 
-var config = {
-    type: Phaser.AUTO,
-    width: 1920,
-    height: 1080,
-    physics: {
-        default: 'arcade',
-        arcade: {
-            gravity: { y: 300 },
-            debug: false
-        }
-    },
-    scene: [respiratory, bossScene, gameOver]
-};
-
-// game instance and global variables
-var game = new Phaser.Game(config);
-console.log('hey!')
-var player;
-var ground;
-var lookLeft = false;
-var acceleration = 0;
-var heroHealth = 415;
-var villainHealth = 415;
-var heroTakingDamage = false;
-var villainTakingDamage = false;
-var heroDamageIntensity = 2;
-var villainDamageIntensity = 2;
-
-//For Powerups
-var heroHealIntensity = 42;
 function toGameover()
 {
   console.log("inside Function")
@@ -118,56 +83,36 @@ function create ()
    damage = this.sound.add('damage')
    jump = this.sound.add('jump')
 
-   // player code
-   player = this.physics.add.sprite(100, 700, "whiteBC");
-   player.setBounce(0.3);
-   player.setCollideWorldBounds(true);
-   this.physics.add.collider(player, ground);
-   player.body.setGravityY(1);
-
    // Boss weakpoints
    theBoss = this.physics.add.staticGroup();
     //left shoulder
-   theBoss.create(640, 480, "wp1");
-   theBoss.create(525, 570, "wp1");
-   theBoss.create(470, 750, "wp2");
+   theBoss.create(630, 480, "wp6"); //1
+   theBoss.create(525, 570, "wp5"); //1
+   theBoss.create(470, 750, "wp5"); //2
     //right shoulder
-   theBoss.create(970, 500, "wp4");
-   theBoss.create(1050, 570, "wp5");
-   theBoss.create(1090, 750, "wp5");
+   theBoss.create(990, 500, "wp3"); //4
+   theBoss.create(1050, 570, "wp2"); //5
+   theBoss.create(1090, 750, "wp2"); //5
     //left head
-    theBoss.create(570, 270, "wp2");
-    theBoss.create(610, 90, "wp1");
+    theBoss.create(570, 270, "wp5"); //2
+    theBoss.create(610, 90, "wp6"); //1
     //right head
-    theBoss.create(990, 270, "wp5");
-    theBoss.create(955, 90, "wp4");
+    theBoss.create(990, 270, "wp2"); //5
+    theBoss.create(955, 90, "wp3"); //4
 
-   //Powerups
+    // player code
+    player = this.physics.add.sprite(100, 700, "whiteBC");
+    player.setBounce(0.3);
+    player.setCollideWorldBounds(true);
+    this.physics.add.collider(player, ground);
+    player.body.setGravityY(1);
+
+
    healthpacks = this.physics.add.group();
-   this.physics.add.collider(healthpacks, ground);
-   this.physics.add.overlap(player, healthpacks, getHealth, null, this);
-   // antibodyStorm = this.physics.add.group({
-   //      key: 'antibody',
-   //      repeat: 300,
-   //      immovable: true,
-   //      allowGravity: false
-   //  });
-   //  antibodyStorm.children.iterate(function (child) {
-   //      //  Give each star a slightly different bounce
-   //      child.setScale(0.1);
-   //      child.angle = (Phaser.Math.FloatBetween(0, 359));
-   //      child.setVelocityY(0);
-   //      child.setVelocityX(400);
-   //      child.setX(Phaser.Math.FloatBetween(-500, 0));
-   //      child.setY(Phaser.Math.FloatBetween(50, 950));
-   //  });
+   antibodyPowerup = this.physics.add.group();
 
-    antibodyPowerup = this.physics.add.group();
-    antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
-    this.physics.add.collider(antibodyPowerup, ground);
-    this.physics.add.overlap(player, antibodyPowerup, getAntibodyPowerup, null, this);
-    this.physics.add.overlap(antibodyStorm, theBoss, boss_antibody_damage, null, this);
-    this.physics.add.overlap(player, theBoss, boss_damage, null, this);
+   this.physics.add.collider(antibodyPowerup, ground);
+   this.physics.add.collider(healthpacks, ground);
 
 
    //Lasers
@@ -290,15 +235,16 @@ function create ()
          };
        })
      })
-
-     // time = this.time.addEvent({ startAt: 1, delay: 500, callback: moveT(move), callbackScope: this, loop: true});
-     // tentacle = tentacles.create(960, 950, "tentacle");
      this.physics.add.collider(tentacles, floor);
+     //Powerups
+     antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
 
-     // this.physics.add.collider(tentacles, player);
-     //Interactions players and boss
+     this.physics.add.overlap(theBoss, player, attack_boss, null, this);
+     this.physics.add.overlap(player, antibodyPowerup, getAntibodyPowerup, null, this);
+     this.physics.add.overlap(theBoss, antibodyStorm, boss_antibody_damage, null, this);
+     this.physics.add.overlap(theBoss, player, boss_damage, null, this);
+     this.physics.add.overlap(player, healthpacks, getHealth, null, this);
 
-     this.physics.add.overlap(player, theBoss, attack_boss, null, this);
      this.physics.add.overlap(player, tentacles, tentacle_damage, null, this);
      this.physics.add.overlap(player, lasers, laser_damage, null, this);
 }
@@ -503,9 +449,9 @@ function update()
 function laser_damage(player, lasers)
 {
   //change all 3 damage intensities when adjusting intensity
-  healthbar.x -= 0.43 * 3;
-  healthbar.displayWidth -= 3;
-  heroHealth -= 10;
+  healthbar.x -= 0.43 * 1;
+  healthbar.displayWidth -= 1;
+  heroHealth -= 1;
   player.setTint(0xff0000);
   this.sound.play("damage");
   console.log("inside if player damage")
@@ -536,11 +482,10 @@ function tentacle_damage(player, tentacles)
   //replay
 
 
-function attack_boss(player, theBoss)
+function attack_boss(theBoss, player)
 {
   if (attackButton.Q.isDown)
   {
-    console.log("player attacks boss")
     villainHealthbar.x += 0.48 * villainDamageIntensity
     villainHealthbar.displayWidth -= villainDamageIntensity
     villainHealth -= villainDamageIntensity
@@ -566,7 +511,7 @@ function attack_boss(player, theBoss)
   {
     heroHealth = 415;
     villainHealth = 415;
-    this.scene.start("bossScene");
+    this.scene.start(bossScene);
     }
   }
 
@@ -585,7 +530,7 @@ function getHealth(player, healthpack)
 
 }
 
-function boss_damage(player, theBoss, storm){
+function boss_damage(theBoss, player, storm){
   if(villainHealth <= 180 && villainHealth > 178)
     {
       var ap = antibodyPowerup.create(960, 20, "antibodyPowerup").setScale(0.25);
@@ -595,7 +540,7 @@ function boss_damage(player, theBoss, storm){
     }
   }
 
-  function boss_antibody_damage(antibodyStorm, theBoss)
+  function boss_antibody_damage(theBoss, antibodyStorm)
 {
     villainDamageIntensity = .02
     villainHealthbar.x += 0.48 * villainDamageIntensity
@@ -608,7 +553,7 @@ function boss_damage(player, theBoss, storm){
   {
     heroHealth = 415;
     villainHealth = 415;
-    this.scene.start("bossScene");
+    this.scene.start(bossScene);
     }
   }
 

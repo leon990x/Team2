@@ -1,22 +1,22 @@
 // let respiratory = new Phaser.Scene("respiratory");
 
-respiratory.preload = p1
-respiratory.create = c1
-respiratory.update = u1
+respiratory.preload = p1;
+respiratory.create = c1;
+respiratory.update = u1;
 
-var player;
-var ground;
-var lookLeft = false;
-var acceleration = 0;
-var heroHealth = 415;
-var villainHealth = 415;
-var heroTakingDamage = false;
-var villainTakingDamage = false;
-var heroDamageIntensity = 2;
-var villainDamageIntensity = 2;
-
-//For Powerups
-var heroHealIntensity = 42;
+// var player;
+// var ground;
+// var lookLeft = false;
+// var acceleration = 0;
+// var heroHealth = 415;
+// var villainHealth = 415;
+// var heroTakingDamage = false;
+// var villainTakingDamage = false;
+// var heroDamageIntensity = 2;
+// var villainDamageIntensity = 2;
+//
+// //For Powerups
+// var heroHealIntensity = 42;
 function p1()
 {
     this.load.image('environment', 'Assets/Boss/Bossbackground.png');
@@ -435,7 +435,7 @@ function tb_damage(player, tb_enemy){
 
 function flu_damage(player, tb_enemy){
   if (attackButton.Q.isDown){
-    villainHealthbar.x -= 0.43 * 4
+    villainHealthbar.x -= 0.48 * 4
     villainHealthbar.displayWidth -= 4
     villainHealth -= 4
     this.sound.play("damage");
@@ -443,7 +443,9 @@ function flu_damage(player, tb_enemy){
 
   if (villainHealth < 0)
   {
-    this.scene.start("bossScene");
+    heroHealth = 415;
+    villainHealth = 415;
+    this.scene.start(bossScene);
   }
 }
 
