@@ -4,19 +4,6 @@ respiratory.preload = p1;
 respiratory.create = c1;
 respiratory.update = u1;
 
-// var player;
-// var ground;
-// var lookLeft = false;
-// var acceleration = 0;
-// var heroHealth = 415;
-// var villainHealth = 415;
-// var heroTakingDamage = false;
-// var villainTakingDamage = false;
-// var heroDamageIntensity = 2;
-// var villainDamageIntensity = 2;
-//
-// //For Powerups
-// var heroHealIntensity = 42;
 function p1()
 {
     this.load.image('environment', 'Assets/Boss/Bossbackground.png');
@@ -27,7 +14,7 @@ function p1()
     this.load.image('healthpack', 'Assets/Boss/heart.png');
     this.load.image('flu', 'Assets/Enemy/Flu.png');
     this.load.image('flaser', 'Assets/Enemy/flu_laser.png');
-    // this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
+    //this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
 // Audio
   this.load.audio("attack", ["assets/Audio/attack.mp3"])
@@ -83,7 +70,8 @@ function c1()
    player.body.setGravityY(1);
 
    //TB Enemy
-   tb_enemy = this.physics.add.sprite(1900, 650, "tb");
+   for(x = 0; x < 5; x++){tb_enemy = this.physics.add.sprite(1900-(10*x), 650+(10*x), "tb");}
+
    tb_enemy.setBounce(0);
    tb_enemy.setScale(.5);
    tb_enemy.setCollideWorldBounds(true);
@@ -217,58 +205,43 @@ function u1()
       if (player.x < tb_enemy.x && player.body.velocity.x < 0) {
               console.log("p left of e, mv left")
               // tb_enemy.body.velocity.x = 0;
-              tb_enemy.body.velocity.x = -150;
+              tb_enemy.body.velocity.x = -70;
 
           }
-      // if (player.x > tb_enemy.x && player.body.velocity.x > 0) {
-      //         console.log("p right of e, mv right")
-      //         // tb_enemy.body.velocity.x = 0;
-      //         tb_enemy.body.velocity.x *= -1;
-      //     }
+      if (player.x > tb_enemy.x && player.body.velocity.x > 0) {
+          console.log("p right of e, mv right")
+          // tb_enemy.body.velocity.x = 0;
+          tb_enemy.body.velocity.x = 70;
+      }
 
-////////////////////////////////////////////////////////////////////
       if (player.x < tb_enemy.x && player.body.velocity.x === 0) {
               console.log("p left of e, stopped")
               // tb_enemy.body.velocity.x = 0;
-              tb_enemy.body.velocity.x = -100;
+              tb_enemy.body.velocity.x = -70;
           }
 
       console.log(tb_enemy.x)
+      if (player.x > tb_enemy.x && player.body.velocity.x === 0) {
+              console.log("p right of e, stopped")
+              // tb_enemy.body.velocity.x = 0;
+              tb_enemy.body.velocity.x = 70;
+          }
 
-      // if (player.x >= tb_enemy.x && player.body.velocity.x === 0) {
-      //         console.log("p right of e, stopped")
-      //         tb_enemy.body.velocity.x *= -1;
-      //         }
-//////////////////////////////////////////////////////////////////
-      if(tb_enemy.x < 480)
-      {
-        tb_enemy.body.velocity.x = 100;
-      }
-
+      console.log(tb_enemy.x)
 
 
       if (player.x < tb_enemy.x && player.body.velocity.x > 0) {
               console.log("p left of e, mv right")
               // tb_enemy.body.velocity.x = 0;
-              tb_enemy.body.velocity.x = -150;
+              tb_enemy.body.velocity.x = -70;
 
           }
       if (player.x > tb_enemy.x && player.body.velocity.x < 0) {
               console.log("p right of e, mv left")
               // tb_enemy.body.velocity.x = 0;
-              tb_enemy.body.velocity.x = 150;
+              tb_enemy.body.velocity.x = 70;
           }
       }
-
-      //     console.log("p stopped")
-      //     if (player.x < tb_enemy.x){tb_enemy.body.velocity.x = -150;}
-      //     if (player.x === tb_enemy.x){tb_enemy.body.velocity.x = 0;}
-      //     if (player.x > tb_enemy.x){tb_enemy.body.velocity.x = 150;}
-      //     if (player.x === tb_enemy.x){tb_enemy.body.velocity.x = 0;}
-      //     }
-      // if (player.x === tb_enemy.x && player.body.velocity.x === 0) {
-      //         tb_enemy.body.velocity.x = 0;
-      //     }
 
 
   // walking
