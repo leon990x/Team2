@@ -73,7 +73,6 @@ function c1()
    player.body.setGravityY(1);
 
    //TB Enemy
-<<<<<<< HEAD
    //TB Enemy
    tB = this.physics.add.group({
      delay: 200,
@@ -97,21 +96,192 @@ function c1()
    this.physics.add.overlap(tB, player, player_damage, null, this);
    this.physics.add.overlap(tB, player, tb_damage, null, this);
 
+   // Flu MiniBoss
+   flu_enemy = this.physics.add.sprite(1910, 720, "flu");
+   flu_enemy.setScale(4);
+   flu_enemy.setCollideWorldBounds(true);
+   flu_enemy.setOrigin(0.5);
+   flu_enemy.body.allowGravity = false;
+   flu_enemy.body.immovable = true; //Makes it so nothing moves it
+   this.physics.add.collider(flu_enemy, floor);
+   this.physics.add.overlap(flu_enemy, player, flu_damage, null, this);
+
+   this.tweens.add({
+     targets: flu_enemy,
+     x:1910,
+     y: flu_enemy.y-40,
+     duration: 2000,
+     ease:"Linear",
+     callbackScope: this,
+     loop: -1,
+     yoyo: true,
+   });
+
+   // Flu laser group
+   flasers = this.physics.add.group({
+     delay: 200,
+     key:"flaser",
+     repeat: 10,
+     setXY:{x: 1900, y: 870, stepX: 700},
+     setScale: {x: .5, y: .5},
+     immovable: true,
+     allowGravity: false,
+     runChildUpdate: true,
+   });
+
+   Phaser.Actions.SetXY(flasers.getChildren(), 1950, 600, 300);
+   Phaser.Actions.Call(flasers.getChildren(),
+
+   function moveT(move){
+     move.setVelocityX(-250)
+     // reset Tentacle attack
+     flasers.children.iterate((child) =>{
+       let x= Phaser.Math.Between(1910, 0);
+       let y= Phaser.Math.Between(flu_enemy.y, 800);
+       child.setX(x);
+       child.setY(y);
+
+       child.update = function(){
+         // console.log("please")
+         if(this.x <= 0 || this.y >= 1080) {
+           // console.log(this.x, "ok");
+           this.x = flu_enemy.x;
+           this.y = Phaser.Math.Between(flu_enemy.y, 800);
+         }
+       };
+     })
+   })
+
+    this.physics.add.overlap(flasers, player, player_damage, null, this);
+
+   //Powerups
+   healthpacks = this.physics.add.group();
+   this.physics.add.collider(healthpacks, ground);
+   this.physics.add.overlap(player, healthpacks, getHealth, null, this);
+
+
+   this.anims.create({
+       key: "leftWalking",
+       frames: this.anims.generateFrameNumbers("LwhiteBC", { start: 1, end: 8}),
+       frameRate: 10,
+       repeat: -1
+     });
+
+     this.anims.create({
+       key: "turnLeft",
+       frames: [ { key: "LwhiteBC", frame: 0 } ],
+       frameRate: 20
+     });
+
+     this.anims.create({
+       key: "turnRight",
+       frames: [ { key: "whiteBC", frame: 0 } ],
+       frameRate: 20
+     });
+
+     this.anims.create({
+       key: "rightWalking",
+       frames: this.anims.generateFrameNumbers("whiteBC", { start: 1, end: 8 }),
+       frameRate: 10,
+       repeat: -1
+     });
+
+     this.anims.create({
+       key: "jumpLeft",
+       frames: this.anims.generateFrameNumbers("LwhiteBC", { start: 8, end: 10 }),
+       frameRate: 10,
+       repeat: -1
+     });
+
+     this.anims.create({
+       key: "jumpRight",
+       frames: this.anims.generateFrameNumbers("whiteBC", { start: 8, end: 10 }),
+       frameRate: 10,
+       repeat: -1
+     });
+
+     this.anims.create({
+       key: "attackRight",
+       frames: this.anims.generateFrameNumbers("whiteBC", { start: 12, end: 14 }),
+       frameRate: 10,
+       repeat: -1
+     });
+
+     this.anims.create({
+       key: "attackLeft",
+       frames: this.anims.generateFrameNumbers("LwhiteBC", { start: 12, end: 14 }),
+       frameRate: 10,
+       repeat: -1
+     });
+}
+
+function u1()
+{
+  // while the waves have not finished, add more waves when one is defeated
+  for (i = 0; i < 5; i ++){
+    // setTimeout(() => console.log("First"), 6000)
+    if (num_enemies === 0){
+      // wave_count -= 1;
+      num_enemies = 4;
+      tB.createMultiple({
+        delay: 20000,
+        key: 'tb',
+        repeat: 3,
+        setXY:{x: 1900, y: 930, stepX: 100},
+        setScale: {x: .5, y: .5},
+        immovable: true,
+        allowGravity: false,
+        runChildUpdate: true,
+      })
+    }
+    else if (num_enemies!= 0 && wave_count != 0){
+  Phaser.Actions.Call(tB.getChildren(),
+  function moveEnemies(enemy){
+    if (enemy != undefined){
+      if (player.x < enemy.x && player.body.velocity.x < 0) {
+              console.log("p left of e, mv left")
+              // tb_enemy.body.velocity.x = 0;
+              enemy.body.velocity.x = -70;
+
+          }
+      if (player.x > enemy.x && player.body.velocity.x > 0) {
+          console.log("p right of e, mv right")
+          // tb_enemy.body.velocity.x = 0;
+          enemy.body.velocity.x = 70;
+      }
+
+      if (player.x < enemy.x && player.body.velocity.x === 0) {
+              console.log("p left of e, stopped")
+              // tb_enemy.body.velocity.x = 0;
+              enemy.body.velocity.x = -70;
+          }
+
+      console.log(enemy.x)
+      if (player.x > enemy.x && player.body.velocity.x === 0) {
+              console.log("p right of e, stopped")
+              // tb_enemy.body.velocity.x = 0;
+              enemy.body.velocity.x = 70;
+          }
+
+      console.log(enemy.x)
+
 
       if (player.x < enemy.x && player.body.velocity.x > 0) {
               console.log("p left of e, mv right")
-              // tb_              tb_enemy.body.velocity.x = -70;
->>>>>>> 040dfebacf30cdc61c9115e89d7c05281ad88c69
+              // tb_enemy.body.velocity.x = 0;
+              enemy.body.velocity.x = -70;
 
           }
       if (player.x > enemy.x && player.body.velocity.x < 0) {
               console.log("p right of e, mv left")
               // tb_enemy.body.velocity.x = 0;
-<<<<<<< HEAD
               enemy.body.velocity.x = 70;
           }
       }
     })
+   }
+  }
+
   // walking
     if (cursors.left.isDown)
     {

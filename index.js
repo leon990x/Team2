@@ -5,6 +5,7 @@
 bossScene = new Phaser.Scene("bossScene");
 respiratory = new Phaser.Scene("respiratory");
 gameOver = new Phaser.Scene("gameOver");
+win = new Phaser.Scene("win1");
 
 var config = {
     type: Phaser.AUTO,
@@ -17,7 +18,7 @@ var config = {
             debug: false
         }
     },
-    scene: [respiratory, bossScene, gameOver]
+    scene: [respiratory, bossScene, gameOver, win]
 };
 
 // game instance and global variables
