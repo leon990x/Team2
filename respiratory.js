@@ -1,22 +1,12 @@
 // let respiratory = new Phaser.Scene("respiratory");
 
-respiratory.preload = p1
-respiratory.create = c1
-respiratory.update = u1
+respiratory.preload = p1;
+respiratory.create = c1;
+respiratory.update = u1;
 
-var player;
-var ground;
-var lookLeft = false;
-var acceleration = 0;
-var heroHealth = 415;
-var villainHealth = 415;
-var heroTakingDamage = false;
-var villainTakingDamage = false;
-var heroDamageIntensity = 2;
-var villainDamageIntensity = 2;
+var wave_count = 3;
+var num_enemies;
 
-//For Powerups
-var heroHealIntensity = 42;
 function p1()
 {
     this.load.image('environment', 'Assets/Boss/Bossbackground.png');
@@ -27,7 +17,7 @@ function p1()
     this.load.image('healthpack', 'Assets/Boss/heart.png');
     this.load.image('flu', 'Assets/Enemy/Flu.png');
     this.load.image('flaser', 'Assets/Enemy/flu_laser.png');
-    // this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
+    //this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
 // Audio
   this.load.audio("attack", ["assets/Audio/attack.mp3"])
@@ -36,12 +26,12 @@ function p1()
 
 // SpriteSheets
     this.load.spritesheet('whiteBC',
-        'Assets/Players/whiteBCSprite.png',
-        { frameWidth: 55, frameHeight: 84 }
+        'Assets/Players/whiteBCSpriteR.png',
+        { frameWidth: 110, frameHeight: 168 }
 );
     this.load.spritesheet('LwhiteBC',
-        'Assets/Players/LwhiteBCS.png',
-        { frameWidth: 55, frameHeight: 84 }
+        'Assets/Players/LwhiteBCSR.png',
+        { frameWidth: 110, frameHeight: 168 }
 );
   // Enemy SpriteSheets
   this.load.spritesheet('tb',
@@ -68,7 +58,7 @@ function c1()
 
    //Edge colliders
    ground = this.physics.add.staticGroup();
-   floor = ground.create(960, 1050, "floor").setScale(1).refreshBody();
+   floor = ground.create(959, 1050, "floor").setScale(1).refreshBody();
 
    // sounds
    attack = this.sound.add('attack')
@@ -83,17 +73,31 @@ function c1()
    player.body.setGravityY(1);
 
    //TB Enemy
-   tb_enemy = this.physics.add.sprite(1900, 650, "tb");
-   tb_enemy.setBounce(0);
-   tb_enemy.setScale(.5);
-   tb_enemy.setCollideWorldBounds(true);
-   this.physics.add.collider(tb_enemy, floor);
-   tb_enemy.body.setGravityY(1);
-   this.physics.add.overlap(tb_enemy, player, player_damage, null, this);
-   this.physics.add.overlap(tb_enemy, player, tb_damage, null, this);
+   //TB Enemy
+   tB = this.physics.add.group({
+     delay: 200,
+     key:"tb",
+     repeat: 3,
+     setXY:{x: 1900, y: 930, stepX: 100},
+     setScale: {x: .5, y: .5},
+     immovable: true,
+     allowGravity: false,
+     runChildUpdate: true,
+   });
+
+   num_enemies = 4;
+   // for(x = 0; x < 5; x++){tb_enemy = this.physics.add.sprite(1900-(10*x), 650+(10*x), "tb");}
+
+   // tb_enemy.setBounce(0);
+   // tb_enemy.setScale(.5);
+   // tb_enemy.setCollideWorldBounds(true);
+   this.physics.add.collider(tB, floor);
+   // tb_enemy.body.setGravityY(1);
+   this.physics.add.overlap(tB, player, player_damage, null, this);
+   this.physics.add.overlap(tB, player, tb_damage, null, this);
 
    // Flu MiniBoss
-   flu_enemy = this.physics.add.sprite(1910, 820, "flu");
+   flu_enemy = this.physics.add.sprite(1910, 720, "flu");
    flu_enemy.setScale(4);
    flu_enemy.setCollideWorldBounds(true);
    flu_enemy.setOrigin(0.5);
@@ -213,63 +217,70 @@ function c1()
 
 function u1()
 {
-    if (tb_enemy != undefined){
-      if (player.x < tb_enemy.x && player.body.velocity.x < 0) {
+  // while the waves have not finished, add more waves when one is defeated
+  for (i = 0; i < 5; i ++){
+    // setTimeout(() => console.log("First"), 6000)
+    if (num_enemies === 0){
+      // wave_count -= 1;
+      num_enemies = 4;
+      tB.createMultiple({
+        delay: 20000,
+        key: 'tb',
+        repeat: 3,
+        setXY:{x: 1900, y: 930, stepX: 100},
+        setScale: {x: .5, y: .5},
+        immovable: true,
+        allowGravity: false,
+        runChildUpdate: true,
+      })
+    }
+    else if (num_enemies!= 0 && wave_count != 0){
+  Phaser.Actions.Call(tB.getChildren(),
+  function moveEnemies(enemy){
+    if (enemy != undefined){
+      if (player.x < enemy.x && player.body.velocity.x < 0) {
               console.log("p left of e, mv left")
               // tb_enemy.body.velocity.x = 0;
-              tb_enemy.body.velocity.x = -150;
+              enemy.body.velocity.x = -70;
 
           }
-      // if (player.x > tb_enemy.x && player.body.velocity.x > 0) {
-      //         console.log("p right of e, mv right")
-      //         // tb_enemy.body.velocity.x = 0;
-      //         tb_enemy.body.velocity.x *= -1;
-      //     }
+      if (player.x > enemy.x && player.body.velocity.x > 0) {
+          console.log("p right of e, mv right")
+          // tb_enemy.body.velocity.x = 0;
+          enemy.body.velocity.x = 70;
+      }
 
-////////////////////////////////////////////////////////////////////
-      if (player.x < tb_enemy.x && player.body.velocity.x === 0) {
+      if (player.x < enemy.x && player.body.velocity.x === 0) {
               console.log("p left of e, stopped")
               // tb_enemy.body.velocity.x = 0;
-              tb_enemy.body.velocity.x = -100;
+              enemy.body.velocity.x = -70;
           }
 
-      console.log(tb_enemy.x)
+      console.log(enemy.x)
+      if (player.x > enemy.x && player.body.velocity.x === 0) {
+              console.log("p right of e, stopped")
+              // tb_enemy.body.velocity.x = 0;
+              enemy.body.velocity.x = 70;
+          }
 
-      // if (player.x >= tb_enemy.x && player.body.velocity.x === 0) {
-      //         console.log("p right of e, stopped")
-      //         tb_enemy.body.velocity.x *= -1;
-      //         }
-//////////////////////////////////////////////////////////////////
-      if(tb_enemy.x < 480)
-      {
-        tb_enemy.body.velocity.x = 100;
-      }
+      console.log(enemy.x)
 
 
-
-      if (player.x < tb_enemy.x && player.body.velocity.x > 0) {
+      if (player.x < enemy.x && player.body.velocity.x > 0) {
               console.log("p left of e, mv right")
               // tb_enemy.body.velocity.x = 0;
-              tb_enemy.body.velocity.x = -150;
+              enemy.body.velocity.x = -70;
 
           }
-      if (player.x > tb_enemy.x && player.body.velocity.x < 0) {
+      if (player.x > enemy.x && player.body.velocity.x < 0) {
               console.log("p right of e, mv left")
               // tb_enemy.body.velocity.x = 0;
-              tb_enemy.body.velocity.x = 150;
+              enemy.body.velocity.x = 70;
           }
       }
-
-      //     console.log("p stopped")
-      //     if (player.x < tb_enemy.x){tb_enemy.body.velocity.x = -150;}
-      //     if (player.x === tb_enemy.x){tb_enemy.body.velocity.x = 0;}
-      //     if (player.x > tb_enemy.x){tb_enemy.body.velocity.x = 150;}
-      //     if (player.x === tb_enemy.x){tb_enemy.body.velocity.x = 0;}
-      //     }
-      // if (player.x === tb_enemy.x && player.body.velocity.x === 0) {
-      //         tb_enemy.body.velocity.x = 0;
-      //     }
-
+    })
+   }
+  }
 
   // walking
     if (cursors.left.isDown)
@@ -424,18 +435,24 @@ function u1()
     }
 }
 
-function tb_damage(player, tb_enemy){
+function tb_damage(player, tB){
+  // var tB_children = tB.getChildren([0]);
   if (attackButton.Q.isDown){
     villainHealthbar.x -= 0.43 * villainDamageIntensity
     villainHealthbar.displayWidth -= villainDamageIntensity
     villainHealth -= villainDamageIntensity
+    tB.destroy();
+    num_enemies -= 1;
     this.sound.play("damage");
+    if (num_enemies === 0){
+    wave_count-= 1
+    }
   }
 }
 
-function flu_damage(player, tb_enemy){
+function flu_damage(player, tB){
   if (attackButton.Q.isDown){
-    villainHealthbar.x -= 0.43 * 4
+    villainHealthbar.x -= 0.48 * 4
     villainHealthbar.displayWidth -= 4
     villainHealth -= 4
     this.sound.play("damage");
@@ -443,11 +460,13 @@ function flu_damage(player, tb_enemy){
 
   if (villainHealth < 0)
   {
-    this.scene.start("bossScene");
+    heroHealth = 415;
+    villainHealth = 415;
+    this.scene.start(bossScene);
   }
 }
 
-function player_damage(player, tb_enemy)
+function player_damage(player, tB)
 {
   healthbar.x -= 0.43 * .5
   healthbar.displayWidth -= .5
