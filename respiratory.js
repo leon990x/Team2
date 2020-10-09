@@ -5,7 +5,7 @@ respiratory.create = c1;
 respiratory.update = u1;
 
 var wave_count = 3;
-var num_enemies;
+var num_enemies = 1;
 
 function p1()
 {
@@ -73,11 +73,10 @@ function c1()
    player.body.setGravityY(1);
 
    //TB Enemy
-   //TB Enemy
    tB = this.physics.add.group({
      delay: 200,
      key:"tb",
-     repeat: 3,
+     repeat: 0,
      setXY:{x: 1900, y: 930, stepX: 100},
      setScale: {x: .5, y: .5},
      immovable: true,
@@ -218,69 +217,75 @@ function c1()
 function u1()
 {
   // while the waves have not finished, add more waves when one is defeated
-  for (i = 0; i < 5; i ++){
+  // for (i = 0; i < 5; i ++){
     // setTimeout(() => console.log("First"), 6000)
-    if (num_enemies === 0){
+    if (num_enemies != 10){
+    Phaser.Actions.Call(tB.getChildren(),
+    function spawn(enemy){
+    if (enemy.x < 1500 && enemy.x >= 1499){
+      console.log('there!' + enemy.x)
       // wave_count -= 1;
-      num_enemies = 4;
       tB.createMultiple({
-        delay: 20000,
+        delay: 2000,
         key: 'tb',
-        repeat: 3,
+        repeat: 0,
         setXY:{x: 1900, y: 930, stepX: 100},
         setScale: {x: .5, y: .5},
         immovable: true,
         allowGravity: false,
         runChildUpdate: true,
       })
+      num_enemies += 1
     }
-    else if (num_enemies!= 0 && wave_count != 0){
+  })
+  }
+  if (num_enemies!= 0 && wave_count != 0){
   Phaser.Actions.Call(tB.getChildren(),
   function moveEnemies(enemy){
     if (enemy != undefined){
       if (player.x < enemy.x && player.body.velocity.x < 0) {
-              console.log("p left of e, mv left")
+              // console.log("p left of e, mv left")
               // tb_enemy.body.velocity.x = 0;
-              enemy.body.velocity.x = -70;
+              enemy.body.velocity.x = -1 * (Math.random() * (80 - 60) + 60);
 
           }
       if (player.x > enemy.x && player.body.velocity.x > 0) {
-          console.log("p right of e, mv right")
+          // console.log("p right of e, mv right")
           // tb_enemy.body.velocity.x = 0;
-          enemy.body.velocity.x = 70;
+          enemy.body.velocity.x = Math.random() * (80 - 60) + 60;
       }
 
       if (player.x < enemy.x && player.body.velocity.x === 0) {
-              console.log("p left of e, stopped")
+              // console.log("p left of e, stopped")
               // tb_enemy.body.velocity.x = 0;
-              enemy.body.velocity.x = -70;
+              enemy.body.velocity.x = -1 * (Math.random() * (80 - 60) + 60);
           }
 
-      console.log(enemy.x)
+      // console.log(enemy.x)
       if (player.x > enemy.x && player.body.velocity.x === 0) {
-              console.log("p right of e, stopped")
+              // console.log("p right of e, stopped")
               // tb_enemy.body.velocity.x = 0;
-              enemy.body.velocity.x = 70;
+              enemy.body.velocity.x = Math.random() * (80 - 60) + 60;
           }
 
-      console.log(enemy.x)
+      // console.log(enemy.x)
 
 
       if (player.x < enemy.x && player.body.velocity.x > 0) {
-              console.log("p left of e, mv right")
+              // console.log("p left of e, mv right")
               // tb_enemy.body.velocity.x = 0;
-              enemy.body.velocity.x = -70;
+              enemy.body.velocity.x = -1 * (Math.random() * (80 - 60) + 60);
 
           }
       if (player.x > enemy.x && player.body.velocity.x < 0) {
-              console.log("p right of e, mv left")
+              // console.log("p right of e, mv left")
               // tb_enemy.body.velocity.x = 0;
-              enemy.body.velocity.x = 70;
+              enemy.body.velocity.x = Math.random() * (80 - 60) + 60;
           }
       }
     })
    }
-  }
+  // }
 
   // walking
     if (cursors.left.isDown)
@@ -446,6 +451,7 @@ function tb_damage(player, tB){
     this.sound.play("damage");
     if (num_enemies === 0){
     wave_count-= 1
+    console.log("wave: " + wave_count)
     }
   }
 }
