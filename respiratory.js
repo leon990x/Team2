@@ -4,6 +4,9 @@ respiratory.preload = p1;
 respiratory.create = c1;
 respiratory.update = u1;
 
+var wave_count = 3;
+var num_enemies = 1;
+
 function p1()
 {
     this.load.image('environment', 'Assets/Boss/Bossbackground.png');
@@ -23,12 +26,12 @@ function p1()
 
 // SpriteSheets
     this.load.spritesheet('whiteBC',
-        'Assets/Players/whiteBCSprite.png',
-        { frameWidth: 55, frameHeight: 84 }
+        'Assets/Players/whiteBCSpriteR.png',
+        { frameWidth: 110, frameHeight: 168 }
 );
     this.load.spritesheet('LwhiteBC',
-        'Assets/Players/LwhiteBCS.png',
-        { frameWidth: 55, frameHeight: 84 }
+        'Assets/Players/LwhiteBCSR.png',
+        { frameWidth: 110, frameHeight: 168 }
 );
   // Enemy SpriteSheets
   this.load.spritesheet('tb',
@@ -55,7 +58,7 @@ function c1()
 
    //Edge colliders
    ground = this.physics.add.staticGroup();
-   floor = ground.create(960, 950, "floor").setScale(2).refreshBody();
+   floor = ground.create(959, 1050, "floor").setScale(1).refreshBody();
 
    // sounds
    attack = this.sound.add('attack')
@@ -70,22 +73,30 @@ function c1()
    player.body.setGravityY(1);
 
    //TB Enemy
-   for(x = 0; x < 5; x++)
-   {
-     tb_enemy = this.physics.add.sprite(1900-(10*x), 650+(10*x), "tb");
-     setTimeout(() => console.log("First"), 6000)
-   }
+   tB = this.physics.add.group({
+     delay: 200,
+     key:"tb",
+     repeat: 0,
+     setXY:{x: 1900, y: 930, stepX: 100},
+     setScale: {x: .5, y: .5},
+     immovable: true,
+     allowGravity: false,
+     runChildUpdate: true,
+   });
 
-   tb_enemy.setBounce(0);
-   tb_enemy.setScale(.5);
-   tb_enemy.setCollideWorldBounds(true);
-   this.physics.add.collider(tb_enemy, floor);
-   tb_enemy.body.setGravityY(1);
-   this.physics.add.overlap(tb_enemy, player, player_damage, null, this);
-   this.physics.add.overlap(tb_enemy, player, tb_damage, null, this);
+   num_enemies = 4;
+   // for(x = 0; x < 5; x++){tb_enemy = this.physics.add.sprite(1900-(10*x), 650+(10*x), "tb");}
+
+   // tb_enemy.setBounce(0);
+   // tb_enemy.setScale(.5);
+   // tb_enemy.setCollideWorldBounds(true);
+   this.physics.add.collider(tB, floor);
+   // tb_enemy.body.setGravityY(1);
+   this.physics.add.overlap(tB, player, player_damage, null, this);
+   this.physics.add.overlap(tB, player, tb_damage, null, this);
 
    // Flu MiniBoss
-   flu_enemy = this.physics.add.sprite(1910, 650, "flu");
+   flu_enemy = this.physics.add.sprite(1910, 720, "flu");
    flu_enemy.setScale(4);
    flu_enemy.setCollideWorldBounds(true);
    flu_enemy.setOrigin(0.5);
@@ -205,48 +216,76 @@ function c1()
 
 function u1()
 {
-    if (tb_enemy != undefined){
-      if (player.x < tb_enemy.x && player.body.velocity.x < 0) {
-              console.log("p left of e, mv left")
+  // while the waves have not finished, add more waves when one is defeated
+  // for (i = 0; i < 5; i ++){
+    // setTimeout(() => console.log("First"), 6000)
+    if (num_enemies != 10){
+    Phaser.Actions.Call(tB.getChildren(),
+    function spawn(enemy){
+    if (enemy.x < 1500 && enemy.x >= 1499){
+      console.log('there!' + enemy.x)
+      // wave_count -= 1;
+      tB.createMultiple({
+        delay: 2000,
+        key: 'tb',
+        repeat: 0,
+        setXY:{x: 1900, y: 930, stepX: 100},
+        setScale: {x: .5, y: .5},
+        immovable: true,
+        allowGravity: false,
+        runChildUpdate: true,
+      })
+      num_enemies += 1
+    }
+  })
+  }
+  if (num_enemies!= 0 && wave_count != 0){
+  Phaser.Actions.Call(tB.getChildren(),
+  function moveEnemies(enemy){
+    if (enemy != undefined){
+      if (player.x < enemy.x && player.body.velocity.x < 0) {
+              // console.log("p left of e, mv left")
               // tb_enemy.body.velocity.x = 0;
-              tb_enemy.body.velocity.x = -70;
+              enemy.body.velocity.x = -1 * (Math.random() * (80 - 60) + 60);
 
           }
-      if (player.x > tb_enemy.x && player.body.velocity.x > 0) {
-          console.log("p right of e, mv right")
+      if (player.x > enemy.x && player.body.velocity.x > 0) {
+          // console.log("p right of e, mv right")
           // tb_enemy.body.velocity.x = 0;
-          tb_enemy.body.velocity.x = 70;
+          enemy.body.velocity.x = Math.random() * (80 - 60) + 60;
       }
 
-      if (player.x < tb_enemy.x && player.body.velocity.x === 0) {
-              console.log("p left of e, stopped")
+      if (player.x < enemy.x && player.body.velocity.x === 0) {
+              // console.log("p left of e, stopped")
               // tb_enemy.body.velocity.x = 0;
-              tb_enemy.body.velocity.x = -70;
+              enemy.body.velocity.x = -1 * (Math.random() * (80 - 60) + 60);
           }
 
-      console.log(tb_enemy.x)
-      if (player.x > tb_enemy.x && player.body.velocity.x === 0) {
-              console.log("p right of e, stopped")
+      // console.log(enemy.x)
+      if (player.x > enemy.x && player.body.velocity.x === 0) {
+              // console.log("p right of e, stopped")
               // tb_enemy.body.velocity.x = 0;
-              tb_enemy.body.velocity.x = 70;
+              enemy.body.velocity.x = Math.random() * (80 - 60) + 60;
           }
 
-      console.log(tb_enemy.x)
+      // console.log(enemy.x)
 
 
-      if (player.x < tb_enemy.x && player.body.velocity.x > 0) {
-              console.log("p left of e, mv right")
+      if (player.x < enemy.x && player.body.velocity.x > 0) {
+              // console.log("p left of e, mv right")
               // tb_enemy.body.velocity.x = 0;
-              tb_enemy.body.velocity.x = -70;
+              enemy.body.velocity.x = -1 * (Math.random() * (80 - 60) + 60);
 
           }
-      if (player.x > tb_enemy.x && player.body.velocity.x < 0) {
-              console.log("p right of e, mv left")
+      if (player.x > enemy.x && player.body.velocity.x < 0) {
+              // console.log("p right of e, mv left")
               // tb_enemy.body.velocity.x = 0;
-              tb_enemy.body.velocity.x = 70;
+              enemy.body.velocity.x = Math.random() * (80 - 60) + 60;
           }
       }
-
+    })
+   }
+  // }
 
   // walking
     if (cursors.left.isDown)
@@ -401,16 +440,23 @@ function u1()
     }
 }
 
-function tb_damage(player, tb_enemy){
+function tb_damage(player, tB){
+  // var tB_children = tB.getChildren([0]);
   if (attackButton.Q.isDown){
     villainHealthbar.x -= 0.43 * villainDamageIntensity
     villainHealthbar.displayWidth -= villainDamageIntensity
     villainHealth -= villainDamageIntensity
+    tB.destroy();
+    num_enemies -= 1;
     this.sound.play("damage");
+    if (num_enemies === 0){
+    wave_count-= 1
+    console.log("wave: " + wave_count)
+    }
   }
 }
 
-function flu_damage(player, tb_enemy){
+function flu_damage(player, tB){
   if (attackButton.Q.isDown){
     villainHealthbar.x -= 0.48 * 4
     villainHealthbar.displayWidth -= 4
@@ -426,7 +472,7 @@ function flu_damage(player, tb_enemy){
   }
 }
 
-function player_damage(player, tb_enemy)
+function player_damage(player, tB)
 {
   healthbar.x -= 0.43 * .5
   healthbar.displayWidth -= .5

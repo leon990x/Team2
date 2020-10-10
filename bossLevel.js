@@ -67,16 +67,16 @@ function create ()
 
    //Edge colliders
    ground = this.physics.add.staticGroup();
-   floor = ground.create(960, 950, "floor").setScale(2).refreshBody();
-   ground.create(400, 650, 'platform');
-   ground.create(800, 550, 'platform');
-   ground.create(1200, 650, 'platform');
+   floor = ground.create(959, 1050, "floor").setScale(1).refreshBody();
+   ground.create(400, 750, 'platform');
+   ground.create(800, 650, 'platform');
+   ground.create(1200, 750, 'platform');
 
-   ground.create(400, 380, 'platform');
-   ground.create(800, 200, 'platform');
-   ground.create(1200, 380, 'platform');
+   ground.create(400, 480, 'platform');
+   ground.create(800, 300, 'platform');
+   ground.create(1200, 480, 'platform');
 
-   ground.create(1600, 510, 'platform');
+   ground.create(1600, 610, 'platform');
 
    // sounds
    attack = this.sound.add('attack')
@@ -184,6 +184,7 @@ function create ()
           key: 'laser',
           repeat: 8,
           setXY: {x: 12, y: 0, stepX: 140},
+          setScale: {x: 1, y: 1},
           runChildUpdate: true
       }
       );
@@ -208,17 +209,17 @@ function create ()
      tentacles = this.physics.add.group({
        delay: 200,
        key:"tentacle",
-       repeat: 2,
-       setXY:{x: 1900, y: 870, stepX: 700},
+       repeat: 1,
+       setXY:{x: 1920, y: 870, stepX: 300},
        setScale: {x: .5, y: .5},
        runChildUpdate: true,
      });
 
-     Phaser.Actions.SetXY(tentacles.getChildren(), 1950, 600, 300);
+     // Phaser.Actions.SetXY(tentacles.getChildren(), 1950, 800);
      Phaser.Actions.Call(tentacles.getChildren(),
 
      function moveT(move){
-       move.setVelocityX(-150)
+       move.setVelocityX(-120)
        // reset Tentacle attack
        tentacles.children.iterate((child) =>{
          let x= Phaser.Math.Between(1910, 0);
@@ -230,7 +231,7 @@ function create ()
            // console.log("please")
            if(this.x <= 0) {
              // console.log(this.x, "ok");
-             this.x = 1900;
+             this.x = 1950;
            }
          };
        })
@@ -426,7 +427,7 @@ function update()
         this.scene.start(respiratory);
     }
     if (villainHealth < 1) {
-        return
+        this.scene.start(win)
     }
     // Hero taking damage
     // if (heroTakingDamage) {
@@ -493,15 +494,10 @@ function attack_boss(theBoss, player)
 
   if(villainHealth <= 280 && villainHealth > 270)
   {
+    villainHealth = 269;
+    healthpacks.create(100, 20, "healthpack");
+    healthpacks.create(100, 20, "healthpack");
     var hp = healthpacks.create(100, 20, "healthpack");
-    hp.setBounce(0.5);
-    hp.setCollideWorldBounds(true);
-    hp.setVelocity(Phaser.Math.Between(-200, 200), 20);
-  }
-
-  if(villainHealth <= 280 && villainHealth > 270)
-  {
-    var hp = healthpacks.create(960, 20, "healthpack");
     hp.setBounce(0.5);
     hp.setCollideWorldBounds(true);
     hp.setVelocity(Phaser.Math.Between(-200, 200), 20);
@@ -511,7 +507,7 @@ function attack_boss(theBoss, player)
   {
     heroHealth = 415;
     villainHealth = 415;
-    this.scene.start(bossScene);
+    this.scene.start(win);
     }
   }
 
@@ -533,6 +529,7 @@ function getHealth(player, healthpack)
 function boss_damage(theBoss, player, storm){
   if(villainHealth <= 180 && villainHealth > 178)
     {
+      villainHealth = 176;
       var ap = antibodyPowerup.create(960, 20, "antibodyPowerup").setScale(0.25);
       ap.setBounce(0.5);
       ap.setCollideWorldBounds(true);
@@ -553,7 +550,7 @@ function boss_damage(theBoss, player, storm){
   {
     heroHealth = 415;
     villainHealth = 415;
-    this.scene.start(bossScene);
+    this.scene.start(win);
     }
   }
 
