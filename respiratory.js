@@ -70,7 +70,11 @@ function c1()
    player.body.setGravityY(1);
 
    //TB Enemy
-   for(x = 0; x < 5; x++){tb_enemy = this.physics.add.sprite(1900-(10*x), 650+(10*x), "tb");}
+   for(x = 0; x < 5; x++)
+   {
+     tb_enemy = this.physics.add.sprite(1900-(10*x), 650+(10*x), "tb");
+     setTimeout(() => console.log("First"), 6000)
+   }
 
    tb_enemy.setBounce(0);
    tb_enemy.setScale(.5);
