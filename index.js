@@ -2,10 +2,13 @@
 //think of as command center
 
 //Scenes
+tutorial = new Phaser.Scene("tutorial");
+transition1 = new Phaser.Scene("t1");
 bossScene = new Phaser.Scene("bossScene");
+transition3 = new Phaser.Scene("t3");
 respiratory = new Phaser.Scene("respiratory");
 gameOver = new Phaser.Scene("gameOver");
-win = new Phaser.Scene("win1");
+win = new Phaser.Scene("win");
 
 var config = {
     type: Phaser.AUTO,
@@ -18,7 +21,7 @@ var config = {
             debug: false
         }
     },
-    scene: [respiratory, bossScene, gameOver, win]
+    scene: [tutorial, transition1, respiratory, transition3, bossScene, gameOver, win]
 };
 
 // game instance and global variables
