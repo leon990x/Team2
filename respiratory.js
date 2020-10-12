@@ -58,7 +58,7 @@ function c1()
 
    //Edge colliders
    ground = this.physics.add.staticGroup();
-   floor = ground.create(959, 1050, "floor").setScale(1).refreshBody();
+   floor = ground.create(959, 960, "floor").setScale(1).refreshBody();
 
    // sounds
    attack = this.sound.add('attack')
@@ -77,7 +77,7 @@ function c1()
      delay: 200,
      key:"tb",
      repeat: 0,
-     setXY:{x: 1900, y: 930, stepX: 100},
+     setXY:{x: 1900, y: 840, stepX: 100},
      setScale: {x: .5, y: .5},
      immovable: true,
      allowGravity: false,
@@ -222,21 +222,37 @@ function u1()
     if (num_enemies != 10){
     Phaser.Actions.Call(tB.getChildren(),
     function spawn(enemy){
-    if (enemy.x < 1500 && enemy.x >= 1499){
-      console.log('there!' + enemy.x)
+    console.log(num_enemies);
+    console.log('there!' + enemy.x)
       // wave_count -= 1;
       tB.createMultiple({
         delay: 2000,
         key: 'tb',
         repeat: 0,
-        setXY:{x: 1900, y: 930, stepX: 100},
+        setXY:{x: 1900, y: 840, stepX: 100},
         setScale: {x: .5, y: .5},
         immovable: true,
         allowGravity: false,
-        runChildUpdate: true,
+        runChildUpdate: false,
       })
       num_enemies += 1
     }
+
+    // else if {
+    //   console.log('there!' + enemy.x)
+    //   // wave_count -= 1;
+    //   tB.createMultiple({
+    //     delay: 2000,
+    //     key: 'tb',
+    //     repeat: 0,
+    //     setXY:{x: (Math.random() * (1900 - 1840) + 1840), y: 840, stepX: 100},
+    //     setScale: {x: .5, y: .5},
+    //     immovable: true,
+    //     allowGravity: false,
+    //     runChildUpdate: false,
+    //   })
+    //   num_enemies += 1
+    // }
   })
   }
   if (num_enemies!= 0 && wave_count != 0){
@@ -448,6 +464,7 @@ function tb_damage(player, tB){
     villainHealth -= villainDamageIntensity
     tB.destroy();
     num_enemies -= 1;
+    console.log("remaining: " + num_enemies);
     this.sound.play("damage");
     if (num_enemies === 0){
     wave_count-= 1
