@@ -52,7 +52,8 @@ function preload ()
 function create ()
 {
    background = this.add.image(960, 540, 'environment');
-   boss = this.add.image(780, 480, "corona");
+   boss = this.add.image(880, 480, "corona");
+   boss.setScale(1.11);
    cursors = this.input.keyboard.createCursorKeys();
    attackButton = this.input.keyboard.addKeys("Q,P");
    redhealth = this.add.image(220, 60, 'red')
@@ -64,17 +65,18 @@ function create ()
    villainRedhealth = this.add.image(1700, 50, 'red')
    villainHealthbar = this.add.image(1700, 50, 'statusbar')
    villainHealthbar.displayWidth = 415
+   boss_text = this.add.text(1200, 40, "Coronavirus").setScale(3);
 
    //Edge colliders
    ground = this.physics.add.staticGroup();
    floor = ground.create(959, 1050, "floor").setScale(1).refreshBody();
-   ground.create(400, 750, 'platform');
-   ground.create(800, 650, 'platform');
-   ground.create(1200, 750, 'platform');
+   ground.create(400, 770, 'platform');
+   ground.create(870, 650, 'platform');
+   ground.create(1350, 770, 'platform');
 
-   ground.create(400, 480, 'platform');
-   ground.create(800, 300, 'platform');
-   ground.create(1200, 480, 'platform');
+   ground.create(380, 480, 'platform');
+   ground.create(870, 350, 'platform');
+   ground.create(1350, 480, 'platform');
 
    ground.create(1600, 610, 'platform');
 
@@ -86,19 +88,19 @@ function create ()
    // Boss weakpoints
    theBoss = this.physics.add.staticGroup();
     //left shoulder
-   theBoss.create(630, 480, "wp6"); //1
-   theBoss.create(525, 570, "wp5"); //1
-   theBoss.create(470, 750, "wp5"); //2
+   theBoss.create(700, 480, "wp6").setScale(1.5); //1
+   theBoss.create(600, 570, "wp5").setScale(1.5); //1
+   theBoss.create(531, 850, "wp5").setScale(1.5); //2
     //right shoulder
-   theBoss.create(990, 500, "wp3"); //4
-   theBoss.create(1050, 570, "wp2"); //5
-   theBoss.create(1090, 750, "wp2"); //5
+   theBoss.create(1130, 500, "wp3").setScale(1.5); //4
+   theBoss.create(1180, 570, "wp2").setScale(1.5); //5
+   theBoss.create(1230, 850, "wp2").setScale(1.5); //5
     //left head
-    theBoss.create(570, 270, "wp5"); //2
-    theBoss.create(610, 90, "wp6"); //1
+    theBoss.create(660, 270, "wp5").setScale(1.5); //2
+    theBoss.create(670, 90, "wp6").setScale(1.5); //1
     //right head
-    theBoss.create(990, 270, "wp2"); //5
-    theBoss.create(955, 90, "wp3"); //4
+    theBoss.create(1110, 270, "wp2").setScale(1.5); //5
+    theBoss.create(1109, 90, "wp3").setScale(1.5); //4
 
     // player code
     player = this.physics.add.sprite(100, 700, "whiteBC");

@@ -4,8 +4,12 @@ respiratory.preload = p1;
 respiratory.create = c1;
 respiratory.update = u1;
 
-var wave_count = 3;
-var num_enemies = 1;
+var wave_count = 1;
+var flaser_timer = 0;
+var num_enemies;
+var tB_health = 100;
+var wave_text;
+var defeated = 0;
 
 function p1()
 {
@@ -44,12 +48,14 @@ function p1()
 function c1()
 {
    background = this.add.image(960, 540, 'environment');
+   wave_text = this.add.text(700, 240, "Tuberculosis:" + "\r\n" + " Wave " + wave_count + " of 3").setScale(4);
+   boss_text = this.add.text(950, 40, "The Flu (Miniboss)").setScale(3);
    cursors = this.input.keyboard.createCursorKeys();
    attackButton = this.input.keyboard.addKeys("Q,P");
-   redhealth = this.add.image(220, 60, 'red')
-   healthbar = this.add.image(220, 60, 'statusbar')
-   redhealth.setOrigin(0.45, 0.5)
-   healthbar.setOrigin(0.45, 0.5)
+   redhealth = this.add.image(220, 60, 'red');
+   healthbar = this.add.image(220, 60, 'statusbar');
+   redhealth.setOrigin(0.45, 0.5);
+   healthbar.setOrigin(0.45, 0.5);
    //Max 415
    healthbar.displayWidth = 415
    villainRedhealth = this.add.image(1700, 60, 'red')
@@ -84,7 +90,6 @@ function c1()
      runChildUpdate: true,
    });
 
-   num_enemies = 4;
    // for(x = 0; x < 5; x++){tb_enemy = this.physics.add.sprite(1900-(10*x), 650+(10*x), "tb");}
 
    // tb_enemy.setBounce(0);
@@ -94,6 +99,7 @@ function c1()
    // tb_enemy.body.setGravityY(1);
    this.physics.add.overlap(tB, player, player_damage, null, this);
    this.physics.add.overlap(tB, player, tb_damage, null, this);
+   num_enemies = 1;
 
    // Flu MiniBoss
    flu_enemy = this.physics.add.sprite(1910, 720, "flu");
@@ -144,6 +150,9 @@ function c1()
          // console.log("please")
          if(this.x <= 0 || this.y >= 1080) {
            // console.log(this.x, "ok");
+           if (flaser_timer <= 5 && wave_count < 4){
+           flaser_timer += 1;
+           }
            this.x = flu_enemy.x;
            this.y = Phaser.Math.Between(flu_enemy.y, 800);
          }
@@ -216,26 +225,72 @@ function c1()
 
 function u1()
 {
-  // while the waves have not finished, add more waves when one is defeated
+    console.log('num_enemies: ' + num_enemies + " wave " + wave_count)
+  if (wave_count === 4 && num_enemies === 0){
+    console.log("SCARY")
+    wave_text.setText("  Wave Over:" + "\n" + "Defeat the Flu").setScale(4);
+    wave_text.visible = true;
+  }
+
+  // Wave Code: At most 5 enemies on the screen. Three waves
+  if (flaser_timer > 5 && wave_count < 4){
+
+    function spawn(enemy){
+    tB.createMultiple({
+      delay: 2000,
+      key: 'tb',
+      repeat: 0,
+      setXY:{x: 1865, y: 930, stepX: 100},
+      setScale: {x: .5, y: .5},
+      immovable: true,
+      allowGravity: false,
+      runChildUpdate: true,
+    })
+    console.log("BEGIN")
+  }
+  if (num_enemies <= 4){
+  spawn(tB.getChildren());
+  }
+
+  num_enemies += 1;
+  // console.log(num_enemies);
+  flaser_timer = 0;
+  }
+  console.log(" timer: " + flaser_timer)
   // for (i = 0; i < 5; i ++){
     // setTimeout(() => console.log("First"), 6000)
-    if (num_enemies != 10){
+    if (num_enemies <= 4 && flaser_timer <= 5 && wave_count < 4){
     Phaser.Actions.Call(tB.getChildren(),
     function spawn(enemy){
+<<<<<<< HEAD
     console.log(num_enemies);
     console.log('there!' + enemy.x)
+=======
+    if (flaser_timer == 5){
+      console.log('there!' + enemy.x);
+>>>>>>> 06ae85121e5d8f19d0441fd6c030b42158c8aa9c
       // wave_count -= 1;
       tB.createMultiple({
         delay: 2000,
         key: 'tb',
         repeat: 0,
+<<<<<<< HEAD
         setXY:{x: 1900, y: 840, stepX: 100},
+=======
+        setXY:{x: 1865, y: 930, stepX: 100},
+>>>>>>> 06ae85121e5d8f19d0441fd6c030b42158c8aa9c
         setScale: {x: .5, y: .5},
         immovable: true,
         allowGravity: false,
         runChildUpdate: false,
       })
-      num_enemies += 1
+      num_enemies += 1;
+      // console.log('num_enemies: ' + num_enemies + " wave " + wave_count)
+
+      // if (num_enemies == 0){
+        flaser_timer = 0;
+      // }
+      console.log("RESTART");
     }
 
     // else if {
@@ -255,9 +310,10 @@ function u1()
     // }
   })
   }
-  if (num_enemies!= 0 && wave_count != 0){
+  if (num_enemies != 0 && wave_count < 4){
   Phaser.Actions.Call(tB.getChildren(),
   function moveEnemies(enemy){
+    // console.log(enemy.x)
     if (enemy != undefined){
       if (player.x < enemy.x && player.body.velocity.x < 0) {
               // console.log("p left of e, mv left")
@@ -312,20 +368,32 @@ function u1()
 
         lookLeft = true;
 
+        player.clearTint();
+        flu_enemy.clearTint();
+
         // Jumping
             if (cursors.up.isDown && player.body.touching.down)
         {
             player.setVelocityY(-330);
 
             if (lookLeft == true){
-            player.anims.play('jumpLeft');
-            this.sound.play("jump");
+              player.clearTint();
+              flu_enemy.clearTint();
+
+              player.anims.play('jumpLeft');
+              this.sound.play("jump");
+
+              player.clearTint();
+              flu_enemy.clearTint();
         }
 
         else{
             player.anims.play('jumpRight');
             this.sound.play("jump");
             lookLeft = false;
+
+            player.clearTint();
+            flu_enemy.clearTint();
         }
         }
 
@@ -335,14 +403,18 @@ function u1()
             // player.setVelocityY(0);
 
             if (lookLeft == true){
-            player.anims.play('attackLeft');
-            this.sound.play("attack")
+              player.clearTint();
+
+              player.anims.play('attackLeft');
+              this.sound.play("attack")
         }
 
         else{
-            player.anims.play('attackRight');
-            this.sound.play("attack")
-            lookLeft = false;
+          player.clearTint();
+
+          player.anims.play('attackRight');
+          this.sound.play("attack")
+          lookLeft = false;
         }
         }
     }
@@ -355,12 +427,18 @@ function u1()
         if (lookLeft == true){
         player.anims.play('jumpLeft');
         this.sound.play("jump");
+
+        player.clearTint();
+        flu_enemy.clearTint();
     }
 
     else{
         player.anims.play('jumpRight');
         this.sound.play("jump");
         lookLeft = false;
+
+        player.clearTint();
+        flu_enemy.clearTint();
     }
     }
 
@@ -372,11 +450,15 @@ function u1()
         // player.setVelocityY(0);
 
         if (lookLeft == true){
-        player.anims.play('attackLeft');
-        this.sound.play("attack")
+          player.clearTint();
+
+          player.anims.play('attackLeft');
+          this.sound.play("attack")
       }
 
       else{
+        player.clearTint();
+
         player.anims.play('attackRight');
         this.sound.play("attack")
         lookLeft = false;
@@ -391,17 +473,27 @@ function u1()
         player.anims.play('rightWalking', true);
 
         lookLeft = false;
+
+        player.clearTint();
+        flu_enemy.clearTint();
+
         // Jumping
         if (cursors.up.isDown && player.body.touching.down)
         {
             player.setVelocityY(-330);
 
             if (lookLeft == true){
-            player.anims.play('jumpLeft');
-            this.sound.play("jump");
+              player.clearTint();
+              flu_enemy.clearTint();
+
+              player.anims.play('jumpLeft');
+              this.sound.play("jump");
         }
 
         else{
+            player.clearTint();
+            flu_enemy.clearTint();
+
             player.anims.play('jumpRight');
             this.sound.play("jump");
             lookLeft = false;
@@ -416,13 +508,17 @@ function u1()
         player.setVelocityY(0);
 
         if (lookLeft == true){
-        player.anims.play('attackLeft');
-        this.sound.play("attack")
+          player.clearTint();
+
+          player.anims.play('attackLeft');
+          this.sound.play("attack")
       }
 
       else{
         player.anims.play('attackRight');
         this.sound.play("attack")
+        player.clearTint();
+
         lookLeft = false;
       }
     }
@@ -433,10 +529,16 @@ function u1()
         player.setVelocityX(0);
 
         if (lookLeft == true){
-        player.anims.play('turnLeft');
+          player.clearTint();
+          flu_enemy.clearTint();
+
+          player.anims.play('turnLeft');
       }
 
       else{
+        player.clearTint();
+        flu_enemy.clearTint();
+
         player.anims.play('turnRight');
         lookLeft = false;
       }
@@ -459,6 +561,7 @@ function u1()
 function tb_damage(player, tB){
   // var tB_children = tB.getChildren([0]);
   if (attackButton.Q.isDown){
+<<<<<<< HEAD
     villainHealthbar.x -= 0.43 * villainDamageIntensity
     villainHealthbar.displayWidth -= villainDamageIntensity
     villainHealth -= villainDamageIntensity
@@ -469,15 +572,40 @@ function tb_damage(player, tB){
     if (num_enemies === 0){
     wave_count-= 1
     console.log("wave: " + wave_count)
+=======
+    wave_text.visible = false;
+    // villainHealthbar.x -= 0.43 * villainDamageIntensity
+    // villainHealthbar.displayWidth -= villainDamageIntensity
+    // villainHealth -= villainDamageIntensity
+    tB_health -= 5;
+
+    if (tB_health <= 0){
+      tB.destroy();
+      defeated += 1;
+      num_enemies -= 1;
+      tB_health = 100;
+      this.sound.play("damage");
+      if (defeated == 5){
+        defeated = 0;
+        console.log(wave_count, defeated)
+        wave_count += 1;
+      if (wave_count < 4){
+        wave_text.visible = true;
+        wave_text.setText("Tuberculosis:" + "\r\n" + " Wave " + wave_count + " of 3").setScale(4);
+        }
+      }
+>>>>>>> 06ae85121e5d8f19d0441fd6c030b42158c8aa9c
     }
   }
 }
 
-function flu_damage(player, tB){
-  if (attackButton.Q.isDown){
+function flu_damage(player, flu_enemy){
+  if (attackButton.Q.isDown && wave_count >= 4){
+    wave_text.visible = false;
     villainHealthbar.x -= 0.48 * 4
     villainHealthbar.displayWidth -= 4
     villainHealth -= 4
+    flu_enemy.setTint(0xff0000);
     this.sound.play("damage");
   }
 
@@ -485,15 +613,16 @@ function flu_damage(player, tB){
   {
     heroHealth = 415;
     villainHealth = 415;
-    this.scene.start(bossScene);
+    this.scene.start(transition3);
   }
 }
 
 function player_damage(player, tB)
 {
-  healthbar.x -= 0.43 * .5
-  healthbar.displayWidth -= .5
-  heroHealth -= .5
+  healthbar.x -= 0.43 * .3
+  healthbar.displayWidth -= .3
+  heroHealth -= .3
+  player.setTint(0xff0000);
   this.sound.play("damage");
 
   if(heroHealth < 0)
