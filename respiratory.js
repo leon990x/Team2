@@ -24,9 +24,9 @@ function p1()
     //this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
 // Audio
-  this.load.audio("attack", ["assets/Audio/attack.mp3"])
-  this.load.audio("jump", ["assets/Audio/jump.wav"])
-  this.load.audio("damage", ["assets/Audio/damage.mp3"])
+  this.load.audio("attack", "assets/Audio/attack.mp3")
+  this.load.audio("jump", "assets/Audio/jump.wav")
+  this.load.audio("damage", "assets/Audio/damage.mp3")
 
 // SpriteSheets
     this.load.spritesheet('whiteBC',
@@ -240,7 +240,7 @@ function u1()
       delay: 2000,
       key: 'tb',
       repeat: 0,
-      setXY:{x: 1865, y: 930, stepX: 100},
+      setXY:{x: 1865, y: 840, stepX: 100},
       setScale: {x: .5, y: .5},
       immovable: true,
       allowGravity: false,
@@ -262,23 +262,14 @@ function u1()
     if (num_enemies <= 4 && flaser_timer <= 5 && wave_count < 4){
     Phaser.Actions.Call(tB.getChildren(),
     function spawn(enemy){
-<<<<<<< HEAD
-    console.log(num_enemies);
-    console.log('there!' + enemy.x)
-=======
     if (flaser_timer == 5){
       console.log('there!' + enemy.x);
->>>>>>> 06ae85121e5d8f19d0441fd6c030b42158c8aa9c
       // wave_count -= 1;
       tB.createMultiple({
         delay: 2000,
         key: 'tb',
         repeat: 0,
-<<<<<<< HEAD
-        setXY:{x: 1900, y: 840, stepX: 100},
-=======
-        setXY:{x: 1865, y: 930, stepX: 100},
->>>>>>> 06ae85121e5d8f19d0441fd6c030b42158c8aa9c
+        setXY:{x: 1865, y: 840, stepX: 100},
         setScale: {x: .5, y: .5},
         immovable: true,
         allowGravity: false,
@@ -561,18 +552,6 @@ function u1()
 function tb_damage(player, tB){
   // var tB_children = tB.getChildren([0]);
   if (attackButton.Q.isDown){
-<<<<<<< HEAD
-    villainHealthbar.x -= 0.43 * villainDamageIntensity
-    villainHealthbar.displayWidth -= villainDamageIntensity
-    villainHealth -= villainDamageIntensity
-    tB.destroy();
-    num_enemies -= 1;
-    console.log("remaining: " + num_enemies);
-    this.sound.play("damage");
-    if (num_enemies === 0){
-    wave_count-= 1
-    console.log("wave: " + wave_count)
-=======
     wave_text.visible = false;
     // villainHealthbar.x -= 0.43 * villainDamageIntensity
     // villainHealthbar.displayWidth -= villainDamageIntensity
@@ -594,7 +573,6 @@ function tb_damage(player, tB){
         wave_text.setText("Tuberculosis:" + "\r\n" + " Wave " + wave_count + " of 3").setScale(4);
         }
       }
->>>>>>> 06ae85121e5d8f19d0441fd6c030b42158c8aa9c
     }
   }
 }

@@ -21,7 +21,7 @@ var config = {
             debug: false
         }
     },
-    scene: [tutorial, transition1, respiratory, transition3, bossScene, gameOver, win]
+    scene: [transition1, respiratory, transition3, bossScene, gameOver, win]
 };
 
 // game instance and global variables
