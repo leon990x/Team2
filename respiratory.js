@@ -90,13 +90,15 @@ function c1()
      runChildUpdate: true,
    });
 
+
    // for(x = 0; x < 5; x++){tb_enemy = this.physics.add.sprite(1900-(10*x), 650+(10*x), "tb");}
 
    // tb_enemy.setBounce(0);
    // tb_enemy.setScale(.5);
    // tb_enemy.setCollideWorldBounds(true);
-   this.physics.add.collider(tB, floor);
+
    // tb_enemy.body.setGravityY(1);
+   this.physics.add.collider(tB, floor);
    this.physics.add.overlap(tB, player, player_damage, null, this);
    this.physics.add.overlap(tB, player, tb_damage, null, this);
    num_enemies = 1;
@@ -114,7 +116,7 @@ function c1()
    this.tweens.add({
      targets: flu_enemy,
      x:1910,
-     y: flu_enemy.y-40,
+     y: flu_enemy.y-300,
      duration: 2000,
      ease:"Linear",
      callbackScope: this,
@@ -142,7 +144,7 @@ function c1()
      // reset Tentacle attack
      flasers.children.iterate((child) =>{
        let x= Phaser.Math.Between(1910, 0);
-       let y= Phaser.Math.Between(flu_enemy.y, 800);
+       let y= Phaser.Math.Between(flu_enemy.y, flu_enemy.y+1);
        child.setX(x);
        child.setY(y);
 
@@ -154,7 +156,7 @@ function c1()
            flaser_timer += 1;
            }
            this.x = flu_enemy.x;
-           this.y = Phaser.Math.Between(flu_enemy.y, 800);
+           this.y = Phaser.Math.Between(flu_enemy.y, 700);
          }
        };
      })
@@ -225,6 +227,7 @@ function c1()
 
 function u1()
 {
+
     console.log('num_enemies: ' + num_enemies + " wave " + wave_count)
   if (wave_count === 4 && num_enemies === 0){
     console.log("SCARY")
@@ -232,75 +235,70 @@ function u1()
     wave_text.visible = true;
   }
 
-  // Wave Code: At most 5 enemies on the screen. Three waves
-  if (flaser_timer > 5 && wave_count < 4){
+if (flaser_timer > 4 && wave_count < 4){
 
-    function spawn(enemy){
-    tB.createMultiple({
-      delay: 2000,
-      key: 'tb',
-      repeat: 0,
-      setXY:{x: 1865, y: 840, stepX: 100},
-      setScale: {x: .5, y: .5},
-      immovable: true,
-      allowGravity: false,
-      runChildUpdate: true,
-    })
-    console.log("BEGIN")
-  }
+  function spawn(enemy){
+  tB.createMultiple({
+    delay: 2000,
+    key: 'tb',
+    repeat: 0,
+    setXY:{x: player.x - 300, y: 840, stepX: 100},
+    setScale: {x: .5, y: .5},
+    immovable: true,
+    allowGravity: false,
+    runChildUpdate: true,
+  })
+  console.log("BEGIN")
+}
   if (num_enemies <= 4){
-  spawn(tB.getChildren());
+    spawn(tB.getChildren());
+    num_enemies += 1;
+    flaser_timer = 0;
   }
-
-  num_enemies += 1;
+}
   // console.log(num_enemies);
-  flaser_timer = 0;
-  }
+
+
   console.log(" timer: " + flaser_timer)
   // for (i = 0; i < 5; i ++){
     // setTimeout(() => console.log("First"), 6000)
-    if (num_enemies <= 4 && flaser_timer <= 5 && wave_count < 4){
-    Phaser.Actions.Call(tB.getChildren(),
-    function spawn(enemy){
-    if (flaser_timer == 5){
-      console.log('there!' + enemy.x);
+  if(num_enemies < 5 && wave_count < 4){
       // wave_count -= 1;
       tB.createMultiple({
         delay: 2000,
         key: 'tb',
         repeat: 0,
-        setXY:{x: 1865, y: 840, stepX: 100},
+        setXY:{x: 1860, y: 750, stepX: 100},
+        setScale: {x: .5, y: .5},
+        immovable: true,
+        allowGravity: true,
+        runChildUpdate: false,
+      })
+
+      tB.createMultiple({
+        delay: 2000,
+        key: 'tb',
+        repeat: 0,
+        setXY:{x: 500, y: 750, stepX: 100},
         setScale: {x: .5, y: .5},
         immovable: true,
         allowGravity: false,
         runChildUpdate: false,
       })
-      num_enemies += 1;
+
+      // num_enemies += 1;
       // console.log('num_enemies: ' + num_enemies + " wave " + wave_count)
 
       // if (num_enemies == 0){
-        flaser_timer = 0;
-      // }
-      console.log("RESTART");
-    }
+      // flaser_timer = 0;
+  // }
+  console.log(tB.getChildren().x);
+  num_enemies += 2;
+}
 
-    // else if {
-    //   console.log('there!' + enemy.x)
-    //   // wave_count -= 1;
-    //   tB.createMultiple({
-    //     delay: 2000,
-    //     key: 'tb',
-    //     repeat: 0,
-    //     setXY:{x: (Math.random() * (1900 - 1840) + 1840), y: 840, stepX: 100},
-    //     setScale: {x: .5, y: .5},
-    //     immovable: true,
-    //     allowGravity: false,
-    //     runChildUpdate: false,
-    //   })
-    //   num_enemies += 1
-    // }
-  })
-  }
+
+
+
   if (num_enemies != 0 && wave_count < 4){
   Phaser.Actions.Call(tB.getChildren(),
   function moveEnemies(enemy){
@@ -309,26 +307,26 @@ function u1()
       if (player.x < enemy.x && player.body.velocity.x < 0) {
               // console.log("p left of e, mv left")
               // tb_enemy.body.velocity.x = 0;
-              enemy.body.velocity.x = -1 * (Math.random() * (80 - 60) + 60);
+              enemy.body.velocity.x = -100;
 
           }
       if (player.x > enemy.x && player.body.velocity.x > 0) {
           // console.log("p right of e, mv right")
           // tb_enemy.body.velocity.x = 0;
-          enemy.body.velocity.x = Math.random() * (80 - 60) + 60;
+          enemy.body.velocity.x = 100;
       }
 
       if (player.x < enemy.x && player.body.velocity.x === 0) {
               // console.log("p left of e, stopped")
               // tb_enemy.body.velocity.x = 0;
-              enemy.body.velocity.x = -1 * (Math.random() * (80 - 60) + 60);
+              enemy.body.velocity.x = -100;
           }
 
       // console.log(enemy.x)
       if (player.x > enemy.x && player.body.velocity.x === 0) {
               // console.log("p right of e, stopped")
               // tb_enemy.body.velocity.x = 0;
-              enemy.body.velocity.x = Math.random() * (80 - 60) + 60;
+              enemy.body.velocity.x = 100;
           }
 
       // console.log(enemy.x)
@@ -337,13 +335,13 @@ function u1()
       if (player.x < enemy.x && player.body.velocity.x > 0) {
               // console.log("p left of e, mv right")
               // tb_enemy.body.velocity.x = 0;
-              enemy.body.velocity.x = -1 * (Math.random() * (80 - 60) + 60);
+              enemy.body.velocity.x = -180;
 
           }
       if (player.x > enemy.x && player.body.velocity.x < 0) {
               // console.log("p right of e, mv left")
               // tb_enemy.body.velocity.x = 0;
-              enemy.body.velocity.x = Math.random() * (80 - 60) + 60;
+              enemy.body.velocity.x = 180;
           }
       }
     })
@@ -611,3 +609,5 @@ function player_damage(player, tB)
   }
 
 }
+
+function spacer(){}
