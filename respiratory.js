@@ -24,9 +24,9 @@ function p1()
     //this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
 // Audio
-  this.load.audio("attack", ["assets/Audio/attack.mp3"])
-  this.load.audio("jump", ["assets/Audio/jump.wav"])
-  this.load.audio("damage", ["assets/Audio/damage.mp3"])
+  this.load.audio("attack", "assets/Audio/attack.mp3")
+  this.load.audio("jump", "assets/Audio/jump.mp3")
+  this.load.audio("damage", "assets/Audio/damage.mp3")
 
 // SpriteSheets
     this.load.spritesheet('whiteBC',
@@ -111,7 +111,7 @@ function c1()
    this.physics.add.collider(flu_enemy, floor);
    this.physics.add.overlap(flu_enemy, player, flu_damage, null, this);
 
-   this.tweens.add({
+   moveFlu = this.tweens.add({
      targets: flu_enemy,
      x:1910,
      y: flu_enemy.y-40,
@@ -127,7 +127,7 @@ function c1()
      delay: 200,
      key:"flaser",
      repeat: 10,
-     setXY:{x: 1900, y: 870, stepX: 700},
+     setXY:{x: flu_enemy.x, y: flu_enemy.y, stepX: 700},
      setScale: {x: .5, y: .5},
      immovable: true,
      allowGravity: false,
@@ -221,10 +221,18 @@ function c1()
        frameRate: 10,
        repeat: -1
      });
+
 }
 
 function u1()
 {
+  if (attackButton.Q.isDown || cursors.up.isDown){
+  moveFlu.updateTo("y", player.y, true);
+}
+else{
+  moveFlu.restart();
+}
+
     console.log('num_enemies: ' + num_enemies + " wave " + wave_count)
   if (wave_count === 4 && num_enemies === 0){
     console.log("SCARY")
@@ -293,26 +301,26 @@ function u1()
       if (player.x < enemy.x && player.body.velocity.x < 0) {
               // console.log("p left of e, mv left")
               // tb_enemy.body.velocity.x = 0;
-              enemy.body.velocity.x = -1 * (Math.random() * (80 - 60) + 60);
+              enemy.body.velocity.x = -1 * (Math.random() * (180 - 60) + 60);
 
           }
       if (player.x > enemy.x && player.body.velocity.x > 0) {
           // console.log("p right of e, mv right")
           // tb_enemy.body.velocity.x = 0;
-          enemy.body.velocity.x = Math.random() * (80 - 60) + 60;
+          enemy.body.velocity.x = Math.random() * (180 - 60) + 60;
       }
 
       if (player.x < enemy.x && player.body.velocity.x === 0) {
               // console.log("p left of e, stopped")
               // tb_enemy.body.velocity.x = 0;
-              enemy.body.velocity.x = -1 * (Math.random() * (80 - 60) + 60);
+              enemy.body.velocity.x = -1 * (Math.random() * (180 - 60) + 60);
           }
 
       // console.log(enemy.x)
       if (player.x > enemy.x && player.body.velocity.x === 0) {
               // console.log("p right of e, stopped")
               // tb_enemy.body.velocity.x = 0;
-              enemy.body.velocity.x = Math.random() * (80 - 60) + 60;
+              enemy.body.velocity.x = Math.random() * (180 - 60) + 60;
           }
 
       // console.log(enemy.x)
@@ -321,13 +329,13 @@ function u1()
       if (player.x < enemy.x && player.body.velocity.x > 0) {
               // console.log("p left of e, mv right")
               // tb_enemy.body.velocity.x = 0;
-              enemy.body.velocity.x = -1 * (Math.random() * (80 - 60) + 60);
+              enemy.body.velocity.x = -1 * (Math.random() * (180 - 60) + 60);
 
           }
       if (player.x > enemy.x && player.body.velocity.x < 0) {
               // console.log("p right of e, mv left")
               // tb_enemy.body.velocity.x = 0;
-              enemy.body.velocity.x = Math.random() * (80 - 60) + 60;
+              enemy.body.velocity.x = Math.random() * (180 - 60) + 60;
           }
       }
     })
@@ -337,7 +345,7 @@ function u1()
   // walking
     if (cursors.left.isDown)
     {
-        player.setVelocityX(-160);
+        player.setVelocityX(-260);
 
         player.anims.play('leftWalking', true);
 
@@ -443,7 +451,7 @@ function u1()
 
     else if (cursors.right.isDown)
     {
-        player.setVelocityX(160);
+        player.setVelocityX(260);
 
         player.anims.play('rightWalking', true);
 
@@ -571,6 +579,18 @@ function flu_damage(player, flu_enemy){
     this.sound.play("damage");
   }
 
+  if(villainHealth <= 280 && villainHealth > 270)
+  {
+    villainHealth = 269;
+    healthpacks.create(100, 20, "healthpack");
+    healthpacks.create(100, 20, "healthpack");
+    var hp = healthpacks.create(960, 20, "healthpack");
+    hp.setScale(2);
+    hp.setBounce(0.5);
+    hp.setCollideWorldBounds(true);
+    hp.setVelocity(Phaser.Math.Between(-200, 200), 20);
+  }
+
   if (villainHealth < 0)
   {
     heroHealth = 415;
@@ -579,6 +599,17 @@ function flu_damage(player, flu_enemy){
   }
 }
 
+function getHealth(player, healthpack)
+{
+  if(heroHealth < 415)
+  {
+    healthbar.x += 0.43 * 20
+    healthbar.displayWidth += 20
+    heroHealth += 20
+    player.setTint(0x00ff00)
+    healthpack.disableBody(true, true);
+  }
+}
 function player_damage(player, tB)
 {
   healthbar.x -= 0.43 * .3

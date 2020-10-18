@@ -37,9 +37,9 @@ function p1()
     // this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
 // Audio
-  this.load.audio("attack", ["assets/Audio/attack.mp3"])
-  this.load.audio("jump", ["assets/Audio/jump.wav"])
-  this.load.audio("damage", ["assets/Audio/damage.mp3"])
+  this.load.audio("attack", "assets/Audio/attack.mp3")
+  this.load.audio("jump", "assets/Audio/jump.mp3")
+  this.load.audio("damage", "assets/Audio/damage.mp3")
 
 // SpriteSheets
     this.load.spritesheet('whiteBC',
@@ -292,7 +292,7 @@ function u1()
   // walking
     if (cursors.left.isDown)
     {
-        player.setVelocityX(-160);
+        player.setVelocityX(-260);
 
         player.anims.play('leftWalking', true);
 
@@ -373,7 +373,7 @@ function u1()
 
     else if (cursors.right.isDown)
     {
-        player.setVelocityX(160);
+        player.setVelocityX(260);
 
         player.anims.play('rightWalking', true);
 

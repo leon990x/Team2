@@ -33,9 +33,9 @@ function preload ()
     this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png')
 
 // Audio
-  this.load.audio("attack", ["assets/Audio/attack.mp3"])
-  this.load.audio("jump", ["assets/Audio/jump.wav"])
-  this.load.audio("damage", ["assets/Audio/damage.mp3"])
+  this.load.audio("attack", "Assets/Audio/attack.mp3")
+  this.load.audio("jump", "Assets/Audio/jump.mp3")
+  this.load.audio("damage", "Assets/Audio/damage.mp3")
 
 // SpriteSheets
     this.load.spritesheet('whiteBC',
@@ -242,10 +242,10 @@ function create ()
      //Powerups
      antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
 
-     this.physics.add.overlap(theBoss, player, attack_boss, null, this);
+     this.physics.add.overlap(theBoss, player, boss,  attack_boss, null, this);
      this.physics.add.overlap(player, antibodyPowerup, getAntibodyPowerup, null, this);
-     this.physics.add.overlap(theBoss, antibodyStorm, boss_antibody_damage, null, this);
-     this.physics.add.overlap(theBoss, player, boss_damage, null, this);
+     this.physics.add.overlap(theBoss, antibodyStorm, boss, boss_antibody_damage, null, this);
+     this.physics.add.overlap(theBoss, player, boss, boss_damage, null, this);
      this.physics.add.overlap(player, healthpacks, getHealth, null, this);
 
      this.physics.add.overlap(player, tentacles, tentacle_damage, null, this);
@@ -485,7 +485,7 @@ function tentacle_damage(player, tentacles)
   //replay
 
 
-function attack_boss(theBoss, player)
+function attack_boss(theBoss, player, boss)
 {
   if (attackButton.Q.isDown)
   {
@@ -539,7 +539,7 @@ function boss_damage(theBoss, player, storm){
     }
   }
 
-  function boss_antibody_damage(theBoss, antibodyStorm)
+  function boss_antibody_damage(theBoss, antibodyStorm, boss)
 {
     villainDamageIntensity = .02
     villainHealthbar.x += 0.48 * villainDamageIntensity
