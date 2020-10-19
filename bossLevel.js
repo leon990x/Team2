@@ -52,8 +52,32 @@ function preload ()
 function create ()
 {
    background = this.add.image(960, 540, 'environment');
-   boss = this.add.image(880, 480, "corona");
-   boss.setScale(1.11);
+   // boss = this.add.image(880, 480, "corona");
+   // boss.setScale(1.11);
+   // Boss weakpoints
+   theBoss = this.physics.add.staticGroup();
+    //left shoulder
+   theBoss.create(740, 490, "wp6").setScale(1.5); //1
+   theBoss.create(600, 580, "wp5").setScale(1.5); //1
+   theBoss.create(531, 850, "wp5").setScale(1.5); //2
+    //right shoulder
+   theBoss.create(1120, 520, "wp3").setScale(1.5); //4
+   theBoss.create(1180, 570, "wp2").setScale(1.5); //5
+   theBoss.create(1230, 850, "wp2").setScale(1.5); //5
+    //left head
+    theBoss.create(660, 270, "wp5").setScale(1.5); //2
+    theBoss.create(670, 90, "wp6").setScale(1.5); //1
+    //right head
+    theBoss.create(1110, 270, "wp2").setScale(1.5); //5
+    theBoss.create(1109, 90, "wp3").setScale(1.5); //4
+   boss = this.physics.add.group({
+     key: "corona",
+     setXY: {x: 880, y: 480},
+     setScale: {x: 1.11, y: 1.11},
+     allowGravity: false,
+     immovable: true
+   });
+
    cursors = this.input.keyboard.createCursorKeys();
    attackButton = this.input.keyboard.addKeys("Q,P");
    redhealth = this.add.image(220, 60, 'red')
@@ -85,22 +109,9 @@ function create ()
    damage = this.sound.add('damage')
    jump = this.sound.add('jump')
 
-   // Boss weakpoints
-   theBoss = this.physics.add.staticGroup();
-    //left shoulder
-   theBoss.create(700, 480, "wp6").setScale(1.5); //1
-   theBoss.create(600, 570, "wp5").setScale(1.5); //1
-   theBoss.create(531, 850, "wp5").setScale(1.5); //2
-    //right shoulder
-   theBoss.create(1130, 500, "wp3").setScale(1.5); //4
-   theBoss.create(1180, 570, "wp2").setScale(1.5); //5
-   theBoss.create(1230, 850, "wp2").setScale(1.5); //5
-    //left head
-    theBoss.create(660, 270, "wp5").setScale(1.5); //2
-    theBoss.create(670, 90, "wp6").setScale(1.5); //1
-    //right head
-    theBoss.create(1110, 270, "wp2").setScale(1.5); //5
-    theBoss.create(1109, 90, "wp3").setScale(1.5); //4
+
+
+
 
     // theBoss.setActive(false);
     // theBoss.setVisible(false);
@@ -197,34 +208,81 @@ function create ()
        repeat: -1
      });
 
-     // boss code
+     //boss code
+
      lasers = this.physics.add.group(
       {
           key: 'laser',
-          repeat: 8,
-          setXY: {x: 12, y: 0, stepX: 140},
+          repeat: 10,
+          setXY: {x: 12, y: 0, stepX: 200},
           setScale: {x: 1, y: 1},
           runChildUpdate: true
       }
       );
 
+      this.time.addEvent({
+        delay: 4000,
+        callback: ()=>{
+          Phaser.Actions.SetXY(lasers.getChildren(), 1950, 600, 300);
+          Phaser.Actions.Call(lasers.getChildren(),
 
-      lasers.children.iterate((child) => {
-        let y = Phaser.Math.Between(-200, -2000)
-        let x = Phaser.Math.Between(200, 1800)
+          function moveT(move){
+            move.setVelocityY(200);
+            lasers.children.iterate((child) =>{
+              let x= Phaser.Math.Between(1910, 0);
+              let y= -2000;
+              child.setX(x);
+              child.setY(y);
 
-        child.setY(y)
-        child.setX(x)
-        child.setMaxVelocity(500)
+              child.update = function(){
+                // console.log("please")
+                if(this.x <= 0 || this.y >= 1080) {
+                  // console.log(this.x, "ok");
+                  this.x = Phaser.Math.Between(1910, 0);
+                  this.y = -10000;
 
-        child.update = function() {
-          if(this.y > 900) {
-            this.y=0;
+                }
+              };
+            })
+          })
+        },
+        loop: true
+      })
 
-          }
-        }
+     // this.time.addEvent({
+     //   delay: 2000,
+     //   callback: ()=>{
+     //
+     //      lasers.children.iterate((child) => {
+     //        let y = Phaser.Math.Between(-200, -2000)
+     //        let x = Phaser.Math.Between(200, 1800)
+     //
+     //        child.setY(y)
+     //        child.setX(x)
+     //        child.setVelocityY(500)
+     //
+     //        child.update = function() {
+     //          if(this.y > 870) {
+     //            // this.y= 0;
+     //            this.disableBody(true, true);
+     //          }
+     //        }
+     //
+     //      });
+     //   },
+     //   loop: true
+     // })
+     tentacles_ss = this.physics.add.group({
+       delay: 200,
+       key:"tentacle",
+       repeat: 0,
+       setXY:{x: 1920, y: Phaser.Math.Between(300, 600)},
+       setScale: {x: .5, y: .5},
+       allowGravity: false,
+       runChildUpdate: true,
+     });
 
-      });
+
 
      tentacles = this.physics.add.group({
        delay: 200,
@@ -242,6 +300,41 @@ function create ()
        move.setVelocityX(-120)
        // reset Tentacle attack
        tentacles.children.iterate((child) =>{
+
+         let x= Phaser.Math.Between(1910, 0);
+         // let y= Phaser.Math.Between(0, -200);
+         child.setX(x);
+         // child.setY(y);
+
+         child.update = function(){
+           Phaser.Actions.SetScale(boss.getChildren(), 1.11, 1.11);
+           if (this.x < 960)
+           {
+             Phaser.Actions.SetScale(boss.getChildren(), 1.35, 1.35);
+             villainshield = true;
+           }
+           if (this.x > 960)
+           {
+             Phaser.Actions.SetScale(boss.getChildren(), 1.11, 1.11);
+             villainshield = false;
+           }
+           // console.log("please")
+           if(this.x <= 0) {
+             // console.log(this.x, "ok");
+             this.x = 1950;
+
+           }
+         };
+       })
+     })
+
+
+     Phaser.Actions.Call(tentacles_ss.getChildren(),
+
+     function moveTS(move){
+       move.setVelocityX(-800);
+       // reset Tentacle attack
+       tentacles_ss.children.iterate((child) =>{
          let x= Phaser.Math.Between(1910, 0);
          // let y= Phaser.Math.Between(0, -200);
          child.setX(x);
@@ -249,13 +342,22 @@ function create ()
 
          child.update = function(){
            // console.log("please")
+           if (this.x <= 1870)
+           {
+             this.setVelocityX(-1050);
+           }
            if(this.x <= 0) {
              // console.log(this.x, "ok");
              this.x = 1950;
+             this.y = Phaser.Math.Between(300, 600);
+
+             this.setVelocityX(-50);
+
            }
          };
        })
      })
+
      this.physics.add.collider(tentacles, floor);
      //Powerups
      antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
@@ -268,6 +370,10 @@ function create ()
 
      this.physics.add.overlap(player, tentacles, tentacle_damage, null, this);
      this.physics.add.overlap(player, lasers, laser_damage, null, this);
+
+     this.physics.add.overlap(player, boss, contact_damage, null, this);
+     this.physics.add.overlap(theBoss, player, attack_boss, null, this);
+     this.physics.add.overlap(player, tentacles_ss, tentacle_ss_damage, null, this);
 }
 
 // // function to move all spawns of tentacles
@@ -305,7 +411,7 @@ function update()
         lookLeft = true;
 
         player.clearTint();
-        boss.clearTint();
+        //boss.clearTint();
 
         // Jumping
             if (cursors.up.isDown && player.body.touching.down)
@@ -316,14 +422,14 @@ function update()
             player.anims.play('jumpLeft');
             this.sound.play("jump");
             player.clearTint();
-            boss.clearTint();
+            //boss.clearTint();
         }
 
         else{
             player.anims.play('jumpRight');
             this.sound.play("jump")
             player.clearTint();
-            boss.clearTint();
+            //boss.clearTint();
             lookLeft = false;
         }
         }
@@ -337,7 +443,7 @@ function update()
             player.anims.play('attackLeft');
             this.sound.play("attack");
             player.clearTint();
-            boss.clearTint();
+            //boss.clearTint();
         }
 
         else{
@@ -345,7 +451,7 @@ function update()
             this.sound.play("attack");
             lookLeft = false;
             player.clearTint();
-            boss.clearTint();
+            //boss.clearTint();
         }
         }
     }
@@ -359,14 +465,14 @@ function update()
         player.anims.play('jumpLeft');
         this.sound.play("jump");
         player.clearTint();
-        boss.clearTint();
+        //boss.clearTint();
     }
 
     else{
         player.anims.play('jumpRight');
         this.sound.play("jump");
         player.clearTint();
-        boss.clearTint();
+        //boss.clearTint();
         lookLeft = false;
     }
     }
@@ -399,7 +505,7 @@ function update()
 
         player.anims.play('rightWalking', true);
         player.clearTint();
-        boss.clearTint();
+        //boss.clearTint();
 
         lookLeft = false;
         // Jumping
@@ -411,14 +517,14 @@ function update()
             player.anims.play('jumpLeft');
             this.sound.play("jump");
             player.clearTint();
-            boss.clearTint();
+            //boss.clearTint();
         }
 
         else{
             player.anims.play('jumpRight');
             this.sound.play("jump");
             player.clearTint();
-            boss.clearTint();
+            //boss.clearTint();
             lookLeft = false;
         }
         }
@@ -487,9 +593,27 @@ function update()
 function laser_damage(player, lasers)
 {
   //change all 3 damage intensities when adjusting intensity
-  healthbar.x -= 0.43 * 1;
-  healthbar.displayWidth -= 1;
-  heroHealth -= 1;
+  healthbar.x -= 0.43 * 0.4;
+  healthbar.displayWidth -= 0.4;
+  heroHealth -= 0.4;
+  player.setTint(0xff0000);
+  this.sound.play("damage");
+  console.log("inside if player damage")
+
+  if(heroHealth < 0)
+  {
+    heroHealth = 415;
+    this.scene.start(gameOver);
+  }
+}
+
+
+function contact_damage(player, boss)
+{
+  //change all 3 damage intensities when adjusting intensity
+  // healthbar.x -= 0.43 * 0.2;
+  // healthbar.displayWidth -= 0.2;
+  // heroHealth -= 0.2;
   player.setTint(0xff0000);
   this.sound.play("damage");
   console.log("inside if player damage")
@@ -517,16 +641,33 @@ function tentacle_damage(player, tentacles)
   }
 }
 
+function tentacle_ss_damage(player, tentacles_ss)
+{
+  healthbar.x -= 0.43 * 1
+  healthbar.displayWidth -= 1
+  heroHealth -= 1
+  player.setTint(0xff0000);
+  this.sound.play("damage");
+
+
+  if(heroHealth < 0)
+  {
+    heroHealth = 415;
+    this.scene.start(gameOver);
+  }
+}
+
   //replay
 
 
 function attack_boss(theBoss, player)
 {
-  if (attackButton.Q.isDown)
+  if (attackButton.Q.isDown && villainshield === false)
   {
     villainHealthbar.x += 0.48 * villainDamageIntensity
     villainHealthbar.displayWidth -= villainDamageIntensity
     villainHealth -= villainDamageIntensity
+  }
 
   if(villainHealth <= 280 && villainHealth > 270)
   {
@@ -545,9 +686,9 @@ function attack_boss(theBoss, player)
     villainHealth = 415;
     this.scene.start(win);
     }
-  }
-
 }
+
+
 
 function getHealth(player, healthpack)
 {
