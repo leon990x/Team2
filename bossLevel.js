@@ -19,7 +19,8 @@ function preload ()
     this.load.image('tentacle', 'Assets/Boss/tentacle.png');
     this.load.image('red', 'Assets/Boss/redHealth.png');
     this.load.image('statusbar', 'Assets/Boss/health.png');
-    this.load.image('laser', 'Assets/Boss/laser.png')
+    this.load.image('laser', 'Assets/Boss/laser.png');
+    this.load.image('ball', 'Assets/Boss/ronaBall.png');
 
     this.load.image('wp1', 'Assets/Boss/wp1.png')
     this.load.image('wp2', 'Assets/Boss/wp2.png')
@@ -52,8 +53,8 @@ function preload ()
 function create ()
 {
    background = this.add.image(960, 540, 'environment');
-   // boss = this.add.image(880, 480, "corona");
-   // boss.setScale(1.11);
+   boss = this.add.image(880, 480, "corona");
+   boss.setScale(1.11);
    // Boss weakpoints
    theBoss = this.physics.add.staticGroup();
     //left shoulder
@@ -61,7 +62,7 @@ function create ()
    theBoss.create(600, 580, "wp5").setScale(1.5); //1
    theBoss.create(531, 850, "wp5").setScale(1.5); //2
     //right shoulder
-   theBoss.create(1120, 520, "wp3").setScale(1.5); //4
+   theBoss.create(1130, 500, "wp3").setScale(1.5); //4
    theBoss.create(1180, 570, "wp2").setScale(1.5); //5
    theBoss.create(1230, 850, "wp2").setScale(1.5); //5
     //left head
@@ -70,12 +71,13 @@ function create ()
     //right head
     theBoss.create(1110, 270, "wp2").setScale(1.5); //5
     theBoss.create(1109, 90, "wp3").setScale(1.5); //4
-   boss = this.physics.add.group({
+   invisibleBoss = this.physics.add.group({
      key: "corona",
      setXY: {x: 880, y: 480},
      setScale: {x: 1.11, y: 1.11},
      allowGravity: false,
-     immovable: true
+     immovable: true,
+     visible: false
    });
 
    cursors = this.input.keyboard.createCursorKeys();
@@ -94,7 +96,7 @@ function create ()
    //Edge colliders
    ground = this.physics.add.staticGroup();
    floor = ground.create(959, 1050, "floor").setScale(1).refreshBody();
-   ground.create(400, 770, 'platform');
+   ground.create(400, 790, 'platform');
    ground.create(870, 650, 'platform');
    ground.create(1350, 770, 'platform');
 
@@ -102,7 +104,7 @@ function create ()
    ground.create(870, 350, 'platform');
    ground.create(1350, 480, 'platform');
 
-   ground.create(1600, 610, 'platform');
+   ground.create(1610, 610, 'platform');
 
    // sounds
    attack = this.sound.add('attack')
@@ -272,12 +274,12 @@ function create ()
      //   },
      //   loop: true
      // })
-     tentacles_ss = this.physics.add.group({
+     ronaBall = this.physics.add.group({
        delay: 200,
-       key:"tentacle",
+       key:"ball",
        repeat: 0,
        setXY:{x: 1920, y: Phaser.Math.Between(300, 600)},
-       setScale: {x: .5, y: .5},
+       setScale: {x: 1, y: 1},
        allowGravity: false,
        runChildUpdate: true,
      });
@@ -285,56 +287,69 @@ function create ()
 
 
      tentacles = this.physics.add.group({
-       delay: 200,
+       delay: 3000,
        key:"tentacle",
-       repeat: 1,
+       repeat: 3,
        setXY:{x: 1920, y: 870, stepX: 300},
        setScale: {x: .5, y: .5},
        runChildUpdate: true,
      });
 
-     Phaser.Actions.SetXY(tentacles.getChildren(), 1950, 800);
-     Phaser.Actions.Call(tentacles.getChildren(),
 
-     function moveT(move){
-       move.setVelocityX(-120)
-       // reset Tentacle attack
-       tentacles.children.iterate((child) =>{
+     this.time.addEvent({
+       delay: 4000,
+       callback: ()=>{
+       Phaser.Actions.SetXY(tentacles.getChildren(), 1950, 800);
+       Phaser.Actions.Call(tentacles.getChildren(),
 
-         let x= Phaser.Math.Between(1910, 0);
-         // let y= Phaser.Math.Between(0, -200);
-         child.setX(x);
-         // child.setY(y);
+       function moveT(move){
+         move.setVelocityX(-220)
+         // reset Tentacle attack
+         tentacles.children.iterate((child) =>{
 
-         child.update = function(){
-           Phaser.Actions.SetScale(boss.getChildren(), 1.11, 1.11);
-           if (this.x < 960)
-           {
-             Phaser.Actions.SetScale(boss.getChildren(), 1.35, 1.35);
-             villainshield = true;
-           }
-           if (this.x > 960)
-           {
-             Phaser.Actions.SetScale(boss.getChildren(), 1.11, 1.11);
-             villainshield = false;
-           }
-           // console.log("please")
-           if(this.x <= 0) {
-             // console.log(this.x, "ok");
-             this.x = 1950;
+           let x= Phaser.Math.Between(1910, 0);
+           // let y= Phaser.Math.Between(0, -200);
+           child.setX(x);
+           // child.setY(y);
 
-           }
-         };
+           child.update = function(){
+             Phaser.Actions.SetScale(invisibleBoss.getChildren(), 1.11, 1.11);
+             if (this.x < 960)
+             {
+               Phaser.Actions.SetScale(invisibleBoss.getChildren(), 1.35, 1.35);
+               villainshield = true;
+               theBoss.children.iterate((child) => {
+                   child.setVisible(true);
+               });
+             }
+             if (this.x > 960)
+             {
+               theBoss.children.iterate((child) => {
+                   child.setVisible(false);
+               });
+               Phaser.Actions.SetScale(invisibleBoss.getChildren(), 1.11, 1.11);
+               villainshield = false;
+             }
+             // console.log("please")
+             if(this.x <= 0) {
+               // console.log(this.x, "ok");
+               this.x = 1950;
+
+             }
+           };
+         })
        })
-     })
+     }
+
+   })
 
 
-     Phaser.Actions.Call(tentacles_ss.getChildren(),
+     Phaser.Actions.Call(ronaBall.getChildren(),
 
      function moveTS(move){
        move.setVelocityX(-800);
        // reset Tentacle attack
-       tentacles_ss.children.iterate((child) =>{
+       ronaBall.children.iterate((child) =>{
          let x= Phaser.Math.Between(1910, 0);
          // let y= Phaser.Math.Between(0, -200);
          child.setX(x);
@@ -371,9 +386,9 @@ function create ()
      this.physics.add.overlap(player, tentacles, tentacle_damage, null, this);
      this.physics.add.overlap(player, lasers, laser_damage, null, this);
 
-     this.physics.add.overlap(player, boss, contact_damage, null, this);
+     // this.physics.add.overlap(player, boss, contact_damage, null, this);
      this.physics.add.overlap(theBoss, player, attack_boss, null, this);
-     this.physics.add.overlap(player, tentacles_ss, tentacle_ss_damage, null, this);
+     this.physics.add.overlap(player, ronaBall, tentacle_ss_damage, null, this);
 }
 
 // // function to move all spawns of tentacles
@@ -608,22 +623,22 @@ function laser_damage(player, lasers)
 }
 
 
-function contact_damage(player, boss)
-{
-  //change all 3 damage intensities when adjusting intensity
-  // healthbar.x -= 0.43 * 0.2;
-  // healthbar.displayWidth -= 0.2;
-  // heroHealth -= 0.2;
-  player.setTint(0xff0000);
-  this.sound.play("damage");
-  console.log("inside if player damage")
-
-  if(heroHealth < 0)
-  {
-    heroHealth = 415;
-    this.scene.start(gameOver);
-  }
-}
+// function contact_damage(player, boss)
+// {
+//   //change all 3 damage intensities when adjusting intensity
+//   // healthbar.x -= 0.43 * 0.2;
+//   // healthbar.displayWidth -= 0.2;
+//   // heroHealth -= 0.2;
+//   player.setTint(0xff0000);
+//   this.sound.play("damage");
+//   console.log("inside if player damage")
+//
+//   if(heroHealth < 0)
+//   {
+//     heroHealth = 415;
+//     this.scene.start(gameOver);
+//   }
+// }
 
 function tentacle_damage(player, tentacles)
 {
@@ -641,7 +656,7 @@ function tentacle_damage(player, tentacles)
   }
 }
 
-function tentacle_ss_damage(player, tentacles_ss)
+function tentacle_ss_damage(player, ronaBall)
 {
   healthbar.x -= 0.43 * 1
   healthbar.displayWidth -= 1
@@ -662,7 +677,7 @@ function tentacle_ss_damage(player, tentacles_ss)
 
 function attack_boss(theBoss, player)
 {
-  if (attackButton.Q.isDown && villainshield === false)
+  if (attackButton.Q.isDown && villainshield === true)
   {
     villainHealthbar.x += 0.48 * villainDamageIntensity
     villainHealthbar.displayWidth -= villainDamageIntensity
@@ -672,9 +687,10 @@ function attack_boss(theBoss, player)
   if(villainHealth <= 280 && villainHealth > 270)
   {
     villainHealth = 269;
-    healthpacks.create(100, 20, "healthpack");
-    healthpacks.create(100, 20, "healthpack");
+    healthpacks.create(100, 20, "healthpack").setScale(1);
+    healthpacks.create(100, 20, "healthpack").setScale(1);
     var hp = healthpacks.create(100, 20, "healthpack");
+    hp.setScale(1);
     hp.setBounce(0.5);
     hp.setCollideWorldBounds(true);
     hp.setVelocity(Phaser.Math.Between(-200, 200), 20);
