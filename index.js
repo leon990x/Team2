@@ -21,7 +21,8 @@ var config = {
             debug: false
         }
     },
-    scene: [transition1, respiratory, transition3, bossScene, gameOver, win]
+    // scene: [transition1, respiratory, transition3, bossScene, gameOver, win]
+    scene: bossScene
 };
 
 // game instance and global variables
@@ -37,6 +38,7 @@ var heroTakingDamage = false;
 var villainTakingDamage = false;
 var heroDamageIntensity = 2;
 var villainDamageIntensity = 2;
+var villainshield = false;
 
 //For Powerups
 var heroHealIntensity = 42;
