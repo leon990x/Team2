@@ -64,6 +64,7 @@ function c1()
 
    //Edge colliders
    ground = this.physics.add.staticGroup();
+   ground.create(959, 750, "platform");
    floor = ground.create(959, 1050, "floor").setScale(1).refreshBody();
 
    // sounds
@@ -75,7 +76,7 @@ function c1()
    player = this.physics.add.sprite(100, 700, "whiteBC");
    player.setBounce(0.3);
    player.setCollideWorldBounds(true);
-   this.physics.add.collider(player, floor);
+   this.physics.add.collider(player, ground);
    player.body.setGravityY(1);
 
    //TB Enemy
@@ -89,6 +90,13 @@ function c1()
      allowGravity: false,
      runChildUpdate: true,
    });
+
+   this.anims.create({
+     key: "crawl",
+     frames: this.anims.generateFrameNumbers("tb", {start: 0, end: 1}),
+     frameRate: 5,
+     repeat: -1
+   })
 
    // for(x = 0; x < 5; x++){tb_enemy = this.physics.add.sprite(1900-(10*x), 650+(10*x), "tb");}
 
@@ -123,44 +131,51 @@ function c1()
    });
 
    // Flu laser group
-   flasers = this.physics.add.group({
-     delay: 200,
-     key:"flaser",
-     repeat: 10,
-     setXY:{x: flu_enemy.x, y: flu_enemy.y, stepX: 700},
-     setScale: {x: .5, y: .5},
-     immovable: true,
-     allowGravity: false,
-     runChildUpdate: true,
-   });
+   this.time.addEvent({
+     delay: 3000,
+     callback: ()=>{
+       flasers = this.physics.add.group({
+         delay: 200,
+         key:"flaser",
+         repeat: 10,
+         setXY:{x: flu_enemy.x, y: flu_enemy.y, stepX: 700},
+         setScale: {x: .5, y: .5},
+         immovable: true,
+         allowGravity: false,
+         runChildUpdate: true,
+       });
 
-   Phaser.Actions.SetXY(flasers.getChildren(), 1950, 600, 300);
-   Phaser.Actions.Call(flasers.getChildren(),
 
-   function moveT(move){
-     move.setVelocityX(-250)
-     // reset Tentacle attack
-     flasers.children.iterate((child) =>{
-       let x= Phaser.Math.Between(1910, 0);
-       let y= Phaser.Math.Between(flu_enemy.y, 800);
-       child.setX(x);
-       child.setY(y);
+          Phaser.Actions.SetXY(flasers.getChildren(), 1950, 600, 300);
+          Phaser.Actions.Call(flasers.getChildren(),
 
-       child.update = function(){
-         // console.log("please")
-         if(this.x <= 0 || this.y >= 1080) {
-           // console.log(this.x, "ok");
-           if (flaser_timer <= 5 && wave_count < 4){
-           flaser_timer += 1;
-           }
-           this.x = flu_enemy.x;
-           this.y = Phaser.Math.Between(flu_enemy.y, 800);
-         }
-       };
-     })
+          function moveT(move){
+            move.setVelocityX(-250)
+            // reset Tentacle attack
+            flasers.children.iterate((child) =>{
+              let x= Phaser.Math.Between(1910, 0);
+              let y= Phaser.Math.Between(flu_enemy.y, 800);
+              child.setX(x);
+              child.setY(y);
+
+              child.update = function(){
+                // console.log("please")
+                if(this.x <= 0 || this.y >= 1080) {
+                  // console.log(this.x, "ok");
+                  if (flaser_timer <= 5 && wave_count < 4){
+                  flaser_timer += 1;
+                  }
+                  this.x = flu_enemy.x;
+                  this.y = Phaser.Math.Between(flu_enemy.y, 800);
+                }
+              };
+            })
+          })
+
+           this.physics.add.overlap(flasers, player, player_damage, null, this);
+     }
    })
 
-    this.physics.add.overlap(flasers, player, player_damage, null, this);
 
    //Powerups
    healthpacks = this.physics.add.group();
@@ -236,6 +251,7 @@ else{
     console.log('num_enemies: ' + num_enemies + " wave " + wave_count)
   if (wave_count === 4 && num_enemies === 0){
     console.log("SCARY")
+
     wave_text.setText("  Wave Over:" + "\n" + "Defeat the Flu").setScale(4);
     wave_text.visible = true;
   }
@@ -301,18 +317,21 @@ else{
       if (player.x < enemy.x && player.body.velocity.x < 0) {
               // console.log("p left of e, mv left")
               // tb_enemy.body.velocity.x = 0;
+              enemy.play("crawl", true);
               enemy.body.velocity.x = -1 * (Math.random() * (180 - 60) + 60);
 
           }
       if (player.x > enemy.x && player.body.velocity.x > 0) {
           // console.log("p right of e, mv right")
           // tb_enemy.body.velocity.x = 0;
+          enemy.play("crawl", true);
           enemy.body.velocity.x = Math.random() * (180 - 60) + 60;
       }
 
       if (player.x < enemy.x && player.body.velocity.x === 0) {
               // console.log("p left of e, stopped")
               // tb_enemy.body.velocity.x = 0;
+              enemy.play("crawl", true);
               enemy.body.velocity.x = -1 * (Math.random() * (180 - 60) + 60);
           }
 
@@ -320,6 +339,7 @@ else{
       if (player.x > enemy.x && player.body.velocity.x === 0) {
               // console.log("p right of e, stopped")
               // tb_enemy.body.velocity.x = 0;
+              enemy.play("crawl", true);
               enemy.body.velocity.x = Math.random() * (180 - 60) + 60;
           }
 
@@ -329,12 +349,14 @@ else{
       if (player.x < enemy.x && player.body.velocity.x > 0) {
               // console.log("p left of e, mv right")
               // tb_enemy.body.velocity.x = 0;
+              enemy.play("crawl", true);
               enemy.body.velocity.x = -1 * (Math.random() * (180 - 60) + 60);
 
           }
       if (player.x > enemy.x && player.body.velocity.x < 0) {
               // console.log("p right of e, mv left")
               // tb_enemy.body.velocity.x = 0;
+              enemy.play("crawl", true);
               enemy.body.velocity.x = Math.random() * (180 - 60) + 60;
           }
       }

@@ -102,6 +102,23 @@ function create ()
     theBoss.create(1110, 270, "wp2").setScale(1.5); //5
     theBoss.create(1109, 90, "wp3").setScale(1.5); //4
 
+    // theBoss.setActive(false);
+    // theBoss.setVisible(false);
+
+    //  wpTimer = this.time.addEvent({
+    //   delay: 30000,
+    //   callback: hideWP(theBoss),
+    //   callbackScope: this,
+    //   loop: true
+    // })
+    //
+    // revealTimer = this.time.addEvent({
+    //   delay: 10000,
+    //   callback: reveal(theBoss),
+    //   callbackScope: this,
+    //   loop: true
+    // })
+
     // player code
     player = this.physics.add.sprite(100, 700, "whiteBC");
     player.setBounce(0.3);
@@ -191,6 +208,7 @@ function create ()
       }
       );
 
+
       lasers.children.iterate((child) => {
         let y = Phaser.Math.Between(-200, -2000)
         let x = Phaser.Math.Between(200, 1800)
@@ -217,7 +235,7 @@ function create ()
        runChildUpdate: true,
      });
 
-     // Phaser.Actions.SetXY(tentacles.getChildren(), 1950, 800);
+     Phaser.Actions.SetXY(tentacles.getChildren(), 1950, 800);
      Phaser.Actions.Call(tentacles.getChildren(),
 
      function moveT(move){
@@ -242,20 +260,37 @@ function create ()
      //Powerups
      antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
 
-     this.physics.add.overlap(theBoss, player, boss,  attack_boss, null, this);
+     this.physics.add.overlap(theBoss, player,  attack_boss, null, this);
      this.physics.add.overlap(player, antibodyPowerup, getAntibodyPowerup, null, this);
-     this.physics.add.overlap(theBoss, antibodyStorm, boss, boss_antibody_damage, null, this);
-     this.physics.add.overlap(theBoss, player, boss, boss_damage, null, this);
+     this.physics.add.overlap(theBoss, antibodyStorm, boss_antibody_damage, null, this);
+     this.physics.add.overlap(theBoss, player, boss_damage, null, this);
      this.physics.add.overlap(player, healthpacks, getHealth, null, this);
 
      this.physics.add.overlap(player, tentacles, tentacle_damage, null, this);
      this.physics.add.overlap(player, lasers, laser_damage, null, this);
 }
 
-// function to move all spawns of tentacles
-function moveTentacles(tentacles){
+// // function to move all spawns of tentacles
+// function moveTentacles(tentacles){
+//
+// }
 
-}
+// // reveal weakpoints
+// function hideWP(theBoss){
+//   console.log("there is it!!")
+//   theBoss.children.iterate((child) => {
+//     child.setVisible(false);
+//     child.body.enable = false;
+// });
+// }
+//
+// function reveal(theBoss){
+//   console.log("there is it!!")
+//   theBoss.children.iterate((child) => {
+//     child.setVisible(true);
+//     child.body.enable = true;
+// });
+// }
 
 function update()
 {
@@ -485,14 +520,13 @@ function tentacle_damage(player, tentacles)
   //replay
 
 
-function attack_boss(theBoss, player, boss)
+function attack_boss(theBoss, player)
 {
   if (attackButton.Q.isDown)
   {
     villainHealthbar.x += 0.48 * villainDamageIntensity
     villainHealthbar.displayWidth -= villainDamageIntensity
     villainHealth -= villainDamageIntensity
-    boss.setTint(0xff0000)
 
   if(villainHealth <= 280 && villainHealth > 270)
   {
@@ -539,13 +573,12 @@ function boss_damage(theBoss, player, storm){
     }
   }
 
-  function boss_antibody_damage(theBoss, antibodyStorm, boss)
+  function boss_antibody_damage(theBoss, antibodyStorm)
 {
     villainDamageIntensity = .02
     villainHealthbar.x += 0.48 * villainDamageIntensity
     villainHealthbar.displayWidth -= villainDamageIntensity
     villainHealth -= villainDamageIntensity
-    boss.setTint(0xff0000)
     villainDamageIntensity = 2
     this.sound.play("attack");
   if(villainHealth < 0)

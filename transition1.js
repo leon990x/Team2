@@ -15,7 +15,7 @@ function ct1()
   next = this.add.text(1300, 200, "Next Destination:" + "\n" + "Respiratory System").setScale(3);
   start = this.add.text(1450, 500,"Click to start").setScale(3);
 
-  this.input.on("pointerdown", () => this.scene.start(respiratory));
+  this.input.on("pointerdown", () => this.scene.start(bossScene));
 }
 
 function ut1()

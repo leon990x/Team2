@@ -18,7 +18,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 300 },
-            debug: false
+            debug: true
         }
     },
     scene: [tutorial, transition1, respiratory, transition3, bossScene, gameOver, win]
@@ -37,6 +37,7 @@ var heroTakingDamage = false;
 var villainTakingDamage = false;
 var heroDamageIntensity = 2;
 var villainDamageIntensity = 2;
+// var wpTimer;
 
 //For Powerups
 var heroHealIntensity = 42;
