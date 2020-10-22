@@ -292,7 +292,7 @@ function u1()
   // walking
     if (cursors.left.isDown)
     {
-        player.setVelocityX(-260);
+        player.setVelocityX(-350);
 
         player.anims.play('leftWalking', true);
 
@@ -301,14 +301,14 @@ function u1()
         // Jumping
             if (cursors.up.isDown && player.body.touching.down)
         {
-            player.setVelocityY(-330);
+            player.setVelocityY(-1600);
 
             if (lookLeft == true){
             player.anims.play('jumpLeft');
             this.sound.play("jump");
         }
 
-        else{
+            if (lookLeft == false) {
             player.anims.play('jumpRight');
             this.sound.play("jump");
             lookLeft = false;
@@ -316,16 +316,15 @@ function u1()
         }
 
         // attacking
-        else if (attackButton.Q.isDown)
+        if (attackButton.Q.isDown)
         {
-            // player.setVelocityY(0);
 
             if (lookLeft == true){
             player.anims.play('attackLeft');
             this.sound.play("attack")
         }
 
-        else{
+         if (!attackButton.Q.isDown) {
             player.anims.play('attackRight');
             this.sound.play("attack")
             lookLeft = false;
@@ -334,17 +333,17 @@ function u1()
     }
 
     // Jumping
-    else if (cursors.up.isDown && player.body.touching.down)
+    if (cursors.up.isDown && player.body.touching.down)
     {
 
-        player.setVelocityY(-330);
+        player.setVelocityY(-1600);
 
-        if (lookLeft == true){
+        if (lookLeft == true) {
         player.anims.play('jumpLeft');
         this.sound.play("jump");
     }
 
-    else{
+        if (lookLeft == false) {
         player.anims.play('jumpRight');
         this.sound.play("jump");
         lookLeft = false;
@@ -354,16 +353,16 @@ function u1()
 
 
     // attacking
-    else if (attackButton.Q.isDown)
+    if (attackButton.Q.isDown)
     {
         // player.setVelocityY(0);
 
-        if (lookLeft == true){
+        if (lookLeft == true) {
         player.anims.play('attackLeft');
         this.sound.play("attack")
       }
 
-      else{
+        if (lookLeft == false) {
         player.anims.play('attackRight');
         this.sound.play("attack")
         lookLeft = false;
@@ -371,9 +370,9 @@ function u1()
     }
     //
 
-    else if (cursors.right.isDown)
+    if (cursors.right.isDown)
     {
-        player.setVelocityX(260);
+        player.setVelocityX(350);
 
         player.anims.play('rightWalking', true);
 
@@ -381,14 +380,14 @@ function u1()
         // Jumping
         if (cursors.up.isDown && player.body.touching.down)
         {
-            player.setVelocityY(-330);
+            player.setVelocityY(-1600);
 
             if (lookLeft == true){
             player.anims.play('jumpLeft');
             this.sound.play("jump");
         }
 
-        else{
+        if (!(cursors.up.isDown && player.body.touching.down)){
             player.anims.play('jumpRight');
             this.sound.play("jump");
             lookLeft = false;
@@ -398,16 +397,16 @@ function u1()
     }
 
     // attacking
-    else if (attackButton.Q.isDown)
+    if (attackButton.Q.isDown)
     {
-        player.setVelocityY(0);
+        //player.setVelocityY(0);
 
-        if (lookLeft == true){
+        if (lookLeft == true) {
         player.anims.play('attackLeft');
         this.sound.play("attack")
       }
 
-      else{
+        if (lookLeft == false) {
         player.anims.play('attackRight');
         this.sound.play("attack")
         lookLeft = false;
@@ -415,15 +414,15 @@ function u1()
     }
 
     // turn direction
-    else
+    if (!cursors.left.isDown && !cursors.right.isDown)
     {
         player.setVelocityX(0);
 
-        if (lookLeft == true){
+        if (lookLeft == true) {
         player.anims.play('turnLeft');
       }
 
-      else{
+        if (lookLeft == false) {
         player.anims.play('turnRight');
         lookLeft = false;
       }
