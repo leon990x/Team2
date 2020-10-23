@@ -91,7 +91,7 @@ function create ()
    villainRedhealth = this.add.image(1700, 50, 'red')
    villainHealthbar = this.add.image(1700, 50, 'statusbar')
    villainHealthbar.displayWidth = 415
-   boss_text = this.add.text(1200, 40, "Coronavirus").setScale(3);
+   boss_text = this.add.text(1170, 40, "Coronavirus").setScale(3);
 
    //Edge colliders
    ground = this.physics.add.staticGroup();
@@ -431,7 +431,7 @@ function update()
         // Jumping
             if (cursors.up.isDown && player.body.touching.down)
         {
-            player.setVelocityY(-330);
+            player.setVelocityY(-380);
 
             if (lookLeft == true){
             player.anims.play('jumpLeft');
@@ -474,7 +474,7 @@ function update()
     // Jumping
     else if (cursors.up.isDown && player.body.touching.down)
     {
-        player.setVelocityY(-330);
+        player.setVelocityY(-380);
 
         if (lookLeft == true){
         player.anims.play('jumpLeft');
@@ -526,7 +526,7 @@ function update()
         // Jumping
         if (cursors.up.isDown && player.body.touching.down)
         {
-            player.setVelocityY(-330);
+            player.setVelocityY(-380);
 
             if (lookLeft == true){
             player.anims.play('jumpLeft');

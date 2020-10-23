@@ -37,9 +37,9 @@ function p1()
     // this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
 // Audio
-  this.load.audio("attack", "assets/Audio/attack.mp3")
-  this.load.audio("jump", "assets/Audio/jump.mp3")
-  this.load.audio("damage", "assets/Audio/damage.mp3")
+  this.load.audio("attack", "Assets/Audio/attack.mp3")
+  this.load.audio("jump", "Assets/Audio/jump.mp3")
+  this.load.audio("damage", "Assets/Audio/damage.mp3")
 
 // SpriteSheets
     this.load.spritesheet('whiteBC',

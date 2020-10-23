@@ -22,7 +22,7 @@ var config = {
         }
     },
     scene: [tutorial, transition1, respiratory, transition3, bossScene, gameOver, win]
-    // scene: respiratory
+    // scene: bossScene
 };
 
 // game instance and global variables
