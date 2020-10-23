@@ -419,75 +419,60 @@ function update()
   // walking
     if (cursors.left.isDown)
     {
-        player.setVelocityX(-160);
+        player.setVelocityX(-350);
 
         player.anims.play('leftWalking', true);
 
         lookLeft = true;
 
-        player.clearTint();
-        //boss.clearTint();
-
         // Jumping
             if (cursors.up.isDown && player.body.touching.down)
         {
-            player.setVelocityY(-380);
+            player.setVelocityY(-1600);
 
             if (lookLeft == true){
             player.anims.play('jumpLeft');
             this.sound.play("jump");
-            player.clearTint();
-            //boss.clearTint();
         }
 
-        else{
+            if (lookLeft == false) {
             player.anims.play('jumpRight');
-            this.sound.play("jump")
-            player.clearTint();
-            //boss.clearTint();
+            this.sound.play("jump");
             lookLeft = false;
         }
         }
 
         // attacking
-        else if (attackButton.Q.isDown)
+        if (attackButton.Q.isDown)
         {
-            // player.setVelocityY(0);
 
             if (lookLeft == true){
             player.anims.play('attackLeft');
-            this.sound.play("attack");
-            player.clearTint();
-            //boss.clearTint();
+            this.sound.play("attack")
         }
 
-        else{
+         if (!attackButton.Q.isDown) {
             player.anims.play('attackRight');
-            this.sound.play("attack");
+            this.sound.play("attack")
             lookLeft = false;
-            player.clearTint();
-            //boss.clearTint();
         }
         }
     }
 
     // Jumping
-    else if (cursors.up.isDown && player.body.touching.down)
+    if (cursors.up.isDown && player.body.touching.down)
     {
-        player.setVelocityY(-380);
 
-        if (lookLeft == true){
+        player.setVelocityY(-1600);
+
+        if (lookLeft == true) {
         player.anims.play('jumpLeft');
         this.sound.play("jump");
-        player.clearTint();
-        //boss.clearTint();
     }
 
-    else{
+        if (lookLeft == false) {
         player.anims.play('jumpRight');
         this.sound.play("jump");
-        player.clearTint();
-        //boss.clearTint();
         lookLeft = false;
     }
     }
@@ -495,51 +480,43 @@ function update()
 
 
     // attacking
-    else if (attackButton.Q.isDown)
+    if (attackButton.Q.isDown)
     {
         // player.setVelocityY(0);
 
-        if (lookLeft == true){
+        if (lookLeft == true) {
         player.anims.play('attackLeft');
-        this.sound.play("attack");
-        player.clearTint();
+        this.sound.play("attack")
       }
 
-      else{
+        if (lookLeft == false) {
         player.anims.play('attackRight');
-        this.sound.play("attack");
-        player.clearTint();
+        this.sound.play("attack")
         lookLeft = false;
       }
     }
     //
 
-    else if (cursors.right.isDown)
+    if (cursors.right.isDown)
     {
-        player.setVelocityX(160);
+        player.setVelocityX(350);
 
         player.anims.play('rightWalking', true);
-        player.clearTint();
-        //boss.clearTint();
 
         lookLeft = false;
         // Jumping
         if (cursors.up.isDown && player.body.touching.down)
         {
-            player.setVelocityY(-380);
+            player.setVelocityY(-1600);
 
             if (lookLeft == true){
             player.anims.play('jumpLeft');
             this.sound.play("jump");
-            player.clearTint();
-            //boss.clearTint();
         }
 
-        else{
+        if (!(cursors.up.isDown && player.body.touching.down)){
             player.anims.play('jumpRight');
             this.sound.play("jump");
-            player.clearTint();
-            //boss.clearTint();
             lookLeft = false;
         }
         }
@@ -547,34 +524,32 @@ function update()
     }
 
     // attacking
-    else if (attackButton.Q.isDown)
+    if (attackButton.Q.isDown)
     {
-        player.setVelocityY(0);
+        //player.setVelocityY(0);
 
-        if (lookLeft == true){
+        if (lookLeft == true) {
         player.anims.play('attackLeft');
-        this.sound.play("attack");
-        player.clearTint();
+        this.sound.play("attack")
       }
 
-      else{
+        if (lookLeft == false) {
         player.anims.play('attackRight');
-        this.sound.play("attack");
-        player.clearTint();
+        this.sound.play("attack")
         lookLeft = false;
       }
     }
 
     // turn direction
-    else
+    if (!cursors.left.isDown && !cursors.right.isDown)
     {
         player.setVelocityX(0);
 
-        if (lookLeft == true){
+        if (lookLeft == true) {
         player.anims.play('turnLeft');
       }
 
-      else{
+        if (lookLeft == false) {
         player.anims.play('turnRight');
         lookLeft = false;
       }

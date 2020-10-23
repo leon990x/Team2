@@ -379,103 +379,77 @@ if (flaser_timer > 4 && wave_count < 4){
   // walking
     if (cursors.left.isDown)
     {
-        player.setVelocityX(-260);
+        player.setVelocityX(-350);
 
         player.anims.play('leftWalking', true);
 
         lookLeft = true;
 
-        player.clearTint();
-        flu_enemy.clearTint();
-
         // Jumping
             if (cursors.up.isDown && player.body.touching.down)
         {
-            player.setVelocityY(-330);
+            player.setVelocityY(-1600);
 
             if (lookLeft == true){
-              player.clearTint();
-              flu_enemy.clearTint();
-
-              player.anims.play('jumpLeft');
-              this.sound.play("jump");
-
-              player.clearTint();
-              flu_enemy.clearTint();
+            player.anims.play('jumpLeft');
+            this.sound.play("jump");
         }
 
-        else{
+            if (lookLeft == false) {
             player.anims.play('jumpRight');
             this.sound.play("jump");
             lookLeft = false;
-
-            player.clearTint();
-            flu_enemy.clearTint();
         }
         }
 
         // attacking
-        else if (attackButton.Q.isDown)
+        if (attackButton.Q.isDown)
         {
-            // player.setVelocityY(0);
 
             if (lookLeft == true){
-              player.clearTint();
-
-              player.anims.play('attackLeft');
-              this.sound.play("attack")
+            player.anims.play('attackLeft');
+            this.sound.play("attack")
         }
 
-        else{
-          player.clearTint();
-
-          player.anims.play('attackRight');
-          this.sound.play("attack")
-          lookLeft = false;
+         if (!attackButton.Q.isDown) {
+            player.anims.play('attackRight');
+            this.sound.play("attack")
+            lookLeft = false;
         }
         }
     }
 
     // Jumping
-    else if (cursors.up.isDown && player.body.touching.down)
+    if (cursors.up.isDown && player.body.touching.down)
     {
-        player.setVelocityY(-330);
 
-        if (lookLeft == true){
+        player.setVelocityY(-1600);
+
+        if (lookLeft == true) {
         player.anims.play('jumpLeft');
         this.sound.play("jump");
-
-        player.clearTint();
-        flu_enemy.clearTint();
     }
 
-    else{
+        if (lookLeft == false) {
         player.anims.play('jumpRight');
         this.sound.play("jump");
         lookLeft = false;
-
-        player.clearTint();
-        flu_enemy.clearTint();
     }
     }
 
 
 
     // attacking
-    else if (attackButton.Q.isDown)
+    if (attackButton.Q.isDown)
     {
         // player.setVelocityY(0);
 
-        if (lookLeft == true){
-          player.clearTint();
-
-          player.anims.play('attackLeft');
-          this.sound.play("attack")
+        if (lookLeft == true) {
+        player.anims.play('attackLeft');
+        this.sound.play("attack")
       }
 
-      else{
-        player.clearTint();
-
+        if (lookLeft == false) {
         player.anims.play('attackRight');
         this.sound.play("attack")
         lookLeft = false;
@@ -483,34 +457,24 @@ if (flaser_timer > 4 && wave_count < 4){
     }
     //
 
-    else if (cursors.right.isDown)
+    if (cursors.right.isDown)
     {
-        player.setVelocityX(260);
+        player.setVelocityX(350);
 
         player.anims.play('rightWalking', true);
 
         lookLeft = false;
-
-        player.clearTint();
-        flu_enemy.clearTint();
-
         // Jumping
         if (cursors.up.isDown && player.body.touching.down)
         {
-            player.setVelocityY(-330);
+            player.setVelocityY(-1600);
 
             if (lookLeft == true){
-              player.clearTint();
-              flu_enemy.clearTint();
-
-              player.anims.play('jumpLeft');
-              this.sound.play("jump");
+            player.anims.play('jumpLeft');
+            this.sound.play("jump");
         }
 
-        else{
-            player.clearTint();
-            flu_enemy.clearTint();
-
+        if (!(cursors.up.isDown && player.body.touching.down)){
             player.anims.play('jumpRight');
             this.sound.play("jump");
             lookLeft = false;
@@ -520,42 +484,32 @@ if (flaser_timer > 4 && wave_count < 4){
     }
 
     // attacking
-    else if (attackButton.Q.isDown)
+    if (attackButton.Q.isDown)
     {
-        player.setVelocityY(0);
+        //player.setVelocityY(0);
 
-        if (lookLeft == true){
-          player.clearTint();
-
-          player.anims.play('attackLeft');
-          this.sound.play("attack")
+        if (lookLeft == true) {
+        player.anims.play('attackLeft');
+        this.sound.play("attack")
       }
 
-      else{
+        if (lookLeft == false) {
         player.anims.play('attackRight');
         this.sound.play("attack")
-        player.clearTint();
-
         lookLeft = false;
       }
     }
 
     // turn direction
-    else
+    if (!cursors.left.isDown && !cursors.right.isDown)
     {
         player.setVelocityX(0);
 
-        if (lookLeft == true){
-          player.clearTint();
-          flu_enemy.clearTint();
-
-          player.anims.play('turnLeft');
+        if (lookLeft == true) {
+        player.anims.play('turnLeft');
       }
 
-      else{
-        player.clearTint();
-        flu_enemy.clearTint();
-
+        if (lookLeft == false) {
         player.anims.play('turnRight');
         lookLeft = false;
       }
