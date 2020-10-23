@@ -461,7 +461,7 @@ if (flaser_timer > 4 && wave_count < 4){
 
     if (attackButton.Q.isDown && qLifted)
     {
-        //qLifted = false;
+        qLifted = false;
 
         if (lookLeft == true) {
             player.anims.play('attackLeft', true);
