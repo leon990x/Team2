@@ -34,26 +34,23 @@ function p1()
     this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png');
     this.load.image('antibody', 'Assets/Powers/antibody.png');
     this.load.image('sebaceousGland', 'Assets/Tutorial/sebaceousGland.png');
-    this.load.image('pow', 'Assets/Players/damage.png');
+    this.load.image('slash', 'Assets/Players/Slash.png');
     // this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
-    // particles
-    // this.load.image('pow', 'Assets/Particles/pow.png');
+// Audio
+  this.load.audio("attack", "Assets/Audio/attack.mp3")
+  this.load.audio("jump", "Assets/Audio/jump.mp3")
+  this.load.audio("damage", "Assets/Audio/damage.mp3")
 
-  // Audio
-    this.load.audio("attack", "Assets/Audio/attack.mp3");
-    this.load.audio("jump", "Assets/Audio/jump.mp3");
-    this.load.audio("damage", "Assets/Audio/damage.mp3");
-
-  // SpriteSheets
-      this.load.spritesheet('whiteBC',
-          'Assets/Players/whiteBCSpriteR.png',
-          { frameWidth: 110, frameHeight: 168 }
-  );
-      this.load.spritesheet('LwhiteBC',
-          'Assets/Players/LwhiteBCSR.png',
-          { frameWidth: 110, frameHeight: 168 }
-  );
+// SpriteSheets
+    this.load.spritesheet('whiteBC',
+        'Assets/Players/whiteBCSpriteR.png',
+        { frameWidth: 110, frameHeight: 168 }
+);
+    this.load.spritesheet('LwhiteBC',
+        'Assets/Players/LwhiteBCSR.png',
+        { frameWidth: 110, frameHeight: 168 }
+);
 
 
 }
@@ -79,25 +76,11 @@ function c1()
    floor = ground.create(960, 940, "floor1");
    gland = this.physics.add.staticGroup();
 
-   // Particles
-
-   // const pow = this.add.particles('pow');
-   // var emit = pow.createEmitter({
-   //   frames: {start: 1, end: 3},
-   //   cycle: false,
-   //   quantity: 5,
-   //   x: 960,
-   //   y: 460,
-   //   speed: 2000,
-   //   lifespan: 5000,
-   //   blendMode: 'ADD'
-   // });
-
 
    // sounds
-   attack = this.sound.add('attack', {volume: 0.1});
-   damage = this.sound.add('damage', {volume: 0.1});
-   jump = this.sound.add('jump', {volume: 0.1});
+   attack = this.sound.add('attack')
+   damage = this.sound.add('damage')
+   jump = this.sound.add('jump')
 
    // prompt
    this.promptl1 = this.add.text(520, 50, "did it work?", {font: "40px Arial", fill: "black"})
@@ -110,6 +93,8 @@ function c1()
    this.physics.add.collider(player, floor);
    player.body.setGravityY(1);
 
+   // slash
+   slash = this.physics.add.group({immovable: true, allowGravity: false});
 
    //Powerups
    healthpacks = this.physics.add.group();
@@ -127,18 +112,17 @@ function c1()
    staph_still = this.physics.add.group();
    this.physics.add.collider(staph_still, ground);
    this.physics.add.overlap(staph_still, player, player_damage, null, this);
-   this.physics.add.overlap(staph_still, player, staph_still_damage, null, this);
+   this.physics.add.overlap(staph_still, slash, staph_still_damage, null, this);
 
    //Staph move
    staph_move = this.physics.add.group();
    this.physics.add.collider(staph_move, ground);
    this.physics.add.overlap(staph_move, player, player_damage, null, this);
-   this.physics.add.overlap(staph_move, player, staph_move_damage, null, this);
+   this.physics.add.overlap(staph_move, slash, staph_move_damage, null, this);
    this.physics.add.overlap(staph_move, antibodyStorm, staph_antibody_damage, null, this);
-   
-   // damage image to attach to player
-   hit = this.add.image(player.x, player.y, "pow");
-   hit.visible = false;
+
+
+
 
 
 
@@ -200,13 +184,8 @@ function c1()
 }
 
 
-
 function u1()
 {
-  if(attackButton.Q.isUp){
-    hit.visible = false;
-  }
-
     if (progression == 0) {
         this.promptl1.setText("Welcome to Fightosis! Press the W key to continue.");
 
@@ -314,113 +293,55 @@ function u1()
 
 
   // walking
+
     if (cursors.left.isDown)
     {
         player.setVelocityX(-350);
 
         player.anims.play('leftWalking', true);
 
-        hit.setX(player.x - 50).setY(player.y);
-
         lookLeft = true;
 
         // Jumping
             if (cursors.up.isDown && player.body.touching.down)
         {
-            player.setVelocityY(-1600);
+                player.setVelocityY(-1600);
 
             if (lookLeft == true){
-            hit.setX(player.x - 50).setY(player.y);
-            player.anims.play('jumpLeft');
-            this.sound.play("jump");
+                player.anims.play('jumpLeft');
+                this.sound.play("jump");
         }
 
-            else if (lookLeft == false) {
-            hit.setX(player.x + 50).setY(player.y);
-            player.anims.play('jumpRight');
-            this.sound.play("jump");
-            lookLeft = false;
+            if (lookLeft == false) {
+                player.anims.play('jumpRight');
+                this.sound.play("jump");
+                lookLeft = false;
         }
         }
 
-        // attacking
-        else if (Phaser.Input.Keyboard.JustDown(attackButton.Q))
-        {
-
-            if (lookLeft == true){
-            hit.setX(player.x - 50).setY(player.y);
-            this.sound.play("attack");
-
-            if (attackButton.Q.isDown) {
-            player.anims.play('attackLeft', true);
-          }
-        }
-
-         else if (Phaser.Input.Keyboard.JustDown(attackButton.Q)) {
-            hit.setX(player.x + 50).setY(player.y);
-            this.sound.play("attack");
-
-            if (attackButton.Q.isDown) {
-            player.anims.play('attackRight', true);
-          }
-            lookLeft = false;
-        }
-        }
     }
 
     // Jumping
-    else if (cursors.up.isDown && player.body.touching.down)
+    if (cursors.up.isDown && player.body.touching.down)
     {
 
         player.setVelocityY(-1600);
 
         if (lookLeft == true) {
-        hit.setX(player.x - 50).setY(player.y);
         player.anims.play('jumpLeft');
         this.sound.play("jump");
     }
 
-        else if (lookLeft == false) {
-        hit.setX(player.x + 50).setY(player.y);
+        if (lookLeft == false) {
         player.anims.play('jumpRight');
         this.sound.play("jump");
         lookLeft = false;
     }
     }
 
-
-
-    // attacking
-    else if (Phaser.Input.Keyboard.JustDown(attackButton.Q))
-    {
-        // player.setVelocityY(0);
-
-        if (lookLeft == true) {
-        hit.setX(player.x - 50).setY(player.y);
-        this.sound.play("attack")
-
-        if (attackButton.Q.isDown) {
-        player.anims.play('attackLeft', true);
-      }
-      }
-
-        else if (lookLeft == false) {
-        hit.setX(player.x + 50).setY(player.y);
-        this.sound.play("attack");
-
-        if (attackButton.Q.isDown) {
-        player.anims.play('attackRight', true);
-      }
-        lookLeft = false;
-      }
-    }
-    //
-
-    else if (cursors.right.isDown)
+    if (cursors.right.isDown)
     {
         player.setVelocityX(350);
-
-        hit.setX(player.x + 50).setY(player.y);
 
         player.anims.play('rightWalking', true);
 
@@ -431,13 +352,11 @@ function u1()
             player.setVelocityY(-1600);
 
             if (lookLeft == true){
-            hit.setX(player.x - 50).setY(player.y);
             player.anims.play('jumpLeft');
             this.sound.play("jump");
         }
 
         if (!(cursors.up.isDown && player.body.touching.down)){
-            hit.setX(player.x + 50).setY(player.y);
             player.anims.play('jumpRight');
             this.sound.play("jump");
             lookLeft = false;
@@ -447,43 +366,46 @@ function u1()
     }
 
     // attacking
-    else if (Phaser.Input.Keyboard.JustDown(attackButton.Q))
+    if (!attackButton.Q.isDown) {
+        qLifted = true;
+    }
+
+
+    if (attackButton.Q.isDown && qLifted)
     {
-        //player.setVelocityY(0);
+        qLifted = false;
 
         if (lookLeft == true) {
-        hit.setX(player.x - 50).setY(player.y);
-        this.sound.play("attack");
+            player.anims.play('attackLeft', true);
+            this.sound.play("attack")
 
-        if (attackButton.Q.isDown) {
-        player.anims.play('attackLeft', true);
-      }
+            var sl = slash.create((player.x - 45), player.y, "slash")
+            sl.flipX = true;
+            sl.setVelocityX(-500);
+            setTimeout(function(){sl.disableBody(true, true);}, 90);
       }
 
-        else if (lookLeft == false) {
-        hit.setX(player.x + 50).setY(player.y);
-        this.sound.play("attack");
+        if (lookLeft == false) {
+            player.anims.play('attackRight', true);
+            this.sound.play("attack")
+            lookLeft = false;
 
-        if (attackButton.Q.isDown) {
-        player.anims.play('attackRight', true);
-      }
-        lookLeft = false;
+            var sl = slash.create((player.x + 45), player.y, "slash")
+            sl.setVelocityX(500);
+            setTimeout(function(){sl.disableBody(true, true);}, 90);
       }
     }
 
     // turn direction
-    else if (!cursors.left.isDown && !cursors.right.isDown)
+    if (!cursors.left.isDown && !cursors.right.isDown)
     {
         player.setVelocityX(0);
-          hit.setX(player.x + 50).setY(player.y);
 
         if (lookLeft == true) {
-        hit.setX(player.x - 50).setY(player.y);
         player.anims.play('turnLeft');
       }
 
         if (lookLeft == false) {
-        hit.setX(player.x + 50).setY(player.y);
         player.anims.play('turnRight');
         lookLeft = false;
       }
@@ -504,27 +426,23 @@ function u1()
 }
 
 
-function staph_still_damage(player, staph_still){
-  if (attackButton.Q.isDown){
+function staph_still_damage(staph_still, slash){
+
     staph_still_health -= 1
-    hit.visible = true;
     this.sound.play("damage");
-  }
-  else{
-    hit.visible = false;
-  }
+    console.log(staph_still_health);
+
 
   if (staph_still_health <= 0) {
+
       staph_still.disableBody(true, true);
   }
 }
 
-function staph_move_damage(player, staph_move){
-  if (attackButton.Q.isDown){
-    staph_move.health -= 1;
-    this.sound.play("damage");
+function staph_move_damage(staph_move, slash){
 
-  }
+    staph_move.health -= 1
+
 
   if (staph_move.health <= 0) {
       staph_move.disableBody(true, true);
@@ -534,7 +452,7 @@ function staph_move_damage(player, staph_move){
 }
 
 function staph_antibody_damage(staph_move, antibodyStorm){
-    console.log(staph_move.health)
+
     staph_move.health -= 1;
     this.sound.play("damage");
 
