@@ -17,11 +17,11 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 3500 },
+            gravity: { y: 300 },
             debug: false
         }
     },
-    scene: [tutorial, transition1, respiratory, transition3, bossScene, gameOver, win]
+    scene: respiratory//[tutorial, transition1, respiratory, transition3, bossScene, gameOver, win]
     // scene: bossScene
 };
 

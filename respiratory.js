@@ -9,6 +9,7 @@ var flaser_timer = 0;
 var num_enemies;
 var tB_health = 100;
 var wave_text;
+var defeated_text;
 var defeated = 0;
 
 function p1()
@@ -49,6 +50,7 @@ function c1()
 {
    background = this.add.image(960, 540, 'environment');
    wave_text = this.add.text(700, 240, "Tuberculosis:" + "\r\n" + " Wave " + wave_count + " of 3").setScale(4);
+   defeated_text = this.add.text(1470, 130, "Enemies left in wave:" + 5 - defeated).setScale(3);
    boss_text = this.add.text(950, 40, "The Flu (Miniboss)").setScale(3);
    cursors = this.input.keyboard.createCursorKeys();
    attackButton = this.input.keyboard.addKeys("Q,P");
@@ -77,7 +79,7 @@ function c1()
    player.setBounce(0.3);
    player.setCollideWorldBounds(true);
    this.physics.add.collider(player, ground);
-   player.body.setGravityY(1);
+   player.body.setGravityY(2400);
 
    //TB Enemy
    tB = this.physics.add.group({
@@ -252,7 +254,7 @@ else{
     console.log('num_enemies: ' + num_enemies + " wave " + wave_count)
   if (wave_count === 4 && num_enemies === 0){
     console.log("SCARY")
-
+    defeated_text.visible = false;
     wave_text.setText("  Wave Over:" + "\n" + "Defeat the Flu").setScale(4);
     wave_text.visible = true;
   }
@@ -371,6 +373,19 @@ if (flaser_timer > 4 && wave_count < 4){
               enemy.play("crawl", true);
               enemy.body.velocity.x = 180;
           }
+
+      //fail safes
+
+      if (enemy.x < 10)
+      {
+        enemy.body.velocity.x = 100;
+      }
+
+      if (enemy.x > 1910)
+      {
+        enemy.body.velocity.x = -100;
+      }
+
       }
     })
    }
@@ -541,11 +556,17 @@ function tb_damage(player, tB){
     if (tB_health <= 0){
       tB.destroy();
       defeated += 1;
+
+      defeated_text.visible = true;
+      defeated_text.setText("Enemies left in wave:" + String(5 - defeated)).setScale(2);
+
+
       num_enemies -= 1;
       tB_health = 100;
       this.sound.play("damage");
       if (defeated == 5){
         defeated = 0;
+        defeated_text.visible = false;
         console.log(wave_count, defeated)
         wave_count += 1;
       if (wave_count < 4){

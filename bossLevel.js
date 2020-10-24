@@ -137,7 +137,7 @@ function create ()
     player.setBounce(0.3);
     player.setCollideWorldBounds(true);
     this.physics.add.collider(player, ground);
-    player.body.setGravityY(1);
+    player.body.setGravityY(1600);
 
 
    healthpacks = this.physics.add.group();
@@ -218,6 +218,7 @@ function create ()
           repeat: 10,
           setXY: {x: 12, y: 0, stepX: 200},
           setScale: {x: 1, y: 1},
+          setGravityY: -10,
           runChildUpdate: true
       }
       );
@@ -428,7 +429,7 @@ function update()
         // Jumping
             if (cursors.up.isDown && player.body.touching.down)
         {
-            player.setVelocityY(-1600);
+            player.setVelocityY(-1000);
 
             if (lookLeft == true){
             player.anims.play('jumpLeft');
@@ -463,7 +464,7 @@ function update()
     if (cursors.up.isDown && player.body.touching.down)
     {
 
-        player.setVelocityY(-1600);
+        player.setVelocityY(-1000);
 
         if (lookLeft == true) {
         player.anims.play('jumpLeft');
@@ -507,7 +508,7 @@ function update()
         // Jumping
         if (cursors.up.isDown && player.body.touching.down)
         {
-            player.setVelocityY(-1600);
+            player.setVelocityY(-1000);
 
             if (lookLeft == true){
             player.anims.play('jumpLeft');
