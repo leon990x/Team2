@@ -39,6 +39,7 @@ var villainTakingDamage = false;
 var heroDamageIntensity = 2;
 var villainDamageIntensity = 2;
 var villainshield = false;
+var hit;
 
 //For Powerups
 var heroHealIntensity = 42;

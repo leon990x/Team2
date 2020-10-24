@@ -22,6 +22,7 @@ function p1()
     this.load.image('healthpack', 'Assets/Boss/heart.png');
     this.load.image('flu', 'Assets/Enemy/Flu.png');
     this.load.image('flaser', 'Assets/Enemy/flu_laser.png');
+    this.load.image('slash', 'Assets/Players/Slash.png');
     //this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
 // Audio
@@ -81,6 +82,9 @@ function c1()
    this.physics.add.collider(player, ground);
    player.body.setGravityY(2400);
 
+   // slash
+   slash = this.physics.add.group({immovable: true, allowGravity: false});
+
    //TB Enemy
    tB = this.physics.add.group({
      delay: 200,
@@ -109,7 +113,7 @@ function c1()
    // tb_enemy.body.setGravityY(1);
    this.physics.add.collider(tB, floor);
    this.physics.add.overlap(tB, player, player_damage, null, this);
-   this.physics.add.overlap(tB, player, tb_damage, null, this);
+   this.physics.add.overlap(tB, slash, tb_damage, null, this);
    num_enemies = 1;
 
    // Flu MiniBoss
@@ -120,7 +124,7 @@ function c1()
    flu_enemy.body.allowGravity = false;
    flu_enemy.body.immovable = true; //Makes it so nothing moves it
    this.physics.add.collider(flu_enemy, floor);
-   this.physics.add.overlap(flu_enemy, player, flu_damage, null, this);
+   this.physics.add.overlap(flu_enemy, slash, flu_damage, null, this);
 
    moveFlu = this.tweens.add({
      targets: flu_enemy,
@@ -392,6 +396,7 @@ if (flaser_timer > 4 && wave_count < 4){
   // }
 
   // walking
+
     if (cursors.left.isDown)
     {
         player.setVelocityX(-350);
@@ -403,35 +408,20 @@ if (flaser_timer > 4 && wave_count < 4){
         // Jumping
             if (cursors.up.isDown && player.body.touching.down)
         {
-            player.setVelocityY(-1600);
+                player.setVelocityY(-1600);
 
             if (lookLeft == true){
-            player.anims.play('jumpLeft');
-            this.sound.play("jump");
+                player.anims.play('jumpLeft');
+                this.sound.play("jump");
         }
 
             if (lookLeft == false) {
-            player.anims.play('jumpRight');
-            this.sound.play("jump");
-            lookLeft = false;
+                player.anims.play('jumpRight');
+                this.sound.play("jump");
+                lookLeft = false;
         }
         }
 
-        // attacking
-        if (attackButton.Q.isDown)
-        {
-
-            if (lookLeft == true){
-            player.anims.play('attackLeft');
-            this.sound.play("attack")
-        }
-
-         if (!attackButton.Q.isDown) {
-            player.anims.play('attackRight');
-            this.sound.play("attack")
-            lookLeft = false;
-        }
-        }
     }
 
     // Jumping
@@ -451,26 +441,6 @@ if (flaser_timer > 4 && wave_count < 4){
         lookLeft = false;
     }
     }
-
-
-
-    // attacking
-    if (attackButton.Q.isDown)
-    {
-        // player.setVelocityY(0);
-
-        if (lookLeft == true) {
-        player.anims.play('attackLeft');
-        this.sound.play("attack")
-      }
-
-        if (lookLeft == false) {
-        player.anims.play('attackRight');
-        this.sound.play("attack")
-        lookLeft = false;
-      }
-    }
-    //
 
     if (cursors.right.isDown)
     {
@@ -499,19 +469,33 @@ if (flaser_timer > 4 && wave_count < 4){
     }
 
     // attacking
-    if (attackButton.Q.isDown)
+    if (!attackButton.Q.isDown) {
+        qLifted = true;
+    }
+
+
+    if (attackButton.Q.isDown && qLifted)
     {
-        //player.setVelocityY(0);
+        qLifted = false;
 
         if (lookLeft == true) {
-        player.anims.play('attackLeft');
-        this.sound.play("attack")
+            player.anims.play('attackLeft', true);
+            this.sound.play("attack")
+
+            var sl = slash.create((player.x - 45), player.y, "slash")
+            sl.flipX = true;
+            sl.setVelocityX(-500);
+            setTimeout(function(){sl.disableBody(true, true);}, 90);
       }
 
         if (lookLeft == false) {
-        player.anims.play('attackRight');
-        this.sound.play("attack")
-        lookLeft = false;
+            player.anims.play('attackRight', true);
+            this.sound.play("attack")
+            lookLeft = false;
+
+            var sl = slash.create((player.x + 45), player.y, "slash")
+            sl.setVelocityX(500);
+            setTimeout(function(){sl.disableBody(true, true);}, 90);
       }
     }
 
@@ -544,14 +528,15 @@ if (flaser_timer > 4 && wave_count < 4){
     }
 }
 
-function tb_damage(player, tB){
+function tb_damage(tB, slash){
   // var tB_children = tB.getChildren([0]);
-  if (attackButton.Q.isDown){
+
     wave_text.visible = false;
     // villainHealthbar.x -= 0.43 * villainDamageIntensity
     // villainHealthbar.displayWidth -= villainDamageIntensity
     // villainHealth -= villainDamageIntensity
     tB_health -= 5;
+    console.log(tB_health);
 
     if (tB_health <= 0){
       tB.destroy();
@@ -575,11 +560,10 @@ function tb_damage(player, tB){
         }
       }
     }
-  }
 }
 
-function flu_damage(player, flu_enemy){
-  if (attackButton.Q.isDown && wave_count >= 4){
+function flu_damage(slash, flu_enemy){
+  if (wave_count >= 4){
     wave_text.visible = false;
     villainHealthbar.x -= 0.48 * 4
     villainHealthbar.displayWidth -= 4

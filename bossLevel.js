@@ -22,6 +22,9 @@ function preload ()
     this.load.image('laser', 'Assets/Boss/laser.png');
     this.load.image('ball', 'Assets/Boss/ronaBall.png');
 
+    // particles
+    this.load.image('spark', 'Assets/Particles/particlesm.png');
+
     this.load.image('wp1', 'Assets/Boss/wp1.png')
     this.load.image('wp2', 'Assets/Boss/wp2.png')
     this.load.image('wp3', 'Assets/Boss/wp3.png')
@@ -32,6 +35,8 @@ function preload ()
     this.load.image('healthpack', 'Assets/Powers/heart.png')
     this.load.image('antibody', 'Assets/Powers/antibody.png')
     this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png')
+
+    this.load.image('slash', 'Assets/Players/Slash.png');
 
 // Audio
   this.load.audio("attack", "Assets/Audio/attack.mp3")
@@ -58,7 +63,7 @@ function create ()
    // Boss weakpoints
    theBoss = this.physics.add.staticGroup();
     //left shoulder
-   theBoss.create(740, 490, "wp6").setScale(1.5); //1
+   theBoss.create(690, 490, "wp6").setScale(1.5); //1
    theBoss.create(600, 580, "wp5").setScale(1.5); //1
    theBoss.create(531, 850, "wp5").setScale(1.5); //2
     //right shoulder
@@ -71,6 +76,8 @@ function create ()
     //right head
     theBoss.create(1110, 270, "wp2").setScale(1.5); //5
     theBoss.create(1109, 90, "wp3").setScale(1.5); //4
+
+    // used to cover the boss's weakpoints
    invisibleBoss = this.physics.add.group({
      key: "corona",
      setXY: {x: 880, y: 480},
@@ -79,6 +86,23 @@ function create ()
      immovable: true,
      visible: false
    });
+
+   // Particles
+   const spark = this.add.particles('spark');
+   var emit = spark.createEmitter({
+     // quantity: 20,
+     // cycle: false,
+     x: 960,
+     y: 460,
+     speed: 900,
+     lifespan: 1000,
+     blendMode: 'ADD',
+     tint: 0x50C878,
+     frequency: -1,
+     scale:{ start: 1, end: 0 },
+     on: false,
+   });
+   // emit.tint.onChange(50C878);
 
    cursors = this.input.keyboard.createCursorKeys();
    attackButton = this.input.keyboard.addKeys("Q,P");
@@ -107,9 +131,9 @@ function create ()
    ground.create(1610, 610, 'platform');
 
    // sounds
-   attack = this.sound.add('attack')
-   damage = this.sound.add('damage')
-   jump = this.sound.add('jump')
+   attack = this.sound.add('attack', {volume: 0.01})
+   damage = this.sound.add('damage', {volume: 0.01})
+   jump = this.sound.add('jump', {volume: 0.01})
 
 
 
@@ -138,6 +162,9 @@ function create ()
     player.setCollideWorldBounds(true);
     this.physics.add.collider(player, ground);
     player.body.setGravityY(1600);
+
+    // slash
+    slash = this.physics.add.group({immovable: true, allowGravity: false});
 
 
    healthpacks = this.physics.add.group();
@@ -317,15 +344,18 @@ function create ()
              Phaser.Actions.SetScale(invisibleBoss.getChildren(), 1.11, 1.11);
              if (this.x < 960)
              {
+               spark.emitParticleAt(child.x, child.y, 1);
                Phaser.Actions.SetScale(invisibleBoss.getChildren(), 1.35, 1.35);
                villainshield = true;
                theBoss.children.iterate((child) => {
                    child.setVisible(true);
+
                });
              }
              if (this.x > 960)
              {
                theBoss.children.iterate((child) => {
+                   spark.emitParticleAt(child.x, child.y, 1);
                    child.setVisible(false);
                });
                Phaser.Actions.SetScale(invisibleBoss.getChildren(), 1.11, 1.11);
@@ -378,7 +408,7 @@ function create ()
      //Powerups
      antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
 
-     this.physics.add.overlap(theBoss, player,  attack_boss, null, this);
+     this.physics.add.overlap(theBoss, slash,  attack_boss, null, this);
      this.physics.add.overlap(player, antibodyPowerup, getAntibodyPowerup, null, this);
      this.physics.add.overlap(theBoss, antibodyStorm, boss_antibody_damage, null, this);
      this.physics.add.overlap(theBoss, player, boss_damage, null, this);
@@ -388,7 +418,7 @@ function create ()
      this.physics.add.overlap(player, lasers, laser_damage, null, this);
 
      // this.physics.add.overlap(player, boss, contact_damage, null, this);
-     this.physics.add.overlap(theBoss, player, attack_boss, null, this);
+     //this.physics.add.overlap(theBoss, player, attack_boss, null, this);
      this.physics.add.overlap(player, ronaBall, tentacle_ss_damage, null, this);
 }
 
@@ -418,6 +448,7 @@ function update()
 {
 
   // walking
+
     if (cursors.left.isDown)
     {
         player.setVelocityX(-350);
@@ -432,32 +463,17 @@ function update()
             player.setVelocityY(-1000);
 
             if (lookLeft == true){
-            player.anims.play('jumpLeft');
-            this.sound.play("jump");
+                player.anims.play('jumpLeft');
+                this.sound.play("jump");
         }
 
             if (lookLeft == false) {
-            player.anims.play('jumpRight');
-            this.sound.play("jump");
-            lookLeft = false;
+                player.anims.play('jumpRight');
+                this.sound.play("jump");
+                lookLeft = false;
         }
         }
 
-        // attacking
-        if (attackButton.Q.isDown)
-        {
-
-            if (lookLeft == true){
-            player.anims.play('attackLeft');
-            this.sound.play("attack")
-        }
-
-         if (!attackButton.Q.isDown) {
-            player.anims.play('attackRight');
-            this.sound.play("attack")
-            lookLeft = false;
-        }
-        }
     }
 
     // Jumping
@@ -477,26 +493,6 @@ function update()
         lookLeft = false;
     }
     }
-
-
-
-    // attacking
-    if (attackButton.Q.isDown)
-    {
-        // player.setVelocityY(0);
-
-        if (lookLeft == true) {
-        player.anims.play('attackLeft');
-        this.sound.play("attack")
-      }
-
-        if (lookLeft == false) {
-        player.anims.play('attackRight');
-        this.sound.play("attack")
-        lookLeft = false;
-      }
-    }
-    //
 
     if (cursors.right.isDown)
     {
@@ -525,19 +521,33 @@ function update()
     }
 
     // attacking
-    if (attackButton.Q.isDown)
+    if (!attackButton.Q.isDown) {
+        qLifted = true;
+    }
+
+
+    if (attackButton.Q.isDown && qLifted)
     {
-        //player.setVelocityY(0);
+        qLifted = false;
 
         if (lookLeft == true) {
-        player.anims.play('attackLeft');
-        this.sound.play("attack")
+            player.anims.play('attackLeft', true);
+            this.sound.play("attack")
+
+            var sl = slash.create((player.x - 45), player.y, "slash")
+            sl.flipX = true;
+            sl.setVelocityX(-500);
+            setTimeout(function(){sl.disableBody(true, true);}, 90);
       }
 
         if (lookLeft == false) {
-        player.anims.play('attackRight');
-        this.sound.play("attack")
-        lookLeft = false;
+            player.anims.play('attackRight', true);
+            this.sound.play("attack")
+            lookLeft = false;
+
+            var sl = slash.create((player.x + 45), player.y, "slash")
+            sl.setVelocityX(500);
+            setTimeout(function(){sl.disableBody(true, true);}, 90);
       }
     }
 
@@ -558,7 +568,7 @@ function update()
 
     // ending game
     if (heroHealth < 1) {
-        this.scene.start(respiratory);
+        this.scene.start(gameOver);
     }
     if (villainHealth < 1) {
         this.scene.start(win)
@@ -651,7 +661,7 @@ function tentacle_ss_damage(player, ronaBall)
   //replay
 
 
-function attack_boss(theBoss, player)
+function attack_boss(theBoss, slash)
 {
   if (attackButton.Q.isDown && villainshield === true)
   {
