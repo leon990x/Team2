@@ -21,7 +21,7 @@ var config = {
             debug: false
         }
     },
-    scene: bossScene//[tutorial, transition1, respiratory, transition3, bossScene, gameOver, win]
+    scene: [tutorial, transition1, respiratory, transition3, bossScene, gameOver, win]
     // scene: bossScene
 };
 
