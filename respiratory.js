@@ -23,13 +23,10 @@ function p1()
     this.load.image('flu', 'Assets/Enemy/Flu.png');
     this.load.image('flaser', 'Assets/Enemy/flu_laser.png');
     this.load.image('slash', 'Assets/Players/Slash.png');
-<<<<<<< HEAD
-    this.load.image('pow', 'Assets/Players/damage.png');
-=======
 
     this.load.image('antibody', 'Assets/Powers/antibody.png')
     this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png')
->>>>>>> cdc1f835f6c8851cde336a760c551f71413634bb
+    this.load.image('pow', 'Assets/Players/damage.png');
     //this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
 // Audio
@@ -281,13 +278,10 @@ function c1()
 
 function u1()
 {
-<<<<<<< HEAD
   // hide pow asset if player is not attacking
   if(attackButton.Q.isUp){
     hit.visible = false;
   }
-=======
->>>>>>> cdc1f835f6c8851cde336a760c551f71413634bb
 
   if (attackButton.Q.isDown || cursors.up.isDown){
   moveFlu.updateTo("y", player.y, true);
