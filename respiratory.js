@@ -22,6 +22,7 @@ function p1()
     this.load.image('flu', 'Assets/Enemy/Flu.png');
     this.load.image('flaser', 'Assets/Enemy/flu_laser.png');
     this.load.image('slash', 'Assets/Players/Slash.png');
+    this.load.image('pow', 'Assets/Players/damage.png');
     //this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
 // Audio
@@ -123,6 +124,7 @@ function c1()
    flu_enemy.body.immovable = true; //Makes it so nothing moves it
    this.physics.add.collider(flu_enemy, floor);
    this.physics.add.overlap(flu_enemy, slash, flu_damage, null, this);
+   flu_enemy.setTint(0xADD8E6);
 
    moveFlu = this.tweens.add({
      targets: flu_enemy,
@@ -187,6 +189,10 @@ function c1()
    this.physics.add.collider(healthpacks, ground);
    this.physics.add.overlap(player, healthpacks, getHealth, null, this);
 
+   // damage image to attach to player
+   hit = this.add.image(player.x, player.y, "pow");
+   hit.visible = false;
+
 
    this.anims.create({
        key: "leftWalking",
@@ -246,6 +252,11 @@ function c1()
 
 function u1()
 {
+  // hide pow asset if player is not attacking
+  if(attackButton.Q.isUp){
+    hit.visible = false;
+  }
+
   if (attackButton.Q.isDown || cursors.up.isDown){
   moveFlu.updateTo("y", player.y, true);
 }
@@ -324,7 +335,7 @@ if (flaser_timer > 4 && wave_count < 4){
 
 
 
-
+// Enemy follow player code
   if (num_enemies != 0 && wave_count < 4){
   Phaser.Actions.Call(tB.getChildren(),
   function moveEnemies(enemy){
@@ -388,6 +399,8 @@ if (flaser_timer > 4 && wave_count < 4){
 
         player.anims.play('leftWalking', true);
 
+        hit.setX(player.x - 100).setY(player.y);
+
         lookLeft = true;
 
         // Jumping
@@ -396,11 +409,13 @@ if (flaser_timer > 4 && wave_count < 4){
                 player.setVelocityY(-1600);
 
             if (lookLeft == true){
+                hit.setX(player.x - 100).setY(player.y);
                 player.anims.play('jumpLeft');
                 this.sound.play("jump");
         }
 
             if (lookLeft == false) {
+                hit.setX(player.x + 100).setY(player.y);
                 player.anims.play('jumpRight');
                 this.sound.play("jump");
                 lookLeft = false;
@@ -416,11 +431,13 @@ if (flaser_timer > 4 && wave_count < 4){
         player.setVelocityY(-1600);
 
         if (lookLeft == true) {
+        hit.setX(player.x - 100).setY(player.y);
         player.anims.play('jumpLeft');
         this.sound.play("jump");
     }
 
         if (lookLeft == false) {
+        hit.setX(player.x + 100).setY(player.y);
         player.anims.play('jumpRight');
         this.sound.play("jump");
         lookLeft = false;
@@ -431,6 +448,8 @@ if (flaser_timer > 4 && wave_count < 4){
     {
         player.setVelocityX(350);
 
+        hit.setX(player.x + 100).setY(player.y);
+
         player.anims.play('rightWalking', true);
 
         lookLeft = false;
@@ -440,11 +459,13 @@ if (flaser_timer > 4 && wave_count < 4){
             player.setVelocityY(-1600);
 
             if (lookLeft == true){
+            hit.setX(player.x - 100).setY(player.y);
             player.anims.play('jumpLeft');
             this.sound.play("jump");
         }
 
         if (!(cursors.up.isDown && player.body.touching.down)){
+          hit.setX(player.x + 100).setY(player.y);
             player.anims.play('jumpRight');
             this.sound.play("jump");
             lookLeft = false;
@@ -464,6 +485,7 @@ if (flaser_timer > 4 && wave_count < 4){
         qLifted = false;
 
         if (lookLeft == true) {
+            hit.setX(player.x - 100).setY(player.y);
             player.anims.play('attackLeft', true);
             this.sound.play("attack")
 
@@ -474,6 +496,7 @@ if (flaser_timer > 4 && wave_count < 4){
       }
 
         if (lookLeft == false) {
+            hit.setX(player.x + 100).setY(player.y);
             player.anims.play('attackRight', true);
             this.sound.play("attack")
             lookLeft = false;
@@ -490,10 +513,12 @@ if (flaser_timer > 4 && wave_count < 4){
         player.setVelocityX(0);
 
         if (lookLeft == true) {
+        hit.setX(player.x - 100).setY(player.y);
         player.anims.play('turnLeft');
       }
 
         if (lookLeft == false) {
+        hit.setX(player.x + 100).setY(player.y);
         player.anims.play('turnRight');
         lookLeft = false;
       }
@@ -514,6 +539,7 @@ if (flaser_timer > 4 && wave_count < 4){
 }
 
 function tb_damage(tB, slash){
+  hit.visible = true;
   // var tB_children = tB.getChildren([0]);
 
     wave_text.visible = false;
@@ -543,6 +569,8 @@ function tb_damage(tB, slash){
 
 function flu_damage(slash, flu_enemy){
   if (wave_count >= 4){
+    flu_enemy.clearTint();
+    hit.visible = true;
     wave_text.visible = false;
     villainHealthbar.x -= 0.48 * 4
     villainHealthbar.displayWidth -= 4

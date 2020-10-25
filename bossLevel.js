@@ -37,6 +37,7 @@ function preload ()
     this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png')
 
     this.load.image('slash', 'Assets/Players/Slash.png');
+    this.load.image('pow', 'Assets/Players/damage.png');
 
 // Audio
   this.load.audio("attack", "Assets/Audio/attack.mp3")
@@ -419,6 +420,10 @@ function create ()
      // this.physics.add.overlap(player, boss, contact_damage, null, this);
      //this.physics.add.overlap(theBoss, player, attack_boss, null, this);
      this.physics.add.overlap(player, ronaBall, tentacle_ss_damage, null, this);
+
+     // damage image to attach to player
+     hit = this.add.image(player.x, player.y, "pow");
+     hit.visible = false;
 }
 
 // // function to move all spawns of tentacles
@@ -445,6 +450,10 @@ function create ()
 
 function update()
 {
+  // hide pow asset if player is not attacking
+  if(attackButton.Q.isUp){
+    hit.visible = false;
+  }
 
   // walking
 
@@ -454,6 +463,8 @@ function update()
 
         player.anims.play('leftWalking', true);
 
+        hit.setX(player.x - 100).setY(player.y);
+
         lookLeft = true;
 
         // Jumping
@@ -462,11 +473,13 @@ function update()
                 player.setVelocityY(-1600);
 
             if (lookLeft == true){
+                hit.setX(player.x - 100).setY(player.y);
                 player.anims.play('jumpLeft');
                 this.sound.play("jump");
         }
 
             if (lookLeft == false) {
+                hit.setX(player.x + 100).setY(player.y);
                 player.anims.play('jumpRight');
                 this.sound.play("jump");
                 lookLeft = false;
@@ -482,11 +495,13 @@ function update()
         player.setVelocityY(-1600);
 
         if (lookLeft == true) {
+        hit.setX(player.x - 100).setY(player.y);
         player.anims.play('jumpLeft');
         this.sound.play("jump");
     }
 
         if (lookLeft == false) {
+        hit.setX(player.x + 100).setY(player.y);
         player.anims.play('jumpRight');
         this.sound.play("jump");
         lookLeft = false;
@@ -497,6 +512,8 @@ function update()
     {
         player.setVelocityX(350);
 
+        hit.setX(player.x + 100).setY(player.y);
+
         player.anims.play('rightWalking', true);
 
         lookLeft = false;
@@ -506,11 +523,13 @@ function update()
             player.setVelocityY(-1600);
 
             if (lookLeft == true){
+            hit.setX(player.x - 100).setY(player.y);
             player.anims.play('jumpLeft');
             this.sound.play("jump");
         }
 
         if (!(cursors.up.isDown && player.body.touching.down)){
+            hit.setX(player.x + 100).setY(player.y);
             player.anims.play('jumpRight');
             this.sound.play("jump");
             lookLeft = false;
@@ -530,6 +549,7 @@ function update()
         qLifted = false;
 
         if (lookLeft == true) {
+            hit.setX(player.x - 100).setY(player.y);
             player.anims.play('attackLeft', true);
             this.sound.play("attack")
 
@@ -540,6 +560,7 @@ function update()
       }
 
         if (lookLeft == false) {
+            hit.setX(player.x + 100).setY(player.y);
             player.anims.play('attackRight', true);
             this.sound.play("attack")
             lookLeft = false;
@@ -556,10 +577,12 @@ function update()
         player.setVelocityX(0);
 
         if (lookLeft == true) {
+        hit.setX(player.x - 100).setY(player.y);
         player.anims.play('turnLeft');
       }
 
         if (lookLeft == false) {
+        hit.setX(player.x + 100).setY(player.y);
         player.anims.play('turnRight');
         lookLeft = false;
       }
@@ -664,6 +687,7 @@ function attack_boss(theBoss, slash)
 {
   if (attackButton.Q.isDown && villainshield === true)
   {
+    hit.visible = true;
     villainHealthbar.x += 0.48 * villainDamageIntensity
     villainHealthbar.displayWidth -= villainDamageIntensity
     villainHealth -= villainDamageIntensity
