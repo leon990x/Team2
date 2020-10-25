@@ -9,6 +9,7 @@ var flaser_timer = 0;
 var num_enemies;
 var tB_health = 100;
 var wave_text;
+var defeated_text;
 var defeated = 0;
 
 function p1()
@@ -22,7 +23,13 @@ function p1()
     this.load.image('flu', 'Assets/Enemy/Flu.png');
     this.load.image('flaser', 'Assets/Enemy/flu_laser.png');
     this.load.image('slash', 'Assets/Players/Slash.png');
+<<<<<<< HEAD
     this.load.image('pow', 'Assets/Players/damage.png');
+=======
+
+    this.load.image('antibody', 'Assets/Powers/antibody.png')
+    this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png')
+>>>>>>> cdc1f835f6c8851cde336a760c551f71413634bb
     //this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
 // Audio
@@ -45,12 +52,23 @@ function p1()
     { frameWidth: 188, frameHeight: 204 }
 );
 
+  this.load.spritesheet('tb1',
+    'Assets/Respiratory/TBSprite1.png',
+    { frameWidth: 188, frameHeight: 204 }
+);
+
+  this.load.spritesheet('tb2',
+    'Assets/Respiratory/TBSprite2.png',
+    { frameWidth: 188, frameHeight: 204 }
+);
+
 }
 
 function c1()
 {
    background = this.add.image(960, 540, 'environment');
    wave_text = this.add.text(700, 240, "Tuberculosis:" + "\r\n" + " Wave " + wave_count + " of 3").setScale(4);
+   defeated_text = this.add.text(1470, 130, "Enemies left in wave:" + 5 - defeated).setScale(3);
    boss_text = this.add.text(950, 40, "The Flu (Miniboss)").setScale(3);
    cursors = this.input.keyboard.createCursorKeys();
    attackButton = this.input.keyboard.addKeys("Q,P");
@@ -79,7 +97,7 @@ function c1()
    player.setBounce(0.3);
    player.setCollideWorldBounds(true);
    this.physics.add.collider(player, ground);
-   player.body.setGravityY(1);
+   player.body.setGravityY(2400);
 
    // slash
    slash = this.physics.add.group({immovable: true, allowGravity: false});
@@ -94,7 +112,17 @@ function c1()
      immovable: true,
      allowGravity: false,
      runChildUpdate: true,
+     setCollideWorldBounds: true
    });
+
+   antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
+   antibodyPowerup = this.physics.add.group();
+
+   antibodyPowerup = this.physics.add.group();
+
+   this.physics.add.collider(antibodyPowerup, ground);
+   this.physics.add.overlap(player, antibodyPowerup, getAntibodyPowerup, null, this);
+
 
    this.anims.create({
      key: "crawl",
@@ -113,6 +141,7 @@ function c1()
    this.physics.add.collider(tB, floor);
    this.physics.add.overlap(tB, player, player_damage, null, this);
    this.physics.add.overlap(tB, slash, tb_damage, null, this);
+   this.physics.add.overlap(tB, antibodyStorm, tb_damage, null, this);
    num_enemies = 1;
 
    // Flu MiniBoss
@@ -252,10 +281,13 @@ function c1()
 
 function u1()
 {
+<<<<<<< HEAD
   // hide pow asset if player is not attacking
   if(attackButton.Q.isUp){
     hit.visible = false;
   }
+=======
+>>>>>>> cdc1f835f6c8851cde336a760c551f71413634bb
 
   if (attackButton.Q.isDown || cursors.up.isDown){
   moveFlu.updateTo("y", player.y, true);
@@ -265,10 +297,14 @@ else{
 }
 
     console.log('num_enemies: ' + num_enemies + " wave " + wave_count)
+
+
   if (wave_count === 4 && num_enemies === 0){
     console.log("SCARY")
 
+    defeated_text.visible = false;
     wave_text.setText("  Wave Over:" + "\n" + "Defeat the Flu").setScale(4);
+    flu_enemy.setTint(0xff5c33);
     wave_text.visible = true;
   }
 
@@ -345,21 +381,23 @@ if (flaser_timer > 4 && wave_count < 4){
               // console.log("p left of e, mv left")
               // tb_enemy.body.velocity.x = 0;
               enemy.play("crawl", true);
-              enemy.body.velocity.x = -100;;
+              enemy.body.velocity.x = -1 * Phaser.Math.Between(60, 120);
 
           }
       if (player.x > enemy.x && player.body.velocity.x > 0) {
           // console.log("p right of e, mv right")
           // tb_enemy.body.velocity.x = 0;
+
           enemy.play("crawl", true);
-          enemy.body.velocity.x = 100;
+          enemy.body.velocity.x = Phaser.Math.Between(60, 120);
       }
 
       if (player.x < enemy.x && player.body.velocity.x === 0) {
               // console.log("p left of e, stopped")
               // tb_enemy.body.velocity.x = 0;
+
               enemy.play("crawl", true);
-              enemy.body.velocity.x = -100;
+              enemy.body.velocity.x = -1 * Phaser.Math.Between(60, 120);
           }
 
       // console.log(enemy.x)
@@ -367,7 +405,7 @@ if (flaser_timer > 4 && wave_count < 4){
               // console.log("p right of e, stopped")
               // tb_enemy.body.velocity.x = 0;
               enemy.play("crawl", true);
-              enemy.body.velocity.x = 100;
+              enemy.body.velocity.x = Phaser.Math.Between(60, 120);
           }
 
       // console.log(enemy.x)
@@ -377,15 +415,28 @@ if (flaser_timer > 4 && wave_count < 4){
               // console.log("p left of e, mv right")
               // tb_enemy.body.velocity.x = 0;
               enemy.play("crawl", true);
-              enemy.body.velocity.x = -180;
+              enemy.body.velocity.x = -1 * Phaser.Math.Between(120, 190);
 
           }
       if (player.x > enemy.x && player.body.velocity.x < 0) {
               // console.log("p right of e, mv left")
               // tb_enemy.body.velocity.x = 0;
               enemy.play("crawl", true);
-              enemy.body.velocity.x = 180;
+              enemy.body.velocity.x = Phaser.Math.Between(120, 190);
           }
+
+      //fail safes
+      if (wave_count == 4)
+      {
+        if (enemy.x > 1920 || enemy.x < 0)
+        {
+          defeated_text.visible = false;
+          wave_text.setText("  Wave Over:" + "\n" + "Defeat the Flu").setScale(4);
+          wave_text.visible = true;
+        }
+      }
+
+
       }
     })
    }
@@ -396,6 +447,7 @@ if (flaser_timer > 4 && wave_count < 4){
     if (cursors.left.isDown)
     {
         player.setVelocityX(-350);
+        player.setTint(0xffffff);
 
         player.anims.play('leftWalking', true);
 
@@ -447,6 +499,7 @@ if (flaser_timer > 4 && wave_count < 4){
     if (cursors.right.isDown)
     {
         player.setVelocityX(350);
+        player.setTint(0xffffff);
 
         hit.setX(player.x + 100).setY(player.y);
 
@@ -476,6 +529,7 @@ if (flaser_timer > 4 && wave_count < 4){
 
     // attacking
     if (!attackButton.Q.isDown) {
+
         qLifted = true;
     }
 
@@ -538,6 +592,8 @@ if (flaser_timer > 4 && wave_count < 4){
     }
 }
 
+var rn;
+
 function tb_damage(tB, slash){
   hit.visible = true;
   // var tB_children = tB.getChildren([0]);
@@ -549,14 +605,42 @@ function tb_damage(tB, slash){
     tB_health -= 5;
     console.log(tB_health);
 
+    if (tB_health < 70 && tB_health > 40)
+    {
+      tB.setTint(0x999999);
+    }
+
+    if (tB_health < 40 && tB_health > 0)
+    {
+      tB.setTint(0x404040);
+    }
+
     if (tB_health <= 0){
+      //drop healthpacks
+      ln = Phaser.Math.Between(1, 10);
+      rn = Phaser.Math.Between(1, 6);
+      if(rn === 2)
+      {
+        var hp = healthpacks.create(tB.x, tB.y, "healthpack");
+      }
+
+      if(ln === 2)
+      {
+        var ap = antibodyPowerup.create(960, 20, "antibodyPowerup").setScale(0.25);
+      }
       tB.destroy();
       defeated += 1;
+
+      defeated_text.visible = true;
+      defeated_text.setText("Enemies left in wave:" + String(5 - defeated)).setScale(2);
+
+
       num_enemies -= 1;
       tB_health = 100;
       this.sound.play("damage");
       if (defeated == 5){
         defeated = 0;
+        defeated_text.visible = false;
         console.log(wave_count, defeated)
         wave_count += 1;
       if (wave_count < 4){
@@ -606,7 +690,7 @@ function getHealth(player, healthpack)
     healthbar.x += 0.43 * 20
     healthbar.displayWidth += 20
     heroHealth += 20
-    player.setTint(0x00ff00)
+    player.setTint(0x00ff00);
     healthpack.disableBody(true, true);
   }
 }
@@ -618,6 +702,7 @@ function player_damage(player, tB)
   player.setTint(0xff0000);
   this.sound.play("damage");
 
+
   if(heroHealth < 0)
   {
     heroHealth = 415;
@@ -627,4 +712,72 @@ function player_damage(player, tB)
 
 }
 
-function spacer(){}
+function getAntibodyPowerup(player, antibodyPowerup)
+{
+  var i;
+  for (i = 0; i < 500; i++)
+      {
+      var storm = antibodyStorm.create(Phaser.Math.FloatBetween(-500, 0), Phaser.Math.FloatBetween(880, 550), "antibody");
+      storm.setScale(0.1);
+      storm.angle = (Phaser.Math.FloatBetween(0, 359));
+      storm.setVelocityY(0);
+      storm.setVelocityX(400);
+      antibodyPowerup.disableBody(true, true);
+      }
+}
+
+function tb_damage(tB, antibodyStorm){
+  // var tB_children = tB.getChildren([0]);
+
+    wave_text.visible = false;
+    // villainHealthbar.x -= 0.43 * villainDamageIntensity
+    // villainHealthbar.displayWidth -= villainDamageIntensity
+    // villainHealth -= villainDamageIntensity
+    tB_health -= 5;
+    console.log(tB_health);
+
+    if (tB_health < 70 && tB_health > 40)
+    {
+      tB.setTint(0x999999);
+    }
+
+    if (tB_health < 40 && tB_health > 0)
+    {
+      tB.setTint(0x404040);
+    }
+
+    if (tB_health <= 0){
+      //drop healthpacks
+      ln = Phaser.Math.Between(1, 15);
+      rn = Phaser.Math.Between(1, 6);
+      if(rn === 2)
+      {
+        var hp = healthpacks.create(tB.x, tB.y, "healthpack");
+      }
+
+      if(ln === 2)
+      {
+        var ap = antibodyPowerup.create(960, 20, "antibodyPowerup").setScale(0.25);
+      }
+      tB.destroy();
+      defeated += 1;
+
+      defeated_text.visible = true;
+      defeated_text.setText("Enemies left in wave:" + String(5 - defeated)).setScale(2);
+
+
+      num_enemies -= 1;
+      tB_health = 100;
+      this.sound.play("damage");
+      if (defeated == 5){
+        defeated = 0;
+        defeated_text.visible = false;
+        console.log(wave_count, defeated)
+        wave_count += 1;
+      if (wave_count < 4){
+        wave_text.visible = true;
+        wave_text.setText("Tuberculosis:" + "\r\n" + " Wave " + wave_count + " of 3").setScale(4);
+        }
+      }
+    }
+}

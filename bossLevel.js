@@ -162,7 +162,7 @@ function create ()
     player.setBounce(0.3);
     player.setCollideWorldBounds(true);
     this.physics.add.collider(player, ground);
-    player.body.setGravityY(1);
+    player.body.setGravityY(1600);
 
     // slash
     slash = this.physics.add.group({immovable: true, allowGravity: false});
@@ -246,6 +246,7 @@ function create ()
           repeat: 10,
           setXY: {x: 12, y: 0, stepX: 200},
           setScale: {x: 1, y: 1},
+          setGravityY: -10,
           runChildUpdate: true
       }
       );
@@ -470,7 +471,7 @@ function update()
         // Jumping
             if (cursors.up.isDown && player.body.touching.down)
         {
-                player.setVelocityY(-1600);
+            player.setVelocityY(-1000);
 
             if (lookLeft == true){
                 hit.setX(player.x - 100).setY(player.y);
@@ -492,7 +493,7 @@ function update()
     if (cursors.up.isDown && player.body.touching.down)
     {
 
-        player.setVelocityY(-1600);
+        player.setVelocityY(-1000);
 
         if (lookLeft == true) {
         hit.setX(player.x - 100).setY(player.y);
@@ -520,7 +521,7 @@ function update()
         // Jumping
         if (cursors.up.isDown && player.body.touching.down)
         {
-            player.setVelocityY(-1600);
+            player.setVelocityY(-1000);
 
             if (lookLeft == true){
             hit.setX(player.x - 100).setY(player.y);

@@ -92,7 +92,7 @@ function c1()
    player.setBounce(0.3);
    player.setCollideWorldBounds(true);
    this.physics.add.collider(player, floor);
-   player.body.setGravityY(1);
+   player.body.setGravityY(2400);
 
    // slash
    slash = this.physics.add.group({immovable: true, allowGravity: false});
