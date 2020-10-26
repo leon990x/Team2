@@ -40,9 +40,11 @@ function preload ()
     this.load.image('pow', 'Assets/Players/damage.png');
 
 // Audio
-  this.load.audio("attack", "Assets/Audio/attack.mp3")
+  this.load.audio("attack", "Assets/Powers/263011__dermotte__sword-02.mp3")
   this.load.audio("jump", "Assets/Audio/jump.mp3")
   this.load.audio("damage", "Assets/Audio/damage.mp3")
+  this.load.audio("playerDamage", "Assets/Audio/458867__raclure__damage-sound-effect.mp3")
+  this.load.audio("pickup", "Assets/Powers/478647__phenala__coin-pickup.mp3")
 
 // SpriteSheets
     this.load.spritesheet('whiteBC',
@@ -132,10 +134,11 @@ function create ()
    ground.create(1610, 610, 'platform');
 
    // sounds
-   attack = this.sound.add('attack', {volume: 0.01})
-   damage = this.sound.add('damage', {volume: 0.01})
-   jump = this.sound.add('jump', {volume: 0.01})
-
+   attack = this.sound.add('attack', {volume: 0.5})
+   damage = this.sound.add('damage', {volume: 3})
+   playerDamage = this.sound.add("playerDamage", {volume: 1})
+   jump = this.sound.add('jump', {volume: 0.5})
+   pickup = this.sound.add('pickup')
 
 
 
@@ -621,7 +624,7 @@ function laser_damage(player, lasers)
   healthbar.displayWidth -= 0.4;
   heroHealth -= 0.4;
   player.setTint(0xff0000);
-  this.sound.play("damage");
+  this.sound.play("playerDamage");
   console.log("inside if player damage")
 
   if(heroHealth < 0)
@@ -655,7 +658,7 @@ function tentacle_damage(player, tentacles)
   healthbar.displayWidth -= 2
   heroHealth -= 2
   player.setTint(0xff0000);
-  this.sound.play("damage");
+  this.sound.play("playerDamage");
 
 
   if(heroHealth < 0)
@@ -671,7 +674,7 @@ function tentacle_ss_damage(player, ronaBall)
   healthbar.displayWidth -= 1
   heroHealth -= 1
   player.setTint(0xff0000);
-  this.sound.play("damage");
+  this.sound.play("playerDamage");
 
 
   if(heroHealth < 0)
@@ -720,6 +723,7 @@ function getHealth(player, healthpack)
 {
   if(heroHealth < 415)
   {
+    this.sound.play("pickup");
     healthbar.x += 0.43 * 20
     healthbar.displayWidth += 20
     heroHealth += 20
@@ -758,6 +762,7 @@ function boss_damage(theBoss, player, storm){
 
   function getAntibodyPowerup(player, antibodyPowerup)
   {
+      this.sound.play("pickup");
     var i;
     for (i = 0; i < 500; i++)
         {

@@ -30,9 +30,11 @@ function p1()
     //this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
 // Audio
-  this.load.audio("attack", "Assets/Audio/attack.mp3")
+  this.load.audio("attack", "Assets/Powers/263011__dermotte__sword-02.mp3")
   this.load.audio("jump", "Assets/Audio/jump.mp3")
   this.load.audio("damage", "Assets/Audio/damage.mp3")
+  this.load.audio("playerDamage", "Assets/Audio/458867__raclure__damage-sound-effect.mp3")
+  this.load.audio("pickup", "Assets/Powers/478647__phenala__coin-pickup.mp3")
 
 // SpriteSheets
     this.load.spritesheet('whiteBC',
@@ -85,9 +87,11 @@ function c1()
    floor = ground.create(959, 1050, "floor").setScale(1).refreshBody();
 
    // sounds
-   attack = this.sound.add('attack')
-   damage = this.sound.add('damage')
-   jump = this.sound.add('jump')
+   attack = this.sound.add('attack', {volume: 0.5})
+   damage = this.sound.add('damage', {volume: 3})
+   playerDamage = this.sound.add("playerDamage", {volume: 1})
+   jump = this.sound.add('jump', {volume: 0.5})
+   pickup = this.sound.add('pickup')
 
    // player code
    player = this.physics.add.sprite(100, 700, "whiteBC");
@@ -681,6 +685,7 @@ function getHealth(player, healthpack)
 {
   if(heroHealth < 415)
   {
+    this.sound.play("pickup");
     healthbar.x += 0.43 * 20
     healthbar.displayWidth += 20
     heroHealth += 20
@@ -694,7 +699,7 @@ function player_damage(player, tB)
   healthbar.displayWidth -= .3
   heroHealth -= .3
   player.setTint(0xff0000);
-  this.sound.play("damage");
+  this.sound.play("playerDamage");
 
 
   if(heroHealth < 0)
@@ -708,6 +713,7 @@ function player_damage(player, tB)
 
 function getAntibodyPowerup(player, antibodyPowerup)
 {
+  this.sound.play("pickup");
   var i;
   for (i = 0; i < 500; i++)
       {

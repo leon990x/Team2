@@ -24,24 +24,27 @@ var num_staph = 0;
 
 function p1()
 {
-    this.load.image('environment1', 'Assets/Tutorial/tutorialBackgroundResize.png');
-    this.load.image('floor1', 'Assets/Tutorial/GRS11.png');
+    this.load.image('environment1', 'Assets/Tutorial/tutbackground.png');
+    this.load.image('floor1', 'Assets/Tutorial/tutfloor.png');
     this.load.image('platform', 'Assets/Boss/platform.png');
     this.load.image('red', 'Assets/Boss/redHealth.png');
     this.load.image('statusbar', 'Assets/Boss/health.png');
     this.load.image('healthpack', 'Assets/Boss/heart.png');
-    this.load.image('staph', 'Assets/Enemy/Staph.png');
+    this.load.image('staph', 'Assets/Enemy/staph.png');
     this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png');
     this.load.image('antibody', 'Assets/Powers/antibody.png');
-    this.load.image('sebaceousGland', 'Assets/Tutorial/sebaceousGland.png');
+    this.load.image('sebaceousGland', 'Assets/Tutorial/sebGland.png');
     this.load.image('slash', 'Assets/Players/Slash.png');
     this.load.image('pow', 'Assets/Players/damage.png');
     // this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
 // Audio
-  this.load.audio("attack", "Assets/Audio/attack.mp3")
+  this.load.audio("attack", "Assets/Powers/263011__dermotte__sword-02.mp3")
   this.load.audio("jump", "Assets/Audio/jump.mp3")
   this.load.audio("damage", "Assets/Audio/damage.mp3")
+  this.load.audio("playerDamage", "Assets/Audio/458867__raclure__damage-sound-effect.mp3")
+  this.load.audio("tutorialm", "Assets/Tutorial/265308__volvion__8-bit-bossfight.mp3")
+  this.load.audio("pickup", "Assets/Powers/478647__phenala__coin-pickup.mp3")
 
 // SpriteSheets
     this.load.spritesheet('whiteBC',
@@ -79,9 +82,13 @@ function c1()
 
 
    // sounds
-   attack = this.sound.add('attack')
-   damage = this.sound.add('damage')
-   jump = this.sound.add('jump')
+   tmusic= this.sound.add('tutorialm', {loop: true, volume: 1});
+   this.sound.play("tutorialm");
+   attack = this.sound.add('attack', {volume: 1})
+   damage = this.sound.add('damage', {volume: 3})
+   playerDamage = this.sound.add("playerDamage", {volume: 1})
+   jump = this.sound.add('jump', {volume: 1})
+   pickup = this.sound.add('pickup')
 
    // prompt
    this.promptl1 = this.add.text(520, 50, "did it work?", {font: "40px Arial", fill: "black"})
@@ -172,14 +179,14 @@ function c1()
      this.anims.create({
        key: "attackRight",
        frames: this.anims.generateFrameNumbers("whiteBC", { start: 12, end: 14 }),
-       frameRate: 10,
+       frameRate: 5,
        repeat: -1
      });
 
      this.anims.create({
        key: "attackLeft",
        frames: this.anims.generateFrameNumbers("LwhiteBC", { start: 12, end: 14 }),
-       frameRate: 10,
+       frameRate: 5,
        repeat: -1
      });
 
@@ -260,6 +267,7 @@ function u1()
         if (player.x < 175) {
             progression += 1;
             num_staph = 6
+            this.sound.play("pickup");
             var ap = antibodyPowerup.create(250, 20, "antibodyPowerup").setScale(0.25);
             ap.setBounce(0.5);
             ap.setCollideWorldBounds(true);
@@ -293,6 +301,7 @@ function u1()
 
         if (player.x > 1600) {
             this.promptl1.setText("Done");
+            tmusic.stop();
             this.scene.start(transition1);
 
         }
@@ -440,10 +449,10 @@ function u1()
 
     // Hero taking damage
     if (heroTakingDamage) {
+        this.sound.play("playerDamage");
         healthbar.x -= 0.43 * heroDamageIntensity
         healthbar.displayWidth -= heroDamageIntensity
         heroHealth -= heroDamageIntensity
-        this.sound.play("damage");
     }
 }
 
@@ -493,21 +502,29 @@ function staph_antibody_damage(staph_move, antibodyStorm){
   {
     heroHealth = 415;
     villainHealth = 415;
+    tmusic.stop();
     this.scene.start(transition1);
   }
 
 
 function player_damage(player, tb_enemy)
 {
+  console.log("hey!")
+  hitTimer += 1;
   healthbar.x -= 0.43 * .5
   healthbar.displayWidth -= .5
   heroHealth -= .5
-  this.sound.play("damage");
+  console.log("hit!" + hitTimer)
+  if (hitTimer % 10 === 0){
+    console.log("hit!" + hitTimer)
+    this.sound.play("playerDamage");
+  }
 
   if(heroHealth < 0)
   {
     heroHealth = 415;
     villainHealth = 415;
+    tmusic.stop();
     this.scene.start(gameOver);
   }
 
@@ -516,6 +533,7 @@ function player_damage(player, tb_enemy)
 
 function getAntibodyPowerup(player, antibodyPowerup)
   {
+    this.sound.play("pickup");
     var i;
     for (i = 0; i < 500; i++)
         {

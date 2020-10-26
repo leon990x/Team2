@@ -5,6 +5,7 @@ transition3.update = ut3;
 function pt3()
 {
   this.load.image('final_background', 'Assets/Transitions/tfinal.png');
+  this.load.audio("transitionf", "Assets/Transitions/502704__soundflakes__a-thing-in-a-town.mp3");
 }
 
 function ct3()
@@ -15,6 +16,10 @@ function ct3()
   next = this.add.text(1300, 200, "New Infection in:" + "\n" + "Respiratory System").setScale(3);
   start = this.add.text(1450, 500,"Click to start").setScale(3);
 
+  finaltrmusic= this.sound.add('transitionf', {loop: true});
+  // this.sound.play("transitionf");
+
+  // this.input.on("pointerdown", () => finaltrmusic.stop());
   this.input.on("pointerdown", () => this.scene.start(bossScene));
 }
 
