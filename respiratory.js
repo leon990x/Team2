@@ -22,7 +22,7 @@ function p1()
     this.load.image('healthpack', 'Assets/Boss/heart.png');
     this.load.image('flu', 'Assets/Enemy/Flu.png');
     this.load.image('flaser', 'Assets/Enemy/flu_laser.png');
-    this.load.image('slash', 'Assets/Players/Slash.png');
+    this.load.image('slash', 'Assets/Players/slash.png');
 
     this.load.image('antibody', 'Assets/Powers/antibody.png')
     this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png')

@@ -34,7 +34,7 @@ function p1()
     this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png');
     this.load.image('antibody', 'Assets/Powers/antibody.png');
     this.load.image('sebaceousGland', 'Assets/Tutorial/sebGland.png');
-    this.load.image('slash', 'Assets/Players/Slash.png');
+    this.load.image('slash', 'Assets/Players/slash.png');
     this.load.image('pow', 'Assets/Players/damage.png');
     // this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
