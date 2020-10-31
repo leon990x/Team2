@@ -123,15 +123,15 @@ function create ()
    //Edge colliders
    ground = this.physics.add.staticGroup();
    floor = ground.create(959, 1050, "floor").setScale(1).refreshBody();
-   ground.create(400, 790, 'platform');
-   ground.create(870, 650, 'platform');
-   ground.create(1350, 770, 'platform');
+   ground.create(400, 750, 'platform');
+   ground.create(870, 640, 'platform');
+   ground.create(1350, 750, 'platform');
 
-   ground.create(380, 480, 'platform');
-   ground.create(870, 350, 'platform');
-   ground.create(1350, 480, 'platform');
+   ground.create(380, 440, 'platform');
+   ground.create(870, 320, 'platform');
+   ground.create(1350, 440, 'platform');
 
-   ground.create(1610, 610, 'platform');
+   //ground.create(1610, 610, 'platform');
 
    // sounds
    attack = this.sound.add('attack', {volume: 0.5})
@@ -670,10 +670,16 @@ function tentacle_damage(player, tentacles)
 
 function tentacle_ss_damage(player, ronaBall)
 {
-  healthbar.x -= 0.43 * 1
-  healthbar.displayWidth -= 1
-  heroHealth -= 1
+  healthbar.x -= 0.43 * 4
+  healthbar.displayWidth -= 4
+  heroHealth -= 4
   player.setTint(0xff0000);
+  if (villainHealth < 415)
+  {
+    villainHealthbar.x -= 0.48 * villainDamageIntensity
+    villainHealthbar.displayWidth += villainDamageIntensity
+    villainHealth += villainDamageIntensity
+  }
   this.sound.play("playerDamage");
 
 
