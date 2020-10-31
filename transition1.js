@@ -25,7 +25,12 @@ function ct1()
     }
   });
 
-  this.input.on("pointerdown", () => this.scene.start(respiratory));
+  this.input.on("pointerdown", () =>
+    {
+      this.sound.stopAll()
+      this.scene.start(respiratory)
+    });
+
 }
 
 function ut1()
