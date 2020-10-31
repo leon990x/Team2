@@ -154,7 +154,7 @@ function c1()
    flu_enemy.body.immovable = true; //Makes it so nothing moves it
    this.physics.add.collider(flu_enemy, floor);
    this.physics.add.overlap(flu_enemy, slash, flu_damage, null, this);
-   flu_enemy.setTint(0xADD8E6);
+   flu_enemy.setTint(0X00000);
 
    moveFlu = this.tweens.add({
      targets: flu_enemy,
@@ -302,7 +302,7 @@ else{
 
     defeated_text.visible = false;
     wave_text.setText("  Wave Over:" + "\n" + "Defeat the Flu").setScale(4);
-    flu_enemy.setTint(0xff5c33);
+    flu_enemy.clearTint();
     wave_text.visible = true;
   }
 
@@ -593,7 +593,7 @@ if (flaser_timer > 4 && wave_count < 4){
 var rn;
 
 function tb_damage(tB, slash){
-  hit.visible = true;
+    hit.visible = true;
   // var tB_children = tB.getChildren([0]);
 
     wave_text.visible = false;
@@ -651,13 +651,12 @@ function tb_damage(tB, slash){
 
 function flu_damage(slash, flu_enemy){
   if (wave_count >= 4){
-    flu_enemy.clearTint();
     hit.visible = true;
     wave_text.visible = false;
     villainHealthbar.x -= 0.48 * 4
     villainHealthbar.displayWidth -= 4
     villainHealth -= 4
-    flu_enemy.setTint(0xff0000);
+    flu_enemy.clearTint();
     this.sound.play("damage");
   }
 
