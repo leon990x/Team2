@@ -367,8 +367,8 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
         if (enemy.x > 1920 || enemy.x < 0)
         {
           defeated_text.visible = false;
-          awave_text.setText("Wave Over: " + "\n" + "Defeat the tau proteins").setScale(4);
-          awave_text.visible = true;
+          wave_text.setText("Wave Over").setScale(4);
+          wave_text.visible = true;
         }
       }
 
@@ -537,7 +537,6 @@ function player_damage(player, bombs)
 function tau_damage(slash, tau_enemy){
   if (awave_count >= 4){
     hit.visible = true;
-    awave_text.visible = false;
     villainHealthbar.x -= 0.48 * 4
     villainHealthbar.displayWidth -= 4
     villainHealth -= 4
