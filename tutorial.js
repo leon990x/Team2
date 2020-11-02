@@ -302,7 +302,7 @@ function u1()
         if (player.x > 1600) {
             this.promptl1.setText("Done");
             tmusic.stop();
-            this.scene.start(transition1);
+            this.scene.start(nervous);
 
         }
     }
@@ -503,7 +503,7 @@ function staph_antibody_damage(staph_move, antibodyStorm){
     heroHealth = 415;
     villainHealth = 415;
     tmusic.stop();
-    this.scene.start(transition1);
+    this.scene.start(nervous);
   }
 
 

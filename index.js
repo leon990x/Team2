@@ -4,6 +4,7 @@
 //Scenes
 tutorial = new Phaser.Scene("tutorial");
 transition1 = new Phaser.Scene("t1");
+nervous = new Phaser.Scene("nerve");
 bossScene = new Phaser.Scene("bossScene");
 transition3 = new Phaser.Scene("t3");
 respiratory = new Phaser.Scene("respiratory");
@@ -21,8 +22,8 @@ var config = {
             debug: false
         }
     },
-    // scene: [tutorial, transition1, respiratory, transition3, bossScene, gameOver, win]
-    scene: respiratory
+    // scene: [tutorial, nervous, transition1, respiratory, transition3, bossScene, gameOver, win]
+    scene: nervous
 };
 
 // game instance and global variables
