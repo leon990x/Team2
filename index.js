@@ -3,11 +3,18 @@
 
 //Scenes
 tutorial = new Phaser.Scene("tutorial");
+<<<<<<< HEAD
 transition0 = new Phaser.Scene("transition0");
 digestive = new Phaser.Scene("digestive")
 transition1 = new Phaser.Scene("transition1");
 nervous = new Phaser.Scene("nervous");
 transition2 = new Phaser.Scene("transition2");
+=======
+transition1 = new Phaser.Scene("t1");
+nervous = new Phaser.Scene("nerve");
+bossScene = new Phaser.Scene("bossScene");
+transition3 = new Phaser.Scene("t3");
+>>>>>>> 8c2b7442bc335d2ba8263c23ceb5dcce54914ada
 respiratory = new Phaser.Scene("respiratory");
 transition3 = new Phaser.Scene("transition3");
 bossScene = new Phaser.Scene("bossScene");
@@ -27,8 +34,13 @@ var config = {
             debug: false
         }
     },
+<<<<<<< HEAD
     scene: [tutorial, transition0, digestive, transition1, nervous, transition2, respiratory, transition3, bossScene, gameOver, win]
     // scene: bossScene
+=======
+    scene: [tutorial, nervous, transition1, respiratory, transition3, bossScene, gameOver, win]
+    // scene: nervous
+>>>>>>> 8c2b7442bc335d2ba8263c23ceb5dcce54914ada
 };
 
 // game instance and global variables
