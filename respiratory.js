@@ -711,19 +711,24 @@ function player_damage(player, tB)
 }
 
 function getAntibodyPowerup(player, antibodyPowerup)
-{
-  this.sound.play("pickup");
-  var i;
-  for (i = 0; i < 500; i++)
-      {
-      var storm = antibodyStorm.create(Phaser.Math.FloatBetween(-500, 0), Phaser.Math.FloatBetween(880, 550), "antibody");
-      storm.setScale(0.1);
-      storm.angle = (Phaser.Math.FloatBetween(0, 359));
-      storm.setVelocityY(0);
-      storm.setVelocityX(400);
-      antibodyPowerup.disableBody(true, true);
-      }
-}
+  {
+    this.sound.play("pickup");
+    var i;
+    for (i = 0; i < 100; i++)
+        {
+        radius = Phaser.Math.FloatBetween(0, 200)
+        theta = Phaser.Math.FloatBetween(0, 6.28)
+        deltaX = radius * (Math.cos(theta))
+        deltaY = radius * (Math.sin(theta))
+            
+        var storm = antibodyStorm.create((-200 + deltaX), (750 + deltaY), "antibody");
+        storm.setScale(0.1);
+        storm.angle = (Phaser.Math.FloatBetween(0, 359));
+        storm.setVelocityY(0);
+        storm.setVelocityX(400);
+        antibodyPowerup.disableBody(true, true);
+        }
+  }
 
 function tb_damage(tB, antibodyStorm){
   // var tB_children = tB.getChildren([0]);

@@ -1,22 +1,22 @@
-transition1.preload = pt1;
-transition1.create = ct1;
-transition1.update = ut1;
+transition2.preload = pt1;
+transition2.create = ct1;
+transition2.update = ut1;
 
 function pt1()
 {
-  this.load.image('second_background', 'Assets/Transitions/tnervous.png');
+  this.load.image('third_background', 'Assets/Transitions/trespiratory.png');
   this.load.audio("transitionm", "Assets/Transitions/172561__djgriffin__video-game-7.mp3");
-  console.log("transition1")
+  console.log("transition2")
 }
 
-console.log("transition1")
+console.log("transition2")
 
 function ct1()
 {
-  background = this.add.image(960, 540, 'second_background');
-  destination = this.add.text(10, 0, "Digestive system cured!").setScale(3);
+  background = this.add.image(960, 540, 'third_background');
+  destination = this.add.text(10, 0, "Nervous cured!").setScale(3);
   patient = this.add.text(1300, 0, "Patient: Bee Curefull").setScale(3);
-  next = this.add.text(1300, 200, "Next Destination:" + "\n" + "Nervous System").setScale(3);
+  next = this.add.text(1300, 200, "Next Destination:" + "\n" + "Respiratory System").setScale(3);
   start = this.add.text(1450, 500,"Click to start").setScale(3);
 
   trmusic= this.sound.add('transitionm', {loop: true});
@@ -31,8 +31,7 @@ function ct1()
   this.input.on("pointerdown", () =>
     {
       this.sound.stopAll()
-      console.log("start digestive")
-      this.scene.start(nervous)
+      this.scene.start(respiratory)
     });
 
 }

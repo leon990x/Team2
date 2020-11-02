@@ -1,8 +1,8 @@
 // let respiratory = new Phaser.Scene("respiratory");
 
-tutorial.preload = p1;
-tutorial.create = c1;
-tutorial.update = u1;
+nervous.preload = p1;
+nervous.create = c1;
+nervous.update = u1;
 
 // var player;
 // var ground;
@@ -24,8 +24,8 @@ var num_staph = 0;
 
 function p1()
 {
-    this.load.image('environment1', 'Assets/Tutorial/tutbackground.png');
-    this.load.image('floor1', 'Assets/Tutorial/tutfloor.png');
+    this.load.image('environment2', 'Assets/Digestive/digestiveBackground3.png');
+    this.load.image('floor2', 'Assets/Digestive/digestiveFloor3.png');
     this.load.image('platform', 'Assets/Boss/platform.png');
     this.load.image('red', 'Assets/Boss/redHealth.png');
     this.load.image('statusbar', 'Assets/Boss/health.png');
@@ -37,6 +37,7 @@ function p1()
     this.load.image('slash', 'Assets/Players/slash.png');
     this.load.image('pow', 'Assets/Players/damage.png');
     // this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
+    console.log("in nervous")
 
 // Audio
   this.load.audio("attack", "Assets/Powers/263011__dermotte__sword-02.mp3")
@@ -61,7 +62,7 @@ function p1()
 
 function c1()
 {
-   background = this.add.image(0, 0, 'environment1');
+   background = this.add.image(0, 0, 'environment2');
    background.setOrigin(0, 0);
    cursors = this.input.keyboard.createCursorKeys();
    attackButton = this.input.keyboard.addKeys("Q,P");
@@ -77,7 +78,7 @@ function c1()
 
    //Edge colliders
    ground = this.physics.add.staticGroup();
-   floor = ground.create(960, 940, "floor1");
+   floor = ground.create(959, 995, "floor2");
    gland = this.physics.add.staticGroup();
 
 
@@ -90,9 +91,6 @@ function c1()
    jump = this.sound.add('jump', {volume: 1})
    pickup = this.sound.add('pickup')
 
-   // prompt
-   this.promptl1 = this.add.text(520, 50, "did it work?", {font: "40px Arial", fill: "black"})
-   this.promptl2 = this.add.text(820, 130, "", {font: "40px Arial", fill: "black"})
 
    // player code
    player = this.physics.add.sprite(100, 700, "whiteBC");
@@ -115,19 +113,6 @@ function c1()
    //this.physics.add.overlap(theBoss, antibodyStorm, boss_antibody_damage, null, this);
    antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
 
-
-   //Staph still
-   staph_still = this.physics.add.group();
-   this.physics.add.collider(staph_still, ground);
-   this.physics.add.overlap(staph_still, player, player_damage, null, this);
-   this.physics.add.overlap(staph_still, slash, staph_still_damage, null, this);
-
-   //Staph move
-   staph_move = this.physics.add.group();
-   this.physics.add.collider(staph_move, ground);
-   this.physics.add.overlap(staph_move, player, player_damage, null, this);
-   this.physics.add.overlap(staph_move, slash, staph_move_damage, null, this);
-   this.physics.add.overlap(staph_move, antibodyStorm, staph_antibody_damage, null, this);
 
    // damage image to attach to player
    hit = this.add.image(player.x, player.y, "pow");
@@ -201,110 +186,12 @@ function u1()
     hit.visible = false;
   }
 
-    if (progression == 0) {
-        this.promptl1.setText("Welcome to Fightosis! Press the W key to continue.");
+    
+    if (player.x > 1600) {
+        tmusic.stop();
+        console.log('start')
+        this.scene.start(transition2);
 
-        if (nextButton.W.isDown) {
-            progression += 1;
-        }
-
-    }
-
-    if (progression == 1) {
-        this.promptl1.setText("Use the left and right arrow keys to explore your environment");
-        this.promptl1.x = 500
-        this.promptl2.setText("Press the E key to continue.");
-        this.promptl2.x = 500
-
-        if (otherNextButton.E.isDown) {
-            progression += 1;
-        }
-    }
-
-    if (progression == 2) {
-        this.promptl1.setText("Press the up arrow to jump.");
-        this.promptl2.setText("");
-
-        if (cursors.up.isDown) {
-            progression += 1;
-        }
-    }
-
-    if (progression == 3) {
-        this.promptl1.setText("Press the Q key to attack.");
-
-
-        if (attackButton.Q.isDown) {
-            progression += 1;
-            num_staph = 1
-            var wave1 = staph_still.create(1100, 500, "staph");
-        }
-    }
-
-    if (progression == 4) {
-        this.promptl1.setText("Your patient has a staph infection!");
-        this.promptl2.setText("Attack the staph to cure the patient.");
-        this.promptl2.x = 500
-
-
-        if (staph_still_health <= 0) {
-            progression += 1;
-            for (i = 0; i < 5; i++)
-            {
-            var hp = healthpacks.create(Phaser.Math.Between(100, 200), 0, "healthpack");
-            hp.setBounce(0.5);
-            hp.setCollideWorldBounds(true);
-            hp.setVelocity(0, 20);
-            }
-        }
-    }
-
-    if (progression == 5) {
-        this.promptl1.setText("You're damaged.");
-        this.promptl2.setText("Pick up healthpacks to heal.");
-
-
-        if (player.x < 175) {
-            progression += 1;
-            num_staph = 6
-            this.sound.play("pickup");
-            var ap = antibodyPowerup.create(250, 20, "antibodyPowerup").setScale(0.25);
-            ap.setBounce(0.5);
-            ap.setCollideWorldBounds(true);
-            ap.setVelocity(0, 20);
-            var i;
-            for (i = 0; i < 7; i++)
-                {
-                var wave2 = staph_move.create(1500 + (100 * i), 500, "staph");
-                wave2.setVelocityX(-40);
-                wave2.health = 50;
-                }
-
-        }
-    }
-
-    if (progression == 6) {
-        this.promptl1.setText("A huge wave of enemies is approaching!");
-        this.promptl2.setText("Collect the antibody powerup to unleash an antibody storm");
-
-        if (num_staph == 0) {
-            progression += 1;
-            sebaceousGland = gland.create(1750, 850, "sebaceousGland");
-
-
-        }
-    }
-
-    if (progression == 7) {
-        this.promptl1.setText("Nice job!");
-        this.promptl2.setText("Go to the sebaceous gland and continue healing the patient.");
-
-        if (player.x > 1600) {
-            this.promptl1.setText("Done");
-            tmusic.stop();
-            this.scene.start(transition0);
-
-        }
     }
 
 
@@ -498,13 +385,6 @@ function staph_antibody_damage(staph_move, antibodyStorm){
 
 
 
-  if (villainHealth < 0)
-  {
-    heroHealth = 415;
-    villainHealth = 415;
-    tmusic.stop();
-    this.scene.start(transition0);
-  }
 
 
 function player_damage(player, tb_enemy)
