@@ -1,6 +1,5 @@
 // let respiratory = new Phaser.Scene("respiratory");
 
-<<<<<<< HEAD
 nervous.preload = p1;
 nervous.create = c1;
 nervous.update = u1;
@@ -182,7 +181,6 @@ function c1()
 
 function u1()
 {
-=======
 nervous.preload = p2;
 nervous.create = c2;
 nervous.update = u2;
@@ -431,13 +429,11 @@ function c2(){
 function u2(){
   // console.log("preon" + preon_timer + " awave_count" + awave_count)
   // console.log("anum_enemies " + anum_enemies)
->>>>>>> 8c2b7442bc335d2ba8263c23ceb5dcce54914ada
   // hide pow asset if player is not attacking
   if(attackButton.Q.isUp){
     hit.visible = false;
   }
 
-<<<<<<< HEAD
     
     if (player.x > 1600) {
         tmusic.stop();
@@ -447,7 +443,6 @@ function u2(){
     }
 
 
-=======
   if(Math.ceil(tau_enemy.x) === Math.ceil(player.x -10) || Math.ceil(tau_enemy.x) === Math.ceil(player.x + 10) || Math.ceil(tau_enemy.x) === Math.ceil(player.x)){
     bombs.create(tau_enemy.x, tau_enemy.y, 'preon').setScale(.4);
     bombs.create(tau_enemy.x, tau_enemy.y, 'preon').setScale(.4);
@@ -571,18 +566,13 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
       }
     })
    }
->>>>>>> 8c2b7442bc335d2ba8263c23ceb5dcce54914ada
 
   // walking
 
     if (cursors.left.isDown)
     {
         player.setVelocityX(-350);
-<<<<<<< HEAD
-=======
         player.setTint(0xffffff);
->>>>>>> 8c2b7442bc335d2ba8263c23ceb5dcce54914ada
-
         player.anims.play('leftWalking', true);
 
         hit.setX(player.x - 100).setY(player.y);
@@ -633,11 +623,7 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
     if (cursors.right.isDown)
     {
         player.setVelocityX(350);
-<<<<<<< HEAD
-=======
         player.setTint(0xffffff);
->>>>>>> 8c2b7442bc335d2ba8263c23ceb5dcce54914ada
-
         hit.setX(player.x + 100).setY(player.y);
 
         player.anims.play('rightWalking', true);
@@ -655,11 +641,8 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
         }
 
         if (!(cursors.up.isDown && player.body.touching.down)){
-<<<<<<< HEAD
             hit.setX(player.x + 100).setY(player.y);
-=======
           hit.setX(player.x + 100).setY(player.y);
->>>>>>> 8c2b7442bc335d2ba8263c23ceb5dcce54914ada
             player.anims.play('jumpRight');
             this.sound.play("jump");
             lookLeft = false;
@@ -670,10 +653,6 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
 
     // attacking
     if (!attackButton.Q.isDown) {
-<<<<<<< HEAD
-=======
-
->>>>>>> 8c2b7442bc335d2ba8263c23ceb5dcce54914ada
         qLifted = true;
     }
 
@@ -722,7 +701,6 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
       }
     }
 
-<<<<<<< HEAD
     // ending game
     if (heroHealth < 1) {
         return
@@ -793,7 +771,6 @@ function player_damage(player, tb_enemy)
     console.log("hit!" + hitTimer)
     this.sound.play("playerDamage");
   }
-=======
 }
 function player_damage(player, bombs)
 {
@@ -853,22 +830,16 @@ function player_alsdamage(player, als)
   player.setTint(0xff0000);
   this.sound.play("playerDamage");
 
->>>>>>> 8c2b7442bc335d2ba8263c23ceb5dcce54914ada
-
   if(heroHealth < 0)
   {
     heroHealth = 415;
     villainHealth = 415;
-<<<<<<< HEAD
     tmusic.stop();
-=======
->>>>>>> 8c2b7442bc335d2ba8263c23ceb5dcce54914ada
     this.scene.start(gameOver);
   }
 
 }
 
-<<<<<<< HEAD
 
 function getAntibodyPowerup(player, antibodyPowerup)
   {
@@ -889,7 +860,6 @@ function getAntibodyPowerup(player, antibodyPowerup)
         antibodyPowerup.disableBody(true, true);
         }
   }
-=======
 function als_damage(als, slash){
     hit.visible = true;
   // var tB_children = tB.getChildren([0]);
@@ -945,5 +915,3 @@ function als_damage(als, slash){
         }
       }
     }
-}
->>>>>>> 8c2b7442bc335d2ba8263c23ceb5dcce54914ada
