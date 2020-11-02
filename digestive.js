@@ -61,6 +61,7 @@ function p1()
 
 function c1()
 {
+   console.log(digestive)
    background = this.add.image(0, 0, 'environment2');
    background.setOrigin(0, 0);
    cursors = this.input.keyboard.createCursorKeys();

@@ -1,186 +1,5 @@
 // let respiratory = new Phaser.Scene("respiratory");
 
-nervous.preload = p1;
-nervous.create = c1;
-nervous.update = u1;
-
-// var player;
-// var ground;
-// var lookLeft = false;
-// var acceleration = 0;
-// var heroHealth = 415;
-// var villainHealth = 415;
-// var heroTakingDamage = false;
-// var villainTakingDamage = false;
-// var heroDamageIntensity = 2;
-// var villainDamageIntensity = 2;
-//
-// //For Powerups
-// var heroHealIntensity = 42;
-var progression = 0;
-var path = "none";
-var staph_still_health = 100;
-var num_staph = 0;
-
-function p1()
-{
-    this.load.image('environment2', 'Assets/Digestive/digestiveBackground3.png');
-    this.load.image('floor2', 'Assets/Digestive/digestiveFloor3.png');
-    this.load.image('platform', 'Assets/Boss/platform.png');
-    this.load.image('red', 'Assets/Boss/redHealth.png');
-    this.load.image('statusbar', 'Assets/Boss/health.png');
-    this.load.image('healthpack', 'Assets/Boss/heart.png');
-    this.load.image('staph', 'Assets/Enemy/staph.png');
-    this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png');
-    this.load.image('antibody', 'Assets/Powers/antibody.png');
-    this.load.image('sebaceousGland', 'Assets/Tutorial/sebGland.png');
-    this.load.image('slash', 'Assets/Players/slash.png');
-    this.load.image('pow', 'Assets/Players/damage.png');
-    // this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
-    console.log("in nervous")
-
-// Audio
-  this.load.audio("attack", "Assets/Powers/263011__dermotte__sword-02.mp3")
-  this.load.audio("jump", "Assets/Audio/jump.mp3")
-  this.load.audio("damage", "Assets/Audio/damage.mp3")
-  this.load.audio("playerDamage", "Assets/Audio/458867__raclure__damage-sound-effect.mp3")
-  this.load.audio("tutorialm", "Assets/Tutorial/265308__volvion__8-bit-bossfight.mp3")
-  this.load.audio("pickup", "Assets/Powers/478647__phenala__coin-pickup.mp3")
-
-// SpriteSheets
-    this.load.spritesheet('whiteBC',
-        'Assets/Players/whiteBCSpriteR.png',
-        { frameWidth: 110, frameHeight: 168 }
-);
-    this.load.spritesheet('LwhiteBC',
-        'Assets/Players/LwhiteBCSR.png',
-        { frameWidth: 110, frameHeight: 168 }
-);
-
-
-}
-
-function c1()
-{
-   background = this.add.image(0, 0, 'environment2');
-   background.setOrigin(0, 0);
-   cursors = this.input.keyboard.createCursorKeys();
-   attackButton = this.input.keyboard.addKeys("Q,P");
-   nextButton = this.input.keyboard.addKeys("W");
-   otherNextButton = this.input.keyboard.addKeys("E");
-   redhealth = this.add.image(220, 60, 'red')
-   healthbar = this.add.image(220, 60, 'statusbar')
-   redhealth.setOrigin(0.45, 0.5)
-   healthbar.setOrigin(0.45, 0.5)
-   //Max 415
-   healthbar.displayWidth = 415
-
-
-   //Edge colliders
-   ground = this.physics.add.staticGroup();
-   floor = ground.create(959, 995, "floor2");
-   gland = this.physics.add.staticGroup();
-
-
-   // sounds
-   tmusic= this.sound.add('tutorialm', {loop: true, volume: 1});
-   this.sound.play("tutorialm");
-   attack = this.sound.add('attack', {volume: 1})
-   damage = this.sound.add('damage', {volume: 3})
-   playerDamage = this.sound.add("playerDamage", {volume: 1})
-   jump = this.sound.add('jump', {volume: 1})
-   pickup = this.sound.add('pickup')
-
-
-   // player code
-   player = this.physics.add.sprite(100, 700, "whiteBC");
-   player.setBounce(0.3);
-   player.setCollideWorldBounds(true);
-   this.physics.add.collider(player, floor);
-   player.body.setGravityY(2400);
-
-   // slash
-   slash = this.physics.add.group({immovable: true, allowGravity: false});
-
-   //Powerups
-   healthpacks = this.physics.add.group();
-   antibodyPowerup = this.physics.add.group();
-
-   this.physics.add.collider(antibodyPowerup, ground);
-   this.physics.add.collider(healthpacks, ground);
-   this.physics.add.overlap(player, healthpacks, getHealth, null, this);
-   this.physics.add.overlap(player, antibodyPowerup, getAntibodyPowerup, null, this);
-   //this.physics.add.overlap(theBoss, antibodyStorm, boss_antibody_damage, null, this);
-   antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
-
-
-   // damage image to attach to player
-   hit = this.add.image(player.x, player.y, "pow");
-   hit.visible = false;
-
-
-
-
-   this.anims.create({
-       key: "leftWalking",
-       frames: this.anims.generateFrameNumbers("LwhiteBC", { start: 1, end: 8}),
-       frameRate: 10,
-       repeat: -1
-     });
-
-     this.anims.create({
-       key: "turnLeft",
-       frames: [ { key: "LwhiteBC", frame: 0 } ],
-       frameRate: 20
-     });
-
-     this.anims.create({
-       key: "turnRight",
-       frames: [ { key: "whiteBC", frame: 0 } ],
-       frameRate: 20
-     });
-
-     this.anims.create({
-       key: "rightWalking",
-       frames: this.anims.generateFrameNumbers("whiteBC", { start: 1, end: 8 }),
-       frameRate: 10,
-       repeat: -1
-     });
-
-     this.anims.create({
-       key: "jumpLeft",
-       frames: this.anims.generateFrameNumbers("LwhiteBC", { start: 8, end: 10 }),
-       frameRate: 10,
-       repeat: -1
-     });
-
-     this.anims.create({
-       key: "jumpRight",
-       frames: this.anims.generateFrameNumbers("whiteBC", { start: 8, end: 10 }),
-       frameRate: 10,
-       repeat: -1
-     });
-
-     this.anims.create({
-       key: "attackRight",
-       frames: this.anims.generateFrameNumbers("whiteBC", { start: 12, end: 14 }),
-       frameRate: 5,
-       repeat: -1
-     });
-
-     this.anims.create({
-       key: "attackLeft",
-       frames: this.anims.generateFrameNumbers("LwhiteBC", { start: 12, end: 14 }),
-       frameRate: 5,
-       repeat: -1
-     });
-
-
-}
-
-
-function u1()
-{
 nervous.preload = p2;
 nervous.create = c2;
 nervous.update = u2;
@@ -197,8 +16,8 @@ var tau_text;
 heroHealth = 415;
 
 function p2(){
-  this.load.image('environment2', 'Assets/Nervous/nervousBackground.png');
-  this.load.image('floor2', 'Assets/Nervous/nervousFloor.png');
+  this.load.image('environment3', 'Assets/Nervous/nervousBackground.png');
+  this.load.image('floor3', 'Assets/Nervous/nervousFloor.png');
   this.load.image('platform2', 'Assets/Nervous/platform2.png');
   this.load.image('red', 'Assets/Boss/redHealth.png');
   this.load.image('statusbar', 'Assets/Boss/health.png');
@@ -236,7 +55,7 @@ function p2(){
 }
 
 function c2(){
-  background = this.add.image(960, 540, 'environment2');
+  background = this.add.image(960, 540, 'environment3');
   tau_text = this.add.text(1130, 40, "Tau Proteins").setScale(3);
   awave_text = this.add.text(700, 240, "Alzheimers:" + "\r\n" + " Wave " + awave_count + " of 3").setScale(4);
   adefeated_text = this.add.text(1470, 130, "Enemies left in wave:" + 5 - defeated).setScale(3);
@@ -256,7 +75,7 @@ function c2(){
   //Edge colliders
   ground = this.physics.add.staticGroup();
   ground.create(959, 750, "platform2").setScale(1.5);
-  floor = ground.create(959, 1050, "floor2").setScale(1).refreshBody();
+  floor = ground.create(959, 1050, "floor3").setScale(1).refreshBody();
 
   // sounds
   attack = this.sound.add('attack', {volume: 0.5})
@@ -434,15 +253,6 @@ function u2(){
     hit.visible = false;
   }
 
-    
-    if (player.x > 1600) {
-        tmusic.stop();
-        console.log('start')
-        this.scene.start(transition2);
-
-    }
-
-
   if(Math.ceil(tau_enemy.x) === Math.ceil(player.x -10) || Math.ceil(tau_enemy.x) === Math.ceil(player.x + 10) || Math.ceil(tau_enemy.x) === Math.ceil(player.x)){
     bombs.create(tau_enemy.x, tau_enemy.y, 'preon').setScale(.4);
     bombs.create(tau_enemy.x, tau_enemy.y, 'preon').setScale(.4);
@@ -557,8 +367,8 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
         if (enemy.x > 1920 || enemy.x < 0)
         {
           defeated_text.visible = false;
-          awave_text.setText("Wave Over: " + "\n" + "Defeat the tau proteins").setScale(4);
-          awave_text.visible = true;
+          wave_text.setText("Wave Over").setScale(4);
+          wave_text.visible = true;
         }
       }
 
@@ -573,6 +383,7 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
     {
         player.setVelocityX(-350);
         player.setTint(0xffffff);
+
         player.anims.play('leftWalking', true);
 
         hit.setX(player.x - 100).setY(player.y);
@@ -624,6 +435,7 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
     {
         player.setVelocityX(350);
         player.setTint(0xffffff);
+
         hit.setX(player.x + 100).setY(player.y);
 
         player.anims.play('rightWalking', true);
@@ -641,7 +453,6 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
         }
 
         if (!(cursors.up.isDown && player.body.touching.down)){
-            hit.setX(player.x + 100).setY(player.y);
           hit.setX(player.x + 100).setY(player.y);
             player.anims.play('jumpRight');
             this.sound.play("jump");
@@ -653,6 +464,7 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
 
     // attacking
     if (!attackButton.Q.isDown) {
+
         qLifted = true;
     }
 
@@ -701,76 +513,6 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
       }
     }
 
-    // ending game
-    if (heroHealth < 1) {
-        return
-    }
-
-    // Hero taking damage
-    if (heroTakingDamage) {
-        this.sound.play("playerDamage");
-        healthbar.x -= 0.43 * heroDamageIntensity
-        healthbar.displayWidth -= heroDamageIntensity
-        heroHealth -= heroDamageIntensity
-    }
-}
-
-
-function staph_still_damage(staph_still, slash){
-
-    staph_still_health -= 1;
-    hit.visible = true;
-    this.sound.play("damage");
-    console.log(staph_still_health);
-
-
-  if (staph_still_health <= 0) {
-
-      staph_still.disableBody(true, true);
-  }
-}
-
-function staph_move_damage(staph_move, slash){
-    hit.visible = true;
-
-    staph_move.health -= 1
-
-
-  if (staph_move.health <= 0) {
-      staph_move.disableBody(true, true);
-      num_staph -= 1;
-      console.log("num_staph:     " + num_staph);
-  }
-}
-
-function staph_antibody_damage(staph_move, antibodyStorm){
-
-    staph_move.health -= 1;
-    this.sound.play("damage");
-
-    if (staph_move.health <= 0) {
-        staph_move.disableBody(true, true);
-        num_staph -= 1;
-        console.log("num_staph:     " + num_staph);
-    }
-}
-
-
-
-
-
-function player_damage(player, tb_enemy)
-{
-  console.log("hey!")
-  hitTimer += 1;
-  healthbar.x -= 0.43 * .5
-  healthbar.displayWidth -= .5
-  heroHealth -= .5
-  console.log("hit!" + hitTimer)
-  if (hitTimer % 10 === 0){
-    console.log("hit!" + hitTimer)
-    this.sound.play("playerDamage");
-  }
 }
 function player_damage(player, bombs)
 {
@@ -795,7 +537,6 @@ function player_damage(player, bombs)
 function tau_damage(slash, tau_enemy){
   if (awave_count >= 4){
     hit.visible = true;
-    awave_text.visible = false;
     villainHealthbar.x -= 0.48 * 4
     villainHealthbar.displayWidth -= 4
     villainHealth -= 4
@@ -818,7 +559,7 @@ function tau_damage(slash, tau_enemy){
   {
     heroHealth = 415;
     villainHealth = 415;
-    this.scene.start(transition1);
+    this.scene.start(transition2);
   }
 }
 
@@ -830,36 +571,16 @@ function player_alsdamage(player, als)
   player.setTint(0xff0000);
   this.sound.play("playerDamage");
 
+
   if(heroHealth < 0)
   {
     heroHealth = 415;
     villainHealth = 415;
-    tmusic.stop();
     this.scene.start(gameOver);
   }
 
 }
 
-
-function getAntibodyPowerup(player, antibodyPowerup)
-  {
-    this.sound.play("pickup");
-    var i;
-    for (i = 0; i < 100; i++)
-        {
-        radius = Phaser.Math.FloatBetween(0, 200)
-        theta = Phaser.Math.FloatBetween(0, 6.28)
-        deltaX = radius * (Math.cos(theta))
-        deltaY = radius * (Math.sin(theta))
-            
-        var storm = antibodyStorm.create((-200 + deltaX), (750 + deltaY), "antibody");
-        storm.setScale(0.1);
-        storm.angle = (Phaser.Math.FloatBetween(0, 359));
-        storm.setVelocityY(0);
-        storm.setVelocityX(400);
-        antibodyPowerup.disableBody(true, true);
-        }
-  }
 function als_damage(als, slash){
     hit.visible = true;
   // var tB_children = tB.getChildren([0]);
@@ -915,3 +636,4 @@ function als_damage(als, slash){
         }
       }
     }
+}
