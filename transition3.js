@@ -15,12 +15,13 @@ function ct3()
   patient = this.add.text(1300, 0, "Patient: Bee Curefull").setScale(3);
   next = this.add.text(1300, 200, "New Infection in:" + "\n" + "Respiratory System").setScale(3);
   start = this.add.text(1450, 500,"Click to start").setScale(3);
+  clickableBoss = this.add.text(1150, 350, "   \n\n\n\n\n\n           ").setScale(3).setInteractive();
 
   finaltrmusic= this.sound.add('transitionf', {loop: true});
   // this.sound.play("transitionf");
 
   // this.input.on("pointerdown", () => finaltrmusic.stop());
-  this.input.on("pointerdown", () => this.scene.start(bossScene));
+  clickableBoss.on("pointerdown", () => this.scene.start(bossScene));
 }
 
 function ut3()

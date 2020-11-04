@@ -13,6 +13,8 @@ var awave_text;
 var adefeated_text;
 var adefeated = 0;
 var tau_text;
+var villainHealth = 207.5;
+var villainHealth2 = 207.5;
 heroHealth = 415;
 
 function p2(){
@@ -195,7 +197,7 @@ function c2(){
     tau_enemy.body.allowGravity = false;
     tau_enemy.body.immovable = true; //Makes it so nothing moves it
     this.physics.add.collider(tau_enemy, floor);
-    this.physics.add.overlap(tau_enemy, slash, tau_damage, null, this);
+    this.physics.add.overlap(slash, tau_enemy, tau_damage1, null, this);
     // flu_enemy.setTint(0X00000);
 
     moveTau = this.tweens.add({
@@ -216,7 +218,7 @@ function c2(){
     tau_enemy2.body.allowGravity = false;
     tau_enemy2.body.immovable = true; //Makes it so nothing moves it
     this.physics.add.collider(tau_enemy2, floor);
-    this.physics.add.overlap(tau_enemy2, slash, tau_damage, null, this);
+    this.physics.add.overlap(slash, tau_enemy2, tau_damage2, null, this);
 
     moveTau2 = this.tweens.add({
       targets: tau_enemy2,
@@ -237,10 +239,13 @@ function c2(){
           setXY:{x: tau_enemy.x, y: tau_enemy.y, stepX: 70},
           setScale: {x: .4, y: .4},
           allowGravity: true,
+          setBounceX: 0.8,
+          setBounceY: 0.8,
           runChildUpdate: true,
         });
         this.physics.add.overlap(player, bombs.getChildren(), player_damage, null, this);
         this.physics.add.collider(bombs.getChildren(), ground)
+
 
         preon_timer += 1;
 }
@@ -249,13 +254,26 @@ function u2(){
   // console.log("preon" + preon_timer + " awave_count" + awave_count)
   // console.log("anum_enemies " + anum_enemies)
   // hide pow asset if player is not attacking
+
+  //death of Taus controls
+  if(villainHealth2 < 0 && villainHealth >= 0)
+  {
+    tau_enemy2.destroy();
+  }
+  if(villainHealth < 0 && villainHealth2 >= 0)
+  {
+    tau_enemy.destroy();
+  }
+
   if(attackButton.Q.isUp){
     hit.visible = false;
   }
 
   if(Math.ceil(tau_enemy.x) === Math.ceil(player.x -10) || Math.ceil(tau_enemy.x) === Math.ceil(player.x + 10) || Math.ceil(tau_enemy.x) === Math.ceil(player.x)){
-    bombs.create(tau_enemy.x, tau_enemy.y, 'preon').setScale(.4);
-    bombs.create(tau_enemy.x, tau_enemy.y, 'preon').setScale(.4);
+    var bomb = bombs.create(tau_enemy.x, tau_enemy.y, 'preon').setScale(.4);
+    //bombs.create(tau_enemy.x, tau_enemy.y, 'preon').setScale(.4);
+    bomb.setVelocityX(Phaser.Math.Between(-70, 70));
+    bomb.setBounce(0.9);////////////////
     if (preon_timer <= 3 && awave_count < 4){
       // console.log("hey")
       preon_timer += 2;
@@ -263,8 +281,10 @@ function u2(){
   }
 
   if(Math.ceil(tau_enemy2.x) === Math.ceil(player.x -10) || Math.ceil(tau_enemy2.x) === Math.ceil(player.x + 10) || Math.ceil(tau_enemy2.x) === Math.ceil(player.x)){
-     bombs.create(tau_enemy2.x, tau_enemy2.y, 'preon').setScale(.4);
-     bombs.create(tau_enemy2.x, tau_enemy2.y, 'preon').setScale(.4);
+     var bomb = bombs.create(tau_enemy2.x, tau_enemy2.y, 'preon').setScale(.4);
+     //bombs.create(tau_enemy2.x, tau_enemy2.y, 'preon').setScale(.4);
+     bomb.setVelocityX(Phaser.Math.Between(-50, 50));
+     bomb.setBounce(0.9);////////////////
     if (preon_timer <= 3 && awave_count < 4){
       // console.log("hey")
       preon_timer += 2;
@@ -534,7 +554,10 @@ function player_damage(player, bombs)
 
 }
 
-function tau_damage(slash, tau_enemy){
+function tau_damage1(slash, tau_enemy1){
+
+  console.log("villain health: ", villainHealth);
+
   if (awave_count >= 4){
     hit.visible = true;
     villainHealthbar.x -= 0.48 * 4
@@ -555,10 +578,42 @@ function tau_damage(slash, tau_enemy){
     hp.setVelocity(Phaser.Math.Between(-200, 200), 20);
   }
 
-  if (villainHealth < 0)
+  if (villainHealth < 0 && villainHealth2 < 0)
   {
     heroHealth = 415;
     villainHealth = 415;
+    this.scene.start(transition2);
+  }
+}
+
+function tau_damage2(slash, tau_enemy2){
+
+  console.log("villain health2: ", villainHealth2);
+
+  if (awave_count >= 4){
+    hit.visible = true;
+    villainHealthbar.x -= 0.48 * 4
+    villainHealthbar.displayWidth -= 4
+    villainHealth2 -= 4
+    this.sound.play("damage");
+  }
+
+  if(villainHealth2 <= 280 && villainHealth2 > 270)
+  {
+    villainHealth2 = 269;
+    healthpacks.create(100, 20, "healthpack");
+    healthpacks.create(100, 20, "healthpack");
+    var hp = healthpacks.create(960, 20, "healthpack");
+    hp.setScale(2);
+    hp.setBounce(0.5);
+    hp.setCollideWorldBounds(true);
+    hp.setVelocity(Phaser.Math.Between(-200, 200), 20);
+  }
+
+  if (villainHealth < 0 && villainHealth2 < 0)
+  {
+    heroHealth = 415;
+    villainHealth2 = 415;
     this.scene.start(transition2);
   }
 }
@@ -567,7 +622,7 @@ function player_alsdamage(player, als)
 {
   healthbar.x -= 0.43 * .5
   healthbar.displayWidth -= .5
-  heroHealth -= .3
+  heroHealth -= .5
   player.setTint(0xff0000);
   this.sound.play("playerDamage");
 
@@ -589,7 +644,7 @@ function als_damage(als, slash){
     // villainHealthbar.x -= 0.43 * villainDamageIntensity
     // villainHealthbar.displayWidth -= villainDamageIntensity
     // villainHealth -= villainDamageIntensity
-    als_health -= 5;
+    als_health -= 10;
     // console.log(als_health);
 
     if (als_health < 70 && als_health > 40)

@@ -18,6 +18,7 @@ function ct1()
   patient = this.add.text(1300, 0, "Patient: Bee Curefull").setScale(3);
   next = this.add.text(1300, 200, "Next Destination:" + "\n" + "Respiratory System").setScale(3);
   start = this.add.text(1450, 500,"Click to start").setScale(3);
+  clickableR = this.add.text(1150, 350, "  \n\n\n\n\n          ").setScale(3).setInteractive();
 
   trmusic= this.sound.add('transitionm', {loop: true});
   this.sound.play("transitionm");
@@ -28,7 +29,7 @@ function ct1()
     }
   });
 
-  this.input.on("pointerdown", () =>
+  clickableR.on("pointerdown", () =>
     {
       this.sound.stopAll()
       this.scene.start(respiratory)
