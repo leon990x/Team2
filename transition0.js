@@ -18,7 +18,7 @@ function ct1()
   patient = this.add.text(1300, 0, "Patient: Bee Curefull").setScale(3);
   next = this.add.text(1300, 200, "Next Destination:" + "\n" + "Digestive System").setScale(3);
   start = this.add.text(1490, 750,"Click to start").setScale(3);
-  clickableD = this.add.text(1130, 950, "     \n\n\n\n\n            ").setScale(3).setInteractive();
+  clickableD = this.add.text(1140, 750, "      \n\n\n\n\n            ").setScale(3).setInteractive();
 
   trmusic= this.sound.add('transitionm', {loop: true});
   this.sound.play("transitionm");
