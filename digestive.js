@@ -36,7 +36,14 @@ function p1()
     this.load.image('sebaceousGland', 'Assets/Tutorial/sebGland.png');
     this.load.image('slash', 'Assets/Players/slash.png');
     this.load.image('pow', 'Assets/Players/damage.png');
+    this.load.image('pipe', 'Assets/Digestive/pipe3.png');
+    this.load.image('ecoli', 'Assets/Digestive/Ecoli.png');
     // this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
+    
+    // acid particles
+    this.load.image('acid1', 'Assets/Digestive/acid1.png')
+    this.load.image('acid2', 'Assets/Digestive/acid2.png')
+    this.load.image('acid3', 'Assets/Digestive/acid3.png')
 
 // Audio
   this.load.audio("attack", "Assets/Powers/263011__dermotte__sword-02.mp3")
@@ -72,14 +79,32 @@ function c1()
    healthbar = this.add.image(220, 60, 'statusbar')
    redhealth.setOrigin(0.45, 0.5)
    healthbar.setOrigin(0.45, 0.5)
+   pipe = this.add
    //Max 415
    healthbar.displayWidth = 415
 
 
-   //Edge colliders
+//Edge colliders
    ground = this.physics.add.staticGroup();
    floor = ground.create(959, 995, "floor2");
    gland = this.physics.add.staticGroup();
+    
+   //pipes
+   pipe = this.physics.add.staticGroup();
+   pipe1 = pipe.create(20, 200, "pipe");
+   pipe2 = pipe.create(2150, 200, "pipe");
+   pipe2.flipX = true;
+    
+   //acid
+   acid = this.physics.add.group();
+   this.physics.add.collider(acid, floor);
+   //this.physics.add.overlap(player, acid, player_damage_acid, null this);
+   myVar1 = setInterval(dropAcidRight, 12000);
+   myVar2 = setInterval(dropAcidLeft, 9000);
+    
+   //ecoli
+   ecoli = this.physics.add.group();
+   this.physics.add.collider(ecoli, floor);
 
 
    // sounds
@@ -110,8 +135,11 @@ function c1()
    this.physics.add.collider(healthpacks, ground);
    this.physics.add.overlap(player, healthpacks, getHealth, null, this);
    this.physics.add.overlap(player, antibodyPowerup, getAntibodyPowerup, null, this);
+   this.physics.add.overlap(player, acid, player_damage, null, this);
+   this.physics.add.overlap(player, ecoli, player_damage, null, this);
    //this.physics.add.overlap(theBoss, antibodyStorm, boss_antibody_damage, null, this);
    antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
+   
 
 
    // damage image to attach to player
@@ -358,36 +386,12 @@ function staph_still_damage(staph_still, slash){
   }
 }
 
-function staph_move_damage(staph_move, slash){
-    hit.visible = true;
-
-    staph_move.health -= 1
-
-
-  if (staph_move.health <= 0) {
-      staph_move.disableBody(true, true);
-      num_staph -= 1;
-      console.log("num_staph:     " + num_staph);
-  }
-}
-
-function staph_antibody_damage(staph_move, antibodyStorm){
-
-    staph_move.health -= 1;
-    this.sound.play("damage");
-
-    if (staph_move.health <= 0) {
-        staph_move.disableBody(true, true);
-        num_staph -= 1;
-        console.log("num_staph:     " + num_staph);
-    }
-}
 
 
 
 
 
-function player_damage(player, tb_enemy)
+function player_damage_acid(player, acid)
 {
   console.log("hey!")
   hitTimer += 1;
@@ -430,3 +434,44 @@ function getAntibodyPowerup(player, antibodyPowerup)
         antibodyPowerup.disableBody(true, true);
         }
   }
+
+function test() {
+    console.log("worked")
+}
+
+function dropAcidLeft()
+  {
+    var i;
+    for (i = 0; i < 10; i++)
+        {
+        
+            
+        var drop1 = acid.create(500, 230, "acid3");
+        //drop1.setScale(0.1);
+        //drop1.angle = (Phaser.Math.FloatBetween(0, 359));
+        drop1.setVelocityY(0);
+        drop1.setVelocityX(Phaser.Math.FloatBetween(80, 230));
+        drop1.setBounce(Phaser.Math.FloatBetween(.1, .5));
+        setTimeout(function(){drop1.destroy();}, 50);
+        //setTimeout(function(){sl.disableBody(true, true);}, 90);
+        }
+      
+    drop1.disableBody(true, true);
+  }
+
+function dropAcidRight()
+  {
+    var i;
+    for (i = 0; i < 10; i++)
+        {
+        
+            
+        var drop1 = acid.create(1660, 230, "acid1");
+        //drop1.setScale(0.1);
+        //drop1.angle = (Phaser.Math.FloatBetween(0, 359));
+        drop1.setVelocityY(0);
+        drop1.setVelocityX(Phaser.Math.FloatBetween(-100, -260));
+        drop1.setBounce(Phaser.Math.FloatBetween(.1, .5));
+        }
+  }
+
