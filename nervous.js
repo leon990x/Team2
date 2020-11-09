@@ -33,6 +33,7 @@ function p2(){
   this.load.image('pow', 'Assets/Players/damage.png');
 
   // Audio
+    this.load.audio('nervem', "Assets/Audio/179511__clinthammer__clinthammermusic-gamerstep-bass-triplets.mp3")
     this.load.audio("attack", "Assets/Powers/263011__dermotte__sword-02.mp3")
     this.load.audio("jump", "Assets/Audio/jump.mp3")
     this.load.audio("damage", "Assets/Audio/damage.mp3")
@@ -76,10 +77,12 @@ function c2(){
 
   //Edge colliders
   ground = this.physics.add.staticGroup();
-  ground.create(959, 750, "platform2").setScale(1.5);
+  ground.create(959, 750, "platform2").setScale(1.5).refreshBody();
   floor = ground.create(959, 1050, "floor3").setScale(1).refreshBody();
 
   // sounds
+  nmusic= this.sound.add('nervem', {loop: true, volume: 3});
+  nmusic.play();
   attack = this.sound.add('attack', {volume: 0.5})
   damage = this.sound.add('damage', {volume: 3})
   playerDamage = this.sound.add("playerDamage", {volume: 1})
@@ -541,14 +544,19 @@ function player_damage(player, bombs)
   healthbar.displayWidth -= .3
   heroHealth -= .3
   player.setTint(0xff0000);
+  // bombs.destroy(bombs,true);
+  bombs.setVisible = false;
+  // bombs.disableBody(true, true);
   this.sound.play("playerDamage");
-  Phaser.Actions.Call(this.children.entries, function(child){bombs.destroy();});
+  Phaser.Actions.Call(this.bombs.getChildren(), function(child){bombs.destroy();});
+
 
 
   if(heroHealth < 0)
   {
     heroHealth = 415;
     villainHealth = 415;
+    nmusic.stop();
     this.scene.start(gameOver);
   }
 
@@ -582,6 +590,7 @@ function tau_damage1(slash, tau_enemy1){
   {
     heroHealth = 415;
     villainHealth = 415;
+    this.sound.stopAll();
     this.scene.start(transition2);
   }
 }
@@ -614,6 +623,7 @@ function tau_damage2(slash, tau_enemy2){
   {
     heroHealth = 415;
     villainHealth2 = 415;
+    this.sound.stopAll();
     this.scene.start(transition2);
   }
 }
@@ -631,6 +641,7 @@ function player_alsdamage(player, als)
   {
     heroHealth = 415;
     villainHealth = 415;
+    this.sound.stopAll();
     this.scene.start(gameOver);
   }
 

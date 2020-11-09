@@ -28,11 +28,11 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 300 },
-            debug: false
+            debug: true
         }
     },
     scene: [tutorial, transition0, digestive, transition1, nervous, transition2, respiratory, transition3, bossScene, gameOver, win]
-
+    // scene: gameOver
 };
 
 // game instance and global variables

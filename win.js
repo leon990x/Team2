@@ -18,7 +18,7 @@ function createW(){
   retryText = this.add.text(750, 540, "Refresh to retry").setScale(3);
 
   winmusic= this.sound.add('win_music', {loop: true});
-  // this.sound.play("win_music");
+  winmusic.play();
 
   // this.input.on("pointerdown", () => winmusic.stop());
   this.input.on('gameobjectdown', () => this.scene.start(bossScene));

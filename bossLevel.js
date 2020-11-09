@@ -40,6 +40,7 @@ function preload ()
     this.load.image('pow', 'Assets/Players/damage.png');
 
 // Audio
+  this.load.audio("bossm", "Assets/Audio/434856__emceeciscokid__retro-last-level-video-game-loop.mp3")
   this.load.audio("attack", "Assets/Powers/263011__dermotte__sword-02.mp3")
   this.load.audio("jump", "Assets/Audio/jump.mp3")
   this.load.audio("damage", "Assets/Audio/damage.mp3")
@@ -134,6 +135,8 @@ function create ()
    //ground.create(1610, 610, 'platform');
 
    // sounds
+   bmusic= this.sound.add('bossm', {loop: true, volume: .5});
+   bmusic.play();
    attack = this.sound.add('attack', {volume: 0.5})
    damage = this.sound.add('damage', {volume: 3})
    playerDamage = this.sound.add("playerDamage", {volume: 1})
@@ -594,9 +597,11 @@ function update()
 
     // ending game
     if (heroHealth < 1) {
+        this.sound.stopAll();
         this.scene.start(gameOver);
     }
     if (villainHealth < 1) {
+        this.sound.stopAll();
         this.scene.start(win)
     }
     // Hero taking damage
@@ -630,6 +635,7 @@ function laser_damage(player, lasers)
   if(heroHealth < 0)
   {
     heroHealth = 415;
+    this.sound.stopAll();
     this.scene.start(gameOver);
   }
 }
@@ -664,6 +670,7 @@ function tentacle_damage(player, tentacles)
   if(heroHealth < 0)
   {
     heroHealth = 415;
+    this.sound.stopAll();
     this.scene.start(gameOver);
   }
 }
@@ -686,6 +693,7 @@ function tentacle_ss_damage(player, ronaBall)
   if(heroHealth < 0)
   {
     heroHealth = 415;
+    this.sound.stopAll();
     this.scene.start(gameOver);
   }
 }
@@ -719,6 +727,7 @@ function attack_boss(theBoss, slash)
   {
     heroHealth = 415;
     villainHealth = 415;
+    this.sound.stopAll();
     this.scene.start(win);
     }
 }
@@ -762,6 +771,7 @@ function boss_damage(theBoss, player, storm){
   {
     heroHealth = 415;
     villainHealth = 415;
+    this.sound.stopAll();
     this.scene.start(win);
     }
   }
@@ -776,7 +786,7 @@ function boss_damage(theBoss, player, storm){
         theta = Phaser.Math.FloatBetween(0, 6.28)
         deltaX = radius * (Math.cos(theta))
         deltaY = radius * (Math.sin(theta))
-            
+
         var storm = antibodyStorm.create((-200 + deltaX), (750 + deltaY), "antibody");
         storm.setScale(0.1);
         storm.angle = (Phaser.Math.FloatBetween(0, 359));

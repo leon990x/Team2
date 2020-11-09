@@ -24,8 +24,8 @@ var num_staph = 0;
 
 function p1()
 {
-    this.load.image('environment2', 'Assets/Digestive/digestiveBackground3.png');
-    this.load.image('floor2', 'Assets/Digestive/digestiveFloor3.png');
+    this.load.image('environment2', 'Assets/Digestive/digestiveBackground.png');
+    this.load.image('floor2', 'Assets/Digestive/digestiveFloor.png');
     this.load.image('platform', 'Assets/Boss/platform.png');
     this.load.image('red', 'Assets/Boss/redHealth.png');
     this.load.image('statusbar', 'Assets/Boss/health.png');
@@ -39,13 +39,14 @@ function p1()
     this.load.image('pipe', 'Assets/Digestive/pipe3.png');
     this.load.image('ecoli', 'Assets/Digestive/Ecoli.png');
     // this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
-    
+
     // acid particles
     this.load.image('acid1', 'Assets/Digestive/acid1.png')
-    this.load.image('acid2', 'Assets/Digestive/acid2.png')
+    // this.load.image('acid2', 'Assets/Digestive/acid2.png')
     this.load.image('acid3', 'Assets/Digestive/acid3.png')
 
 // Audio
+  this.load.audio("digestm", "Assets/Audio/412344__michorvath__rivalry-8-bit-music-loop.mp3")
   this.load.audio("attack", "Assets/Powers/263011__dermotte__sword-02.mp3")
   this.load.audio("jump", "Assets/Audio/jump.mp3")
   this.load.audio("damage", "Assets/Audio/damage.mp3")
@@ -88,28 +89,28 @@ function c1()
    ground = this.physics.add.staticGroup();
    floor = ground.create(959, 995, "floor2");
    gland = this.physics.add.staticGroup();
-    
+
    //pipes
    pipe = this.physics.add.staticGroup();
    pipe1 = pipe.create(20, 200, "pipe");
    pipe2 = pipe.create(2150, 200, "pipe");
    pipe2.flipX = true;
-    
+
    //acid
    acid = this.physics.add.group();
    this.physics.add.collider(acid, floor);
    //this.physics.add.overlap(player, acid, player_damage_acid, null this);
    myVar1 = setInterval(dropAcidRight, 12000);
    myVar2 = setInterval(dropAcidLeft, 9000);
-    
+
    //ecoli
    ecoli = this.physics.add.group();
    this.physics.add.collider(ecoli, floor);
 
 
    // sounds
-   tmusic= this.sound.add('tutorialm', {loop: true, volume: 1});
-   this.sound.play("tutorialm");
+   dmusic= this.sound.add('digestm', {loop: true, volume: 3});
+   dmusic.play();
    attack = this.sound.add('attack', {volume: 1})
    damage = this.sound.add('damage', {volume: 3})
    playerDamage = this.sound.add("playerDamage", {volume: 1})
@@ -139,7 +140,7 @@ function c1()
    this.physics.add.overlap(player, ecoli, player_damage, null, this);
    //this.physics.add.overlap(theBoss, antibodyStorm, boss_antibody_damage, null, this);
    antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
-   
+
 
 
    // damage image to attach to player
@@ -214,9 +215,9 @@ function u1()
     hit.visible = false;
   }
 
-    
+
     if (player.x > 1600) {
-        tmusic.stop();
+        this.sound.stopAll();
         console.log('start')
         this.scene.start(transition1);
 
@@ -408,7 +409,7 @@ function player_damage_acid(player, acid)
   {
     heroHealth = 415;
     villainHealth = 415;
-    tmusic.stop();
+    dmusic.stop();
     this.scene.start(gameOver);
   }
 
@@ -425,7 +426,7 @@ function getAntibodyPowerup(player, antibodyPowerup)
         theta = Phaser.Math.FloatBetween(0, 6.28)
         deltaX = radius * (Math.cos(theta))
         deltaY = radius * (Math.sin(theta))
-            
+
         var storm = antibodyStorm.create((-200 + deltaX), (750 + deltaY), "antibody");
         storm.setScale(0.1);
         storm.angle = (Phaser.Math.FloatBetween(0, 359));
@@ -444,8 +445,8 @@ function dropAcidLeft()
     var i;
     for (i = 0; i < 10; i++)
         {
-        
-            
+
+
         var drop1 = acid.create(500, 230, "acid3");
         //drop1.setScale(0.1);
         //drop1.angle = (Phaser.Math.FloatBetween(0, 359));
@@ -455,7 +456,7 @@ function dropAcidLeft()
         setTimeout(function(){drop1.destroy();}, 50);
         //setTimeout(function(){sl.disableBody(true, true);}, 90);
         }
-      
+
     drop1.disableBody(true, true);
   }
 
@@ -464,8 +465,8 @@ function dropAcidRight()
     var i;
     for (i = 0; i < 10; i++)
         {
-        
-            
+
+
         var drop1 = acid.create(1660, 230, "acid1");
         //drop1.setScale(0.1);
         //drop1.angle = (Phaser.Math.FloatBetween(0, 359));
@@ -474,4 +475,3 @@ function dropAcidRight()
         drop1.setBounce(Phaser.Math.FloatBetween(.1, .5));
         }
   }
-

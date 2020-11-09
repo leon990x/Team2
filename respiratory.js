@@ -30,6 +30,7 @@ function p1()
     //this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
 // Audio
+  this.load.audio("respm", "Assets/Audio/277251__zetauri__zetauri-darkthrillerloop-j8.mp3")
   this.load.audio("attack", "Assets/Powers/263011__dermotte__sword-02.mp3")
   this.load.audio("jump", "Assets/Audio/jump.mp3")
   this.load.audio("damage", "Assets/Audio/damage.mp3")
@@ -87,6 +88,8 @@ function c1()
    floor = ground.create(959, 1050, "floor").setScale(1).refreshBody();
 
    // sounds
+   rmusic= this.sound.add('respm', {loop: true, volume: 3});
+   rmusic.play();
    attack = this.sound.add('attack', {volume: 0.5})
    damage = this.sound.add('damage', {volume: 3})
    playerDamage = this.sound.add("playerDamage", {volume: 1})
@@ -676,6 +679,7 @@ function flu_damage(slash, flu_enemy){
   {
     heroHealth = 415;
     villainHealth = 415;
+    this.sound.stopAll();
     this.scene.start(transition3);
   }
 }
@@ -705,6 +709,7 @@ function player_damage(player, tB)
   {
     heroHealth = 415;
     villainHealth = 415;
+    rmusic.stop();
     this.scene.start(gameOver);
   }
 
@@ -720,7 +725,7 @@ function getAntibodyPowerup(player, antibodyPowerup)
         theta = Phaser.Math.FloatBetween(0, 6.28)
         deltaX = radius * (Math.cos(theta))
         deltaY = radius * (Math.sin(theta))
-            
+
         var storm = antibodyStorm.create((-200 + deltaX), (750 + deltaY), "antibody");
         storm.setScale(0.1);
         storm.angle = (Phaser.Math.FloatBetween(0, 359));

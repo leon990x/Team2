@@ -85,8 +85,8 @@ function c1()
    tmusic= this.sound.add('tutorialm', {loop: true, volume: 1});
    this.sound.play("tutorialm");
    attack = this.sound.add('attack', {volume: 1})
-   damage = this.sound.add('damage', {volume: 3})
-   playerDamage = this.sound.add("playerDamage", {volume: 1})
+   damage = this.sound.add('damage', {volume: .01})
+   playerDamage = this.sound.add("playerDamage", {volume: .5})
    jump = this.sound.add('jump', {volume: 1})
    pickup = this.sound.add('pickup')
 
@@ -541,7 +541,7 @@ function getAntibodyPowerup(player, antibodyPowerup)
         theta = Phaser.Math.FloatBetween(0, 6.28)
         deltaX = radius * (Math.cos(theta))
         deltaY = radius * (Math.sin(theta))
-            
+
         var storm = antibodyStorm.create((-200 + deltaX), (750 + deltaY), "antibody");
         storm.setScale(0.1);
         storm.angle = (Phaser.Math.FloatBetween(0, 359));

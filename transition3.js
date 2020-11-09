@@ -17,11 +17,21 @@ function ct3()
   start = this.add.text(1450, 500,"Click to start").setScale(3);
   clickableBoss = this.add.text(1150, 350, "   \n\n\n\n\n\n           ").setScale(3).setInteractive();
 
-  finaltrmusic= this.sound.add('transitionf', {loop: true});
-  // this.sound.play("transitionf");
+  finaltrmusic= this.sound.add('transitionf', {loop: true, volume: 5});
+  this.sound.play("transitionf");
+
+  this.time.addEvent({
+    delay: 300,
+    callback: ()=> {finaltrmusic.stop()
+    }
+  });
 
   // this.input.on("pointerdown", () => finaltrmusic.stop());
-  clickableBoss.on("pointerdown", () => this.scene.start(bossScene));
+  clickableBoss.on("pointerdown", () =>
+  {
+  this.sound.stopAll();
+  this.scene.start(bossScene);
+});
 }
 
 function ut3()

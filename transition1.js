@@ -20,7 +20,7 @@ function ct1()
   start = this.add.text(50, 200,"Click to start").setScale(3);
   clickableN = this.add.text(465, 0, "    \n\n\n\n\n\n           ").setScale(3).setInteractive();
 
-  trmusic= this.sound.add('transitionm', {loop: true});
+  tr1music= this.sound.add('transitionm', {loop: true});
   this.sound.play("transitionm");
 
   this.time.addEvent({
@@ -31,9 +31,9 @@ function ct1()
 
   clickableN.on("pointerdown", () =>
     {
-      this.sound.stopAll()
+      this.sound.stopAll();
       console.log("start digestive")
-      this.scene.start(nervous)
+      this.scene.start(nervous);
     });
 
 }
