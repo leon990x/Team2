@@ -16,8 +16,8 @@ function ct1()
   background = this.add.image(960, 540, 'first_background');
   destination = this.add.text(10, 0, "Epidermis cured!").setScale(3);
   patient = this.add.text(1300, 0, "Patient: Bee Curefull").setScale(3);
-  next = this.add.text(1300, 200, "Next Destination:" + "\n" + "Digestive System").setScale(3);
-  start = this.add.text(1490, 750,"Click to start").setScale(3);
+  next = this.add.text(1300, 60, "Next Destination:" + "\n" + "Digestive System").setScale(3);
+  start = this.add.text(1300, 180,"Click on the unlocked bubble \nto start").setScale(2);
   clickableD = this.add.text(1140, 750, "      \n\n\n\n\n            ").setScale(3).setInteractive();
 
   trmusic= this.sound.add('transitionm', {loop: true});

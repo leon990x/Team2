@@ -164,10 +164,11 @@ function c1()
    this.physics.add.overlap(player, acid, player_damage, null, this);
    this.physics.add.overlap(player, ecoli, player_damage, null, this);
    this.physics.add.overlap(ecoli, slash, ecoli_damage, null, this);
+
    num_ecoli = 1;
    //this.physics.add.overlap(theBoss, antibodyStorm, boss_antibody_damage, null, this);
    antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
-
+   this.physics.add.overlap(ecoli, antibodyStorm, ecoli_damage, null, this);
 
 
    // damage image to attach to player
@@ -392,12 +393,15 @@ function u1()
     }
 
     if(num_ecoli < 4 && ewave_count < 4){
+
+      rand = Phaser.Math.Between(1, 10);
+      if(rand > 3){
         // wave_count -= 1;
         ecoli.createMultiple({
-          delay: 2000,
+          delay: 4000,
           key: 'ecoli',
           repeat: 0,
-          setXY:{x: Phaser.Math.Between(500, 900), y: 840, stepX: 700},
+          setXY:{x: -1000, y: 840, stepX: 700},
           setScale: {x: 0.5, y: 0.5},
           immovable: true,
           allowGravity: false,
@@ -408,16 +412,57 @@ function u1()
           delay: 2000,
           key: 'ecoli',
           repeat: 0,
-          setXY:{x: Phaser.Math.Between(600, 1000), y: 840, stepX: 700},
+          setXY:{x: 2200, y: 840, stepX: 700},
           setScale: {x: 0.5, y: 0.5},
           immovable: true,
           allowGravity: false,
           runChildUpdate: false,
         })
 
+        num_ecoli += 2;
+      }
 
-    num_ecoli += 2;
+      else {
+        ecoli.createMultiple({
+          delay: 2000,
+          key: 'ecoli',
+          repeat: 0,
+          setXY:{x: 2200, y: 870, stepX: 700},
+          setScale: {x: 0.3, y: 0.3},
+          immovable: true,
+          allowGravity: false,
+          runChildUpdate: false,
+        })
+
+        ecoli.createMultiple({
+          delay: 2000,
+          key: 'ecoli',
+          repeat: 0,
+          setXY:{x: 2170, y: 870, stepX: 700},
+          setScale: {x: 0.3, y: 0.3},
+          immovable: true,
+          allowGravity: false,
+          runChildUpdate: false,
+        })
+
+        ecoli.createMultiple({
+          delay: 2000,
+          key: 'ecoli',
+          repeat: 0,
+          setXY:{x: 2140, y: 870, stepX: 700},
+          setScale: {x: 0.3, y: 0.3},
+          immovable: true,
+          allowGravity: false,
+          runChildUpdate: false,
+        })
+
+        num_ecoli += 3;
+      }
+
+
+
   }
+
 
   if(ewave_count > 3)
   {
@@ -432,19 +477,35 @@ function u1()
     if (enemy != undefined){
       if (player.x < enemy.x && player.body.velocity.x < 0) {
               enemy.body.velocity.x = -1 * Phaser.Math.Between(60, 120);
+              if(rand <= 3)
+              {
+                enemy.body.velocity.x = -1 * 180;
+              }
 
           }
       if (player.x > enemy.x && player.body.velocity.x > 0) {
           enemy.body.velocity.x = Phaser.Math.Between(60, 120);
+          if(rand <= 3)
+          {
+            enemy.body.velocity.x = 1 * 180;
+          }
       }
 
       if (player.x < enemy.x && player.body.velocity.x === 0) {
               enemy.body.velocity.x = -1 * Phaser.Math.Between(60, 120);
+              if(rand <= 3)
+              {
+                enemy.body.velocity.x = -1 * 180;
+              }
           }
 
       // console.log(enemy.x)
       if (player.x > enemy.x && player.body.velocity.x === 0) {
               enemy.body.velocity.x = Phaser.Math.Between(60, 120);
+              if(rand <= 3)
+              {
+                enemy.body.velocity.x = 1 * 180;
+              }
           }
 
       // console.log(enemy.x)
@@ -452,10 +513,18 @@ function u1()
 
       if (player.x < enemy.x && player.body.velocity.x > 0) {
               enemy.body.velocity.x = -1 * Phaser.Math.Between(120, 190);
+              if(rand <= 3)
+              {
+                enemy.body.velocity.x = -1 * 180;
+              }
 
           }
       if (player.x > enemy.x && player.body.velocity.x < 0) {
               enemy.body.velocity.x = Phaser.Math.Between(120, 190);
+              if(rand <= 3)
+              {
+                enemy.body.velocity.x = 1 * 180;
+              }
           }
 
       //fail safes
@@ -628,7 +697,7 @@ function dropAcidRight()
           var hp = healthpacks.create(ecoli.x, ecoli.y, "healthpack");
         }
 
-        if(ln === 30)
+        if(ln < 10)
         {
           var ap = antibodyPowerup.create(960, 20, "antibodyPowerup").setScale(0.25);
         }

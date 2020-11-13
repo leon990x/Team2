@@ -13,8 +13,8 @@ function ct3()
   background = this.add.image(960, 540, 'final_background');
   destination = this.add.text(10, 0, "Respiratory..." + "\n" +" NOT cured!").setScale(3);
   patient = this.add.text(1300, 0, "Patient: Bee Curefull").setScale(3);
-  next = this.add.text(1300, 200, "New Infection in:" + "\n" + "Respiratory System").setScale(3);
-  start = this.add.text(1450, 500,"Click to start").setScale(3);
+  next = this.add.text(1300, 60, "Final Destination:" + "\n" + "Respiratory System").setScale(3);
+  start = this.add.text(1300, 180,"Click on the unlocked bubble \nto start").setScale(2);
   clickableBoss = this.add.text(1150, 350, "   \n\n\n\n\n\n           ").setScale(3).setInteractive();
 
   finaltrmusic= this.sound.add('transitionf', {loop: true, volume: 5});
