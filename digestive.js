@@ -466,6 +466,7 @@ function u1()
 
   if(ewave_count > 3)
   {
+    this.sound.stopAll();
     this.scene.start(transition1);
   }
 
