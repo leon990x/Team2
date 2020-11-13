@@ -55,6 +55,11 @@ function p2(){
       this.load.image('preon', 'Assets/Enemy/prion.png')
       this.load.image('als', 'Assets/Enemy/als.png')
 
+      this.load.spritesheet('alsSprite',
+          'Assets/Enemy/alSprite.png',
+          { frameWidth: 92, frameHeight: 86 }
+  );
+
 }
 
 function c2(){
@@ -118,7 +123,7 @@ function c2(){
     key:"als",
     repeat: 0,
     setXY:{x: 1900, y: 930, stepX: 800},
-    setScale: {x: 2, y: 2},
+    setScale: {x: 1, y: 1},
     immovable: true,
     allowGravity: false,
     runChildUpdate: true,
@@ -131,6 +136,20 @@ function c2(){
   this.physics.add.overlap(als, slash, als_damage, null, this);
   this.physics.add.overlap(als, antibodyStorm, als_damage, null, this);
   anum_enemies = 1;
+
+  this.anims.create({
+    key:"walkingR",
+    frames: this.anims.generateFrameNumbers("alsSprite", {start: 0, end: 7}),
+    frameRate: 10,
+    repeat: -1
+  })
+
+  this.anims.create({
+    key:"attackR",
+    frames: this.anims.generateFrameNumbers("alsSprite", {start: 6, end: 18}),
+    frameRate: 10,
+    repeat: -1
+  })
 
 
   // damage image to attach to player
@@ -258,6 +277,7 @@ function u2(){
   // console.log("anum_enemies " + anum_enemies)
   // hide pow asset if player is not attacking
 
+
   //death of Taus controls
   if(villainHealth2 < 0 && villainHealth >= 0)
   {
@@ -308,7 +328,7 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
     key: 'als',
     repeat: 0,
     setXY:{x: player.x - 300, y: 930, stepX: 100},
-    setScale: {x: 2, y: 2},
+    setScale: {x: 1, y: 1},
     immovable: true,
     allowGravity: false,
     runChildUpdate: true,
@@ -329,7 +349,7 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
         key: 'als',
         repeat: 0,
         setXY:{x: Phaser.Math.Between(500, 900), y: 930, stepX: 700},
-        setScale: {x: 2, y: 2},
+        setScale: {x: 1, y: 1},
         immovable: true,
         allowGravity: false,
         runChildUpdate: false,
@@ -340,7 +360,7 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
         key: 'als',
         repeat: 0,
         setXY:{x: Phaser.Math.Between(600, 1000), y: 930, stepX: 700},
-        setScale: {x: 2, y: 2},
+        setScale: {x: 1, y: 1},
         immovable: true,
         allowGravity: false,
         runChildUpdate: false,
@@ -356,20 +376,26 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
   function moveEnemies(enemy){
     // console.log(enemy.x)
     if (enemy != undefined){
+      if(Math.ceil(enemy.x) === Math.ceil(player.x -10) || Math.ceil(enemy.x) === Math.ceil(player.x + 10) || Math.ceil(enemy.x) === Math.ceil(player.x)){
+        enemy.play("attackR", true);
+      }
       if (player.x < enemy.x && player.body.velocity.x < 0) {
               enemy.body.velocity.x = -1 * Phaser.Math.Between(60, 120);
-
+              enemy.play("walkingR", true);
           }
       if (player.x > enemy.x && player.body.velocity.x > 0) {
+          enemy.play("walkingR", true);
           enemy.body.velocity.x = Phaser.Math.Between(60, 120);
       }
 
       if (player.x < enemy.x && player.body.velocity.x === 0) {
+              enemy.play("walkingR", true);
               enemy.body.velocity.x = -1 * Phaser.Math.Between(60, 120);
           }
 
       // console.log(enemy.x)
       if (player.x > enemy.x && player.body.velocity.x === 0) {
+              enemy.play("walkingR", true);
               enemy.body.velocity.x = Phaser.Math.Between(60, 120);
           }
 
@@ -377,10 +403,12 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
 
 
       if (player.x < enemy.x && player.body.velocity.x > 0) {
+              enemy.play("walkingR", true);
               enemy.body.velocity.x = -1 * Phaser.Math.Between(120, 190);
 
           }
       if (player.x > enemy.x && player.body.velocity.x < 0) {
+              enemy.play("walkingR", true);
               enemy.body.velocity.x = Phaser.Math.Between(120, 190);
           }
 
@@ -628,13 +656,19 @@ function tau_damage2(slash, tau_enemy2){
   }
 }
 
-function player_alsdamage(player, als)
+function player_alsdamage(player, als) //FIX ME FIX THE ATTACK ANIMATIONS
 {
-  healthbar.x -= 0.43 * .5
-  healthbar.displayWidth -= .5
-  heroHealth -= .5
-  player.setTint(0xff0000);
-  this.sound.play("playerDamage");
+  Phaser.Actions.Call(als.getChildren(),
+  function checkAnims(enemy){
+    if(enemy.anims.isPlaying && enemy.currentAnim.key ==="attackR"){
+    healthbar.x -= 0.43 * .5
+    healthbar.displayWidth -= .5
+    heroHealth -= .5
+    player.setTint(0xff0000);
+    this.sound.play("playerDamage");
+});
+
+}
 
 
   if(heroHealth < 0)

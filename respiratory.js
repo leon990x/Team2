@@ -709,7 +709,7 @@ function player_damage(player, tB)
   {
     heroHealth = 415;
     villainHealth = 415;
-    rmusic.stop();
+    this.sound.stopAll();
     this.scene.start(gameOver);
   }
 
