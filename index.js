@@ -31,8 +31,7 @@ var config = {
             debug: false
         }
     },
-    //scene: [tutorial, transition0, digestive, transition1, nervous, transition2, respiratory, transition3, bossScene, gameOver, win]
-    scene: digestive
+    scene: [tutorial, transition0, digestive, transition1, nervous, transition2, respiratory, transition3, bossScene, gameOver, win]
 };
 
 // game instance and global variables

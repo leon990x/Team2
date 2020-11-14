@@ -15,6 +15,8 @@ var adefeated = 0;
 var tau_text;
 var villainHealth = 207.5;
 var villainHealth2 = 207.5;
+
+var builder;
 heroHealth = 415;
 
 function p2(){
@@ -82,7 +84,9 @@ function c2(){
 
   //Edge colliders
   ground = this.physics.add.staticGroup();
-  ground.create(959, 750, "platform2").setScale(1.5).refreshBody();
+  ground.create(960, 750, "platform2").setScale(1.5).refreshBody();
+
+
   floor = ground.create(959, 1050, "floor3").setScale(1).refreshBody();
 
   // sounds
@@ -132,7 +136,7 @@ function c2(){
 
   this.physics.add.collider(als, als);
   this.physics.add.collider(als, floor);
-  this.physics.add.overlap(als, player, player_alsdamage, null, this);
+  this.physics.add.overlap(als, player, checkAnims, null, this);
   this.physics.add.overlap(als, slash, als_damage, null, this);
   this.physics.add.overlap(als, antibodyStorm, als_damage, null, this);
   anum_enemies = 1;
@@ -315,10 +319,16 @@ function u2(){
   }
 
   if (awave_count === 4 && anum_enemies === 0){
-    // console.log("SCARY")
+    // console.log("SCARY
     adefeated_text.visible = false;
     awave_text.setText("Wave Over: " + "\n"+ "Defeat the Tau proteins").setScale(4);
     awave_text.visible = true;
+    if(builder != false)
+    {
+    ground.create(1400, 550, "platform2").setScale(1.5).refreshBody();
+    ground.create(500, 550, "platform2").setScale(1.5).refreshBody();
+    builder = false;
+    }
   }
 
 if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
@@ -327,7 +337,7 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
     delay: 2000,
     key: 'als',
     repeat: 0,
-    setXY:{x: player.x - 300, y: 930, stepX: 100},
+    setXY:{x: -600, y: 930, stepX: 100},
     setScale: {x: 1, y: 1},
     immovable: true,
     allowGravity: false,
@@ -348,7 +358,7 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
         delay: 2000,
         key: 'als',
         repeat: 0,
-        setXY:{x: Phaser.Math.Between(500, 900), y: 930, stepX: 700},
+        setXY:{x: Phaser.Math.Between(960, 980), y: 930, stepX: 700},
         setScale: {x: 1, y: 1},
         immovable: true,
         allowGravity: false,
@@ -359,7 +369,7 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
         delay: 2000,
         key: 'als',
         repeat: 0,
-        setXY:{x: Phaser.Math.Between(600, 1000), y: 930, stepX: 700},
+        setXY:{x: Phaser.Math.Between(960, 980), y: 930, stepX: 700},
         setScale: {x: 1, y: 1},
         immovable: true,
         allowGravity: false,
@@ -656,19 +666,16 @@ function tau_damage2(slash, tau_enemy2){
   }
 }
 
-function player_alsdamage(player, als) //FIX ME FIX THE ATTACK ANIMATIONS
-{
-  Phaser.Actions.Call(als.getChildren(),
-  function checkAnims(enemy){
-    if(enemy.anims.isPlaying && enemy.currentAnim.key ==="attackR"){
+
+function checkAnims(player, enemy)
+  {
     healthbar.x -= 0.43 * .5
     healthbar.displayWidth -= .5
     heroHealth -= .5
     player.setTint(0xff0000);
-    this.sound.play("playerDamage");
-});
+    this.sound.play("playerDamage")
+  }
 
-}
 
 
   if(heroHealth < 0)
@@ -679,7 +686,7 @@ function player_alsdamage(player, als) //FIX ME FIX THE ATTACK ANIMATIONS
     this.scene.start(gameOver);
   }
 
-}
+
 
 function als_damage(als, slash){
     hit.visible = true;
