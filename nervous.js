@@ -34,6 +34,9 @@ function p2(){
   this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png')
   this.load.image('pow', 'Assets/Players/damage.png');
 
+  // particles
+  this.load.image('spark', 'Assets/Particles/particlesm.png');
+
   // Audio
     this.load.audio('nervem', "Assets/Audio/179511__clinthammer__clinthammermusic-gamerstep-bass-triplets.mp3")
     this.load.audio("attack", "Assets/Powers/263011__dermotte__sword-02.mp3")
@@ -97,6 +100,22 @@ function c2(){
   playerDamage = this.sound.add("playerDamage", {volume: 1})
   jump = this.sound.add('jump', {volume: 0.5})
   pickup = this.sound.add('pickup')
+
+  // Particles
+  const spark = this.add.particles('spark');
+  var emit = spark.createEmitter({
+    // quantity: 20,
+    // cycle: false,
+    x: 960,
+    y: 460,
+    speed: 900,
+    lifespan: 1000,
+    blendMode: 'ADD',
+    tint: 0x50C878,
+    frequency: -1,
+    scale:{ start: 1, end: 0 },
+    on: false,
+  });
 
   // player code
   player = this.physics.add.sprite(100, 700, "whiteBC");
@@ -269,8 +288,14 @@ function c2(){
           setBounceY: 0.8,
           runChildUpdate: true,
         });
-        this.physics.add.overlap(player, bombs.getChildren(), player_damage, null, this);
+        this.physics.add.overlap(player, bombs, playerBomb_damage, null, this);
         this.physics.add.collider(bombs.getChildren(), ground)
+
+        Phaser.Actions.Call(bombs.getChildren(),
+
+        function boundset(child){
+          child.setCollideWorldBounds(true);
+        });
 
 
         preon_timer += 1;
@@ -298,12 +323,13 @@ function u2(){
 
   if(Math.ceil(tau_enemy.x) === Math.ceil(player.x -10) || Math.ceil(tau_enemy.x) === Math.ceil(player.x + 10) || Math.ceil(tau_enemy.x) === Math.ceil(player.x)){
     var bomb = bombs.create(tau_enemy.x, tau_enemy.y, 'preon').setScale(.4);
-    //bombs.create(tau_enemy.x, tau_enemy.y, 'preon').setScale(.4);
+    // bombs.create(tau_enemy.x, tau_enemy.y, 'preon').setScale(.4);
+
     bomb.setVelocityX(Phaser.Math.Between(-70, 70));
     bomb.setBounce(0.9);////////////////
     if (preon_timer <= 3 && awave_count < 4){
       // console.log("hey")
-      preon_timer += 2;
+      preon_timer += 1;
   }
   }
 
@@ -314,7 +340,7 @@ function u2(){
      bomb.setBounce(0.9);////////////////
     if (preon_timer <= 3 && awave_count < 4){
       // console.log("hey")
-      preon_timer += 2;
+      preon_timer += 1;
   }
   }
 
@@ -575,23 +601,44 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
     }
 
 }
-function player_damage(player, bombs)
+function playerBomb_damage(player, bombs)
 {
+  // Particles
+  const spark = this.add.particles('spark');
+  var emit = spark.createEmitter({
+    // quantity: 20,
+    // cycle: false,
+    x: 400,
+    y: 460,
+    speed: 200,
+    lifespan: 500,
+    blendMode: 'ADD',
+    maxParticles: 50,
+    tint: 0xFACA0F,
+    frequency: -1,
+    scale:{ start: 1, end: 0 },
+    on: false,
+  });
+
+  console.log("stop!")
   console.log(heroHealth)
   healthbar.x -= 0.43 * .3
   healthbar.displayWidth -= .3
   heroHealth -= .3
   player.setTint(0xff0000);
-  // bombs.destroy(bombs,true);
-  bombs.setVisible = false;
+  // bombs.kill();
+  console.log(bombs.x)
+  bombs.destroy(bombs,true);
+  spark.emitParticleAt(bombs.x, bombs.y, 50);
   // bombs.disableBody(true, true);
   this.sound.play("playerDamage");
-  Phaser.Actions.Call(this.bombs.getChildren(), function(child){bombs.destroy();});
+  // Phaser.Actions.Call(this.bombs.getChildren(), function(child){bombs.kill();});
 
 
 
   if(heroHealth < 0)
   {
+    console.log("DONEsS")
     heroHealth = 415;
     villainHealth = 415;
     nmusic.stop();
@@ -669,6 +716,7 @@ function tau_damage2(slash, tau_enemy2){
 
 function checkAnims(player, enemy)
   {
+    console.log("Help!!")
     healthbar.x -= 0.43 * .5
     healthbar.displayWidth -= .5
     heroHealth -= .5

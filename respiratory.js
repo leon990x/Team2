@@ -11,6 +11,7 @@ var tB_health = 100;
 var wave_text;
 var defeated_text;
 var defeated = 0;
+var villainHealth = 415;
 
 function p1()
 {
@@ -171,50 +172,51 @@ function c1()
    });
 
    // Flu laser group
-   this.time.addEvent({
-     delay: 3000,
-     callback: ()=>{
+   // this.time.addEvent({
+     // delay: 3000,
+     // callback: ()=>{
        flasers = this.physics.add.group({
          delay: 200,
          key:"flaser",
-         repeat: 10,
+         repeat: 2,
          setXY:{x: flu_enemy.x, y: flu_enemy.y, stepX: 700},
          setScale: {x: .5, y: .5},
+         setVelocityX: -700,
          immovable: true,
          allowGravity: false,
          runChildUpdate: true,
        });
-
-
-          Phaser.Actions.SetXY(flasers.getChildren(), 1950, 600, 300);
-          Phaser.Actions.Call(flasers.getChildren(),
-
-          function moveT(move){
-            move.setVelocityX(-250)
-            // reset Tentacle attack
-            flasers.children.iterate((child) =>{
-              let x= Phaser.Math.Between(1910, 0);
-              let y= Phaser.Math.Between(flu_enemy.y, 800);
-              child.setX(x);
-              child.setY(y);
-
-              child.update = function(){
-                // console.log("please")
-                if(this.x <= 0 || this.y >= 1080) {
-                  // console.log(this.x, "ok");
-                  if (flaser_timer <= 5 && wave_count < 4){
-                  flaser_timer += 1;
-                  }
-                  this.x = flu_enemy.x;
-                  this.y = Phaser.Math.Between(flu_enemy.y, 800);
-                }
-              };
-            })
-          })
+          //
+          //
+          // Phaser.Actions.SetXY(flasers.getChildren(), 1950, 600, 300);
+          // Phaser.Actions.Call(flasers.getChildren(),
+          //
+          // function moveT(move){
+          //   move.setVelocityX(-250)
+          //   // reset Tentacle attack
+          //   flasers.children.iterate((child) =>{
+          //     let x= Phaser.Math.Between(1910, 0);
+          //     let y= Phaser.Math.Between(flu_enemy.y, 800);
+          //     child.setX(x);
+          //     child.setY(y);
+          //
+          //     child.update = function(){
+          //       // console.log("please")
+          //       if(this.x <= 0 || this.y >= 1080) {
+          //         // console.log(this.x, "ok");
+          //         if (flaser_timer <= 5 && wave_count < 4){
+          //         flaser_timer += 1;
+          //         }
+          //         this.x = flu_enemy.x;
+          //         this.y = Phaser.Math.Between(flu_enemy.y, 800);
+          //       }
+          //     };
+          //   })
+          // })
 
            this.physics.add.overlap(flasers, player, player_damage, null, this);
-     }
-   })
+     // }
+   // })
 
 
    //Powerups
@@ -299,6 +301,17 @@ else{
 
     console.log('num_enemies: ' + num_enemies + " wave " + wave_count)
 
+    if(Math.ceil(flu_enemy.y) <= Math.ceil(player.y -20) && Math.ceil(flu_enemy.y) > Math.ceil(player.y -22)|| Math.ceil(flu_enemy.y) === Math.ceil(player.y + 20) || Math.ceil(flu_enemy.y) === Math.ceil(player.y)){
+      flasers.create(flu_enemy.x, flu_enemy.y, 'flaser').setScale(.4);
+      flasers.create(flu_enemy.x, flu_enemy.y, 'flaser').setScale(.4);
+      flasers.create(flu_enemy.x, flu_enemy.y, 'flaser').setScale(.4);
+      flasers.setVelocityX(Phaser.Math.Between(-700, -750));
+      if (flaser_timer <= 3 && wave_count < 4){
+        // console.log("hey")
+        flaser_timer += 3;
+    }
+    }
+
 
   if (wave_count === 4 && num_enemies === 0){
     console.log("SCARY")
@@ -376,13 +389,14 @@ if (flaser_timer > 4 && wave_count < 4){
   if (num_enemies != 0 && wave_count < 4){
   Phaser.Actions.Call(tB.getChildren(),
   function moveEnemies(enemy){
+    enemy.setCollideWorldBounds(true);
     // console.log(enemy.x)
     if (enemy != undefined){
       if (player.x < enemy.x && player.body.velocity.x < 0) {
               // console.log("p left of e, mv left")
               // tb_enemy.body.velocity.x = 0;
               enemy.play("crawl", true);
-              enemy.body.velocity.x = -1 * Phaser.Math.Between(60, 120);
+              enemy.body.velocity.x = -1 * Phaser.Math.Between(120, 240);
 
           }
       if (player.x > enemy.x && player.body.velocity.x > 0) {
@@ -390,7 +404,7 @@ if (flaser_timer > 4 && wave_count < 4){
           // tb_enemy.body.velocity.x = 0;
 
           enemy.play("crawl", true);
-          enemy.body.velocity.x = Phaser.Math.Between(60, 120);
+          enemy.body.velocity.x = Phaser.Math.Between(120, 240);
       }
 
       if (player.x < enemy.x && player.body.velocity.x === 0) {
@@ -398,7 +412,7 @@ if (flaser_timer > 4 && wave_count < 4){
               // tb_enemy.body.velocity.x = 0;
 
               enemy.play("crawl", true);
-              enemy.body.velocity.x = -1 * Phaser.Math.Between(60, 120);
+              enemy.body.velocity.x = -1 * Phaser.Math.Between(120, 240);
           }
 
       // console.log(enemy.x)
@@ -406,7 +420,7 @@ if (flaser_timer > 4 && wave_count < 4){
               // console.log("p right of e, stopped")
               // tb_enemy.body.velocity.x = 0;
               enemy.play("crawl", true);
-              enemy.body.velocity.x = Phaser.Math.Between(60, 120);
+              enemy.body.velocity.x = Phaser.Math.Between(120, 240);
           }
 
       // console.log(enemy.x)
@@ -416,20 +430,20 @@ if (flaser_timer > 4 && wave_count < 4){
               // console.log("p left of e, mv right")
               // tb_enemy.body.velocity.x = 0;
               enemy.play("crawl", true);
-              enemy.body.velocity.x = -1 * Phaser.Math.Between(120, 190);
+              enemy.body.velocity.x = -1 * Phaser.Math.Between(240, 380);
 
           }
       if (player.x > enemy.x && player.body.velocity.x < 0) {
               // console.log("p right of e, mv left")
               // tb_enemy.body.velocity.x = 0;
               enemy.play("crawl", true);
-              enemy.body.velocity.x = Phaser.Math.Between(120, 190);
+              enemy.body.velocity.x = Phaser.Math.Between(240, 380);
           }
 
       //fail safes
       if (wave_count == 4)
       {
-        if (enemy.x > 1920 || enemy.x < 0)
+        if (Math.ceil(enemy.x) >= 1920 || Math.ceil(enemy.x) <= 0)
         {
           defeated_text.visible = false;
           wave_text.setText("  Wave Over:" + "\n" + "Defeat the Flu").setScale(4);
@@ -654,6 +668,7 @@ function tb_damage(tB, slash){
 
 function flu_damage(slash, flu_enemy){
   if (wave_count >= 4){
+    console.log("villain" + villainHealth)
     hit.visible = true;
     wave_text.visible = false;
     villainHealthbar.x -= 0.48 * 4
