@@ -70,7 +70,10 @@ function p1()
         'Assets/Players/LwhiteBCSR.png',
         { frameWidth: 110, frameHeight: 168 }
 );
-
+    this.load.spritesheet('Ecoli',
+      'Assets/Digestive/ecoliSprite.png',
+      { frameWidth: 101, frameHeight: 154 }
+);
 
 }
 
@@ -150,7 +153,7 @@ function c1()
      key:"ecoli",
      repeat: 0,
      setXY:{x: 1900, y: 845, stepX: 800},
-     setScale: {x: 0.5, y: 0.5},
+     setScale: {x: 1, y: 1},
      immovable: true,
      allowGravity: false,
      runChildUpdate: true,
@@ -232,7 +235,20 @@ function c1()
        repeat: -1
      });
 
+     // ECOLI Animations
+     this.anims.create({
+       key: "walkR",
+       frames: this.anims.generateFrameNumbers("Ecoli", { start: 0, end: 8 }),
+       frameRate: 10,
+       repeat: -1
+     });
 
+     this.anims.create({
+       key: "walkL",
+       frames: this.anims.generateFrameNumbers("Ecoli", { start: 10, end: 17 }),
+       frameRate: 10,
+       repeat: -1
+     });
 }
 
 
@@ -402,9 +418,9 @@ function u1()
           key: 'ecoli',
           repeat: 0,
           setXY:{x: -1000, y: 840, stepX: 700},
-          setScale: {x: 0.5, y: 0.5},
+          setScale: {x: 1, y: 1},
           immovable: true,
-          allowGravity: false,
+          allowGravity: true,
           runChildUpdate: false,
         })
 
@@ -413,9 +429,9 @@ function u1()
           key: 'ecoli',
           repeat: 0,
           setXY:{x: 2200, y: 840, stepX: 700},
-          setScale: {x: 0.5, y: 0.5},
+          setScale: {x: 1, y: 1},
           immovable: true,
-          allowGravity: false,
+          allowGravity: true,
           runChildUpdate: false,
         })
 
@@ -427,10 +443,10 @@ function u1()
           delay: 2000,
           key: 'ecoli',
           repeat: 0,
-          setXY:{x: 2200, y: 870, stepX: 700},
-          setScale: {x: 0.3, y: 0.3},
+          setXY:{x: 2200, y: 840, stepX: 700},
+          setScale: {x: 1, y: 1},
           immovable: true,
-          allowGravity: false,
+          allowGravity: true,
           runChildUpdate: false,
         })
 
@@ -438,10 +454,10 @@ function u1()
           delay: 2000,
           key: 'ecoli',
           repeat: 0,
-          setXY:{x: 2170, y: 870, stepX: 700},
-          setScale: {x: 0.3, y: 0.3},
+          setXY:{x: 2170, y: 840, stepX: 700},
+          setScale: {x: 1, y: 1},
           immovable: true,
-          allowGravity: false,
+          allowGravity: true,
           runChildUpdate: false,
         })
 
@@ -449,10 +465,10 @@ function u1()
           delay: 2000,
           key: 'ecoli',
           repeat: 0,
-          setXY:{x: 2140, y: 870, stepX: 700},
-          setScale: {x: 0.3, y: 0.3},
+          setXY:{x: 2140, y: 840, stepX: 700},
+          setScale: {x: 1, y: 1},
           immovable: true,
-          allowGravity: false,
+          allowGravity: true,
           runChildUpdate: false,
         })
 
@@ -478,34 +494,42 @@ function u1()
     if (enemy != undefined){
       if (player.x < enemy.x && player.body.velocity.x < 0) {
               enemy.body.velocity.x = -1 * Phaser.Math.Between(60, 120);
+              enemy.play("walkL", true);
               if(rand <= 3)
               {
                 enemy.body.velocity.x = -1 * 180;
+                enemy.play("walkL", true);
               }
 
           }
       if (player.x > enemy.x && player.body.velocity.x > 0) {
           enemy.body.velocity.x = Phaser.Math.Between(60, 120);
+          enemy.play("walkR", true);
           if(rand <= 3)
           {
             enemy.body.velocity.x = 1 * 180;
+            enemy.play("walkR", true);
           }
       }
 
       if (player.x < enemy.x && player.body.velocity.x === 0) {
               enemy.body.velocity.x = -1 * Phaser.Math.Between(60, 120);
+              enemy.play("walkL", true);
               if(rand <= 3)
               {
                 enemy.body.velocity.x = -1 * 180;
+                enemy.play("walkL", true);
               }
           }
 
       // console.log(enemy.x)
       if (player.x > enemy.x && player.body.velocity.x === 0) {
               enemy.body.velocity.x = Phaser.Math.Between(60, 120);
+              enemy.play("walkR", true);
               if(rand <= 3)
               {
                 enemy.body.velocity.x = 1 * 180;
+                enemy.play("walkR", true);
               }
           }
 
@@ -514,17 +538,21 @@ function u1()
 
       if (player.x < enemy.x && player.body.velocity.x > 0) {
               enemy.body.velocity.x = -1 * Phaser.Math.Between(120, 190);
+              enemy.play("walkL", true);
               if(rand <= 3)
               {
                 enemy.body.velocity.x = -1 * 180;
+                enemy.play("walkL", true);
               }
 
           }
       if (player.x > enemy.x && player.body.velocity.x < 0) {
               enemy.body.velocity.x = Phaser.Math.Between(120, 190);
+              enemy.play("walkR", true);
               if(rand <= 3)
               {
                 enemy.body.velocity.x = 1 * 180;
+                enemy.play("walkR", true);
               }
           }
 

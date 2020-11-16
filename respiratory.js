@@ -73,6 +73,7 @@ function c1()
    boss_text = this.add.text(950, 40, "The Flu (Miniboss)").setScale(3);
    cursors = this.input.keyboard.createCursorKeys();
    attackButton = this.input.keyboard.addKeys("Q,P");
+   letterCursors = this.input.keyboard.addKeys("W,A,S,D");
    redhealth = this.add.image(220, 60, 'red');
    healthbar = this.add.image(220, 60, 'statusbar');
    redhealth.setOrigin(0.45, 0.5);
