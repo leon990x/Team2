@@ -4,7 +4,7 @@ transition3.update = ut3;
 
 function pt3()
 {
-  this.load.image('final_background', 'Assets/Transitions/tfinal.png');
+  this.load.image('final_background', 'Assets/Transitions/tfinal1.png');
   this.load.audio("transitionf", "Assets/Transitions/502704__soundflakes__a-thing-in-a-town.mp3");
 }
 

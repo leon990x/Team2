@@ -4,7 +4,7 @@ transition2.update = ut1;
 
 function pt1()
 {
-  this.load.image('third_background', 'Assets/Transitions/trespiratory.png');
+  this.load.image('third_background', 'Assets/Transitions/trespiratory1.png');
   this.load.audio("transitionm", "Assets/Transitions/172561__djgriffin__video-game-7.mp3");
   console.log("transition2")
 }
