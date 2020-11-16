@@ -622,9 +622,9 @@ function playerBomb_damage(player, bombs)
 
   console.log("stop!")
   console.log(heroHealth)
-  healthbar.x -= 0.43 * .3
-  healthbar.displayWidth -= .3
-  heroHealth -= .3
+  healthbar.x -= 0.43 * 10
+  healthbar.displayWidth -= 10
+  heroHealth -= 10
   player.setTint(0xff0000);
   // bombs.kill();
   console.log(bombs.x)
