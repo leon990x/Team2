@@ -31,7 +31,7 @@ var config = {
             debug: false
         }
     },
-    scene: [nervous]//[tutorial, transition0, digestive, transition1, nervous, transition2, respiratory, transition3, bossScene, gameOver, win]
+    scene: [tutorial, transition0, digestive, transition1, nervous, transition2, respiratory, transition3, bossScene, gameOver, win]
     // scene: nervous
 };
 
