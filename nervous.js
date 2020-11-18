@@ -659,9 +659,8 @@ function tau_damage1(slash, tau_enemy1){
     this.sound.play("damage");
   }
 
-  if(villainHealth <= 280 && villainHealth > 270)
+  if(villainHealth <= 110 && villainHealth > 105)
   {
-    villainHealth = 269;
     healthpacks.create(100, 20, "healthpack");
     healthpacks.create(100, 20, "healthpack");
     var hp = healthpacks.create(960, 20, "healthpack");
@@ -692,9 +691,8 @@ function tau_damage2(slash, tau_enemy2){
     this.sound.play("damage");
   }
 
-  if(villainHealth2 <= 280 && villainHealth2 > 270)
+  if(villainHealth2 <= 110 && villainHealth2 > 105)
   {
-    villainHealth2 = 269;
     healthpacks.create(100, 20, "healthpack");
     healthpacks.create(100, 20, "healthpack");
     var hp = healthpacks.create(960, 20, "healthpack");
