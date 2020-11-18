@@ -655,7 +655,7 @@ function tau_damage1(slash, tau_enemy1){
     hit.visible = true;
     villainHealthbar.x -= 0.48 * 4
     villainHealthbar.displayWidth -= 4
-    villainHealth -= 4
+    villainHealth -= 6
     this.sound.play("damage");
   }
 
@@ -687,7 +687,7 @@ function tau_damage2(slash, tau_enemy2){
     hit.visible = true;
     villainHealthbar.x -= 0.48 * 4
     villainHealthbar.displayWidth -= 4
-    villainHealth2 -= 4
+    villainHealth2 -= 6
     this.sound.play("damage");
   }
 
@@ -717,7 +717,7 @@ function checkAnims(player, enemy)
     console.log("Help!!")
     healthbar.x -= 0.43 * .5
     healthbar.displayWidth -= .5
-    heroHealth -= .5
+    heroHealth -= 3.5
     player.setTint(0xff0000);
     this.sound.play("playerDamage")
   }
