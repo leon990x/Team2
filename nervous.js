@@ -143,7 +143,7 @@ function c2(){
   //Als Enemy
   als = this.physics.add.group({
     delay: 200,
-    key:"als",
+    key:"alsSprite",
     repeat: 0,
     setXY:{x: 1900, y: 930, stepX: 800},
     setScale: {x: 1, y: 1},
@@ -169,7 +169,7 @@ function c2(){
 
   this.anims.create({
     key:"attackR",
-    frames: this.anims.generateFrameNumbers("alsSprite", {start: 6, end: 18}),
+    frames: this.anims.generateFrameNumbers("alsSprite", {start: 7, end: 17}),
     frameRate: 10,
     repeat: -1
   })
@@ -305,8 +305,8 @@ function u2(){
   // console.log("preon" + preon_timer + " awave_count" + awave_count)
   // console.log("anum_enemies " + anum_enemies)
   // hide pow asset if player is not attacking
-  console.log("health", heroHealth);
-  console.log("Wave count: ", awave_count);
+  // console.log("health", heroHealth);
+  // console.log("Wave count: ", awave_count);
   if(heroHealth < 0)
   {
     console.log("DONEsS")
@@ -428,7 +428,17 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
   function moveEnemies(enemy){
     // console.log(enemy.x)
     if (enemy != undefined){
-      if(Math.ceil(enemy.x) === Math.ceil(player.x -10) || Math.ceil(enemy.x) === Math.ceil(player.x + 10) || Math.ceil(enemy.x) === Math.ceil(player.x)){
+        // Attack code for alzheimers
+      // if(Math.ceil(enemy.x) === Math.ceil(player.x -10) || Math.ceil(enemy.x) === Math.ceil(player.x + 10) || Math.ceil(enemy.x) === Math.ceil(player.x)){
+      if(Math.ceil(enemy.x) < Math.ceil(player.x) || Math.ceil(enemy.x) > Math.ceil(player.x)|| Math.ceil(enemy.x) === Math.ceil(player.x) || Math.ceil(enemy.x) === Math.ceil(player.x-2)){
+        console.log(enemy.x + " Player:" + player.x)
+        // enemy.body.velocity.x = 0; //stop and attack
+        console.log(enemy.body.velocity.x);
+        console.log("ye-ouch!")
+        // enemy.anims.stop();
+        // enemy.once("animationrepeat", () => {
+        //   enemy.anims.play("attackR", true);
+        // });
         enemy.play("attackR", true);
       }
       if (player.x < enemy.x && player.body.velocity.x < 0) {
@@ -455,12 +465,12 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
 
 
       if (player.x < enemy.x && player.body.velocity.x > 0) {
-              enemy.play("walkingR", true);
+              // enemy.play("walkingR", true);
               enemy.body.velocity.x = -1 * Phaser.Math.Between(150, 186);
 
           }
       if (player.x > enemy.x && player.body.velocity.x < 0) {
-              enemy.play("walkingR", true);
+              // enemy.play("walkingR", true);
               enemy.body.velocity.x = Phaser.Math.Between(150, 500);
           }
 
@@ -742,12 +752,18 @@ function tau_damage2(slash, tau_enemy2){
 
 function checkAnims(player, enemy)
   {
-    console.log("Help!!")
-    healthbar.x -= 0.43 * 1
-    healthbar.displayWidth -= 1
-    heroHealth -= 1
-    player.setTint(0xff0000);
-    this.sound.play("playerDamage")
+    Phaser.Actions.Call(als.getChildren(),
+    function enemyAttack(enemy){
+      if(enemy.anims.isPlaying && player.anims.currentAnim.key === "attackR"){
+        console.log("Help!!")
+        healthbar.x -= 0.43 * 1
+        healthbar.displayWidth -= 1
+        heroHealth -= 1
+        player.setTint(0xff0000);
+        this.sound.play("playerDamage")
+      }
+    });
+
   }
 
 
