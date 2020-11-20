@@ -314,7 +314,7 @@ else{
     }
 
 
-  if (wave_count === 4 && num_enemies === 0){
+  if (wave_count >= 4 && num_enemies === 0){
     console.log("SCARY")
 
     defeated_text.visible = false;
@@ -442,7 +442,7 @@ if (flaser_timer > 4 && wave_count < 4){
           }
 
       //fail safes
-      if (wave_count == 4)
+      if (wave_count >= 4)
       {
         if (Math.ceil(enemy.x) >= 1920 || Math.ceil(enemy.x) <= 0)
         {
