@@ -30,9 +30,10 @@ function p2(){
   this.load.image('flaser', 'Assets/Enemy/flu_laser.png');
   this.load.image('slash', 'Assets/Players/slash.png');
 
-  this.load.image('antibody', 'Assets/Powers/antibody.png')
-  this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png')
+  this.load.image('antibody', 'Assets/Powers/antibody.png');
+  this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png');
   this.load.image('pow', 'Assets/Players/damage.png');
+  this.load.image('zap', 'Assets/Nervous/impulseOverload.png');
 
   // particles
   this.load.image('spark', 'Assets/Particles/particlesm.png');
@@ -152,12 +153,16 @@ function c2(){
     runChildUpdate: true,
     setCollideWorldBounds: true
   });
+  //lightning
+  lightning = this.physics.add.group({allowGravity: false});
+  this.physics.add.overlap(player, lightning, zapDamage, null, this);
 
   this.physics.add.collider(als.getChildren(), als.getChildren());
   this.physics.add.collider(als, floor);
   this.physics.add.overlap(als, player, checkAnims, null, this);
   this.physics.add.overlap(als, slash, als_damage, null, this);
   this.physics.add.overlap(als, antibodyStorm, als_damage, null, this);
+  //this.physics.add.overlap(player, zap, zapDamage, null, this);
   anum_enemies = 1;
 
 
@@ -170,7 +175,7 @@ function c2(){
 
   this.anims.create({
     key:"attackR",
-    frames: this.anims.generateFrameNumbers("alsSprite", {start: 7, end: 17}),
+    frames: this.anims.generateFrameNumbers("alsSprite", {start: 11, end: 17}),
     frameRate: 10,
     repeat: -1
   })
@@ -310,8 +315,13 @@ function u2(){
   // console.log("preon" + preon_timer + " awave_count" + awave_count)
   // console.log("anum_enemies " + anum_enemies)
   // hide pow asset if player is not attacking
-  console.log("health", heroHealth);
-  // console.log("Wave count: ", awave_count);
+  // console.log("health", heroHealth);
+  // console.log("Wave count: ", awave_count
+
+  if(player.x + 80 < als.x){
+    als.anims.play("attackR", true);
+  }
+
   if(heroHealth < 0)
   {
     console.log("DONEsS")
@@ -429,6 +439,14 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
   anum_enemies += 2;
 }
 
+//Impulse Overload Trigger
+var lighter = Phaser.Math.Between(880, 1000);
+if(Math.abs(tau_enemy2.x - tau_enemy.x) < 2)
+{
+  impulse = lightning.create(lighter, 700, 'zap');
+  setTimeout(function(){impulse.destroy();}, 30);
+}
+
 // Enemy follow player code
   if (anum_enemies != 0 && awave_count <= 4){
   Phaser.Actions.Call(als.getChildren(),
@@ -445,7 +463,7 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
         console.log("ye-ouch!")
         // enemy.anims.stop();
         // enemy.once("animationrepeat", () => {
-        //   enemy.anims.play("attackR", true);
+        //enemy.anims.play("attackR", true);
         // });
         if(enemy.body.velocity.x == 0){
         // enemy.play("attackR", true);
@@ -459,18 +477,26 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
       if (player.x < enemy.x && player.body.velocity.x < 0) {
               enemy.body.velocity.x = -1 * Phaser.Math.Between(150, 240);
               enemy.play("walkingR", true);
+
+
           }
       if (player.x > enemy.x && player.body.velocity.x > 0) {
           enemy.play("walkingR", true);
           enemy.body.velocity.x = Phaser.Math.Between(150, 240);
       }
 
-      if (player.x < enemy.x && player.body.velocity.x === 0) {
+
+
+      var switcher = false;
+
+      if ((player.x < enemy.x && player.body.velocity.x === 0) && (player.x + 85 < enemy.x)){
+                                                                  //must be 5 lower than separation
               enemy.play("walkingR", true);
               enemy.body.velocity.x = -1 * Phaser.Math.Between(150, 240);
           }
 
       // console.log(enemy.x)
+
       if (player.x > enemy.x && player.body.velocity.x === 0) {
               enemy.play("walkingR", true);
               enemy.body.velocity.x = Phaser.Math.Between(150, 240);
@@ -479,7 +505,7 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
       // console.log(enemy.x)
 
 
-      if (player.x < enemy.x && player.body.velocity.x > 0) {
+      if (player.x < enemy.x + 60 && player.body.velocity.x > 0) {
               // enemy.play("walkingR", true);
               enemy.body.velocity.x = -1 * Phaser.Math.Between(150, 240);
 
@@ -488,6 +514,8 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
               // enemy.play("walkingR", true);
               enemy.body.velocity.x = Phaser.Math.Between(150, 500);
           }
+
+
 
       //fail safes
       if (wave_count == 4)
@@ -794,14 +822,29 @@ function checkAnims(player, enemy)
         heroHealth -= 1
         attacking = true;
       }
-    });
+      console.log("Help!!")
+      healthbar.x -= 0.43 * 1
+      healthbar.displayWidth -= 1
+      heroHealth -= 1
+      player.setTint(0xff0000);
+      //this.sound.play("playerDamage");
 
     if(attacking == true){
       player.setTint(0xff0000);
       this.sound.play("playerDamage")
     }
 
-  }
+  });
+}
+
+function zapDamage(player, zap)
+{
+  healthbar.x -= 0.43 * 50
+  healthbar.displayWidth -= 50
+  heroHealth -= 50
+  player.setTint(0xff0000);
+  this.sound.play("playerDamage");
+}
 
 
 function als_damage(als, slash){
