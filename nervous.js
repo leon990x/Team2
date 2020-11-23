@@ -159,7 +159,7 @@ function c2(){
 
   this.physics.add.collider(als.getChildren(), als.getChildren());
   this.physics.add.collider(als, floor);
-  this.physics.add.overlap(als, player, checkAnims, null, this);
+  this.physics.add.overlap(player, als, checkAnims, null, this);
   this.physics.add.overlap(als, slash, als_damage, null, this);
   this.physics.add.overlap(als, antibodyStorm, als_damage, null, this);
   //this.physics.add.overlap(player, zap, zapDamage, null, this);
@@ -814,27 +814,19 @@ function checkAnims(player, enemy)
   }
     attacking = false;
     Phaser.Actions.Call(als.getChildren(),
-    function enemyAttack(enemy){
-      if(enemy.anims.isPlaying && enemy.anims.currentAnim.key === "attackR"){
+    function enemyAttack(enemies){
+      if(enemies.anims.isPlaying && enemies.anims.currentAnim.key === "attackR"){
         console.log("Help!!")
         healthbar.x -= 0.43 * 1
         healthbar.displayWidth -= 1
         heroHealth -= 1
         attacking = true;
       }
-      console.log("Help!!")
-      healthbar.x -= 0.43 * 1
-      healthbar.displayWidth -= 1
-      heroHealth -= 1
-      player.setTint(0xff0000);
-      //this.sound.play("playerDamage");
-
-    if(attacking == true){
-      player.setTint(0xff0000);
-      this.sound.play("playerDamage")
-    }
-
   });
+  if(attacking == true){
+    player.setTint(0xff0000);
+    this.sound.play("playerDamage");
+  }
 }
 
 function zapDamage(player, zap)
