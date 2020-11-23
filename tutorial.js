@@ -30,7 +30,7 @@ function p1()
     this.load.image('red', 'Assets/Boss/redHealth.png');
     this.load.image('statusbar', 'Assets/Boss/health.png');
     this.load.image('healthpack', 'Assets/Boss/heart.png');
-    this.load.image('staph', 'Assets/Enemy/staph.png');
+    // this.load.image('staph', 'Assets/Enemy/staph.png');
     this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png');
     this.load.image('antibody', 'Assets/Powers/antibody.png');
     this.load.image('sebaceousGland', 'Assets/Tutorial/sebGland.png');
@@ -54,6 +54,10 @@ function p1()
     this.load.spritesheet('LwhiteBC',
         'Assets/Players/LwhiteBCSR.png',
         { frameWidth: 110, frameHeight: 168 }
+);
+  this.load.spritesheet('staph',
+      'Assets/Enemy/staphSprite.png',
+      { frameWidth: 110, frameHeight: 168 }
 );
 
 
@@ -130,10 +134,17 @@ function c1()
    this.physics.add.overlap(staph_move, slash, staph_move_damage, null, this);
    this.physics.add.overlap(staph_move, antibodyStorm, staph_antibody_damage, null, this);
 
+// Staph Animation
+   this.anims.create({
+       key: "walk",
+       frames: this.anims.generateFrameNumbers("staph", { start: 1, end: 4}),
+       frameRate: 5,
+       repeat: -1
+     });
+
    // damage image to attach to player
    hit = this.add.image(player.x, player.y, "pow");
    hit.visible = false;
-
 
 
 
@@ -239,6 +250,7 @@ function u1()
             progression += 1;
             num_staph = 1
             var wave1 = staph_still.create(1100, 500, "staph");
+            wave1.anims.play("walk",true);
         }
     }
 
@@ -278,6 +290,7 @@ function u1()
                 {
                 var wave2 = staph_move.create(1500 + (100 * i), 500, "staph");
                 wave2.setVelocityX(-40);
+                wave2.anims.play("walk", true);
                 wave2.health = 50;
                 }
 

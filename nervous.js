@@ -153,12 +153,13 @@ function c2(){
     setCollideWorldBounds: true
   });
 
-  this.physics.add.collider(als, als);
+  this.physics.add.collider(als.getChildren(), als.getChildren());
   this.physics.add.collider(als, floor);
   this.physics.add.overlap(als, player, checkAnims, null, this);
   this.physics.add.overlap(als, slash, als_damage, null, this);
   this.physics.add.overlap(als, antibodyStorm, als_damage, null, this);
   anum_enemies = 1;
+
 
   this.anims.create({
     key:"walkingR",
@@ -173,6 +174,8 @@ function c2(){
     frameRate: 10,
     repeat: -1
   })
+
+  setInterval(alsAttacking(als), 3000);
 
 
   // damage image to attach to player
@@ -241,6 +244,7 @@ function c2(){
     tau_enemy.setOrigin(0.5);
     tau_enemy.body.allowGravity = false;
     tau_enemy.body.immovable = true; //Makes it so nothing moves it
+    tau_enemy.setTint(0X767676);
     this.physics.add.collider(tau_enemy, floor);
     this.physics.add.overlap(slash, tau_enemy, tau_damage1, null, this);
     // flu_enemy.setTint(0X00000);
@@ -262,6 +266,7 @@ function c2(){
     tau_enemy2.setOrigin(0.5);
     tau_enemy2.body.allowGravity = false;
     tau_enemy2.body.immovable = true; //Makes it so nothing moves it
+    tau_enemy2.setTint(0X767676);
     this.physics.add.collider(tau_enemy2, floor);
     this.physics.add.overlap(slash, tau_enemy2, tau_damage2, null, this);
 
@@ -305,7 +310,7 @@ function u2(){
   // console.log("preon" + preon_timer + " awave_count" + awave_count)
   // console.log("anum_enemies " + anum_enemies)
   // hide pow asset if player is not attacking
-  // console.log("health", heroHealth);
+  console.log("health", heroHealth);
   // console.log("Wave count: ", awave_count);
   if(heroHealth < 0)
   {
@@ -358,6 +363,8 @@ function u2(){
     adefeated_text.visible = false;
     awave_text.setText("Wave Over: " + "\n"+ "Defeat the Tau proteins").setScale(4);
     awave_text.visible = true;
+    tau_enemy.clearTint();
+    tau_enemy2.clearTint();
     if(builder != false)
     {
     ground.create(1400, 550, "platform2").setScale(1.5).refreshBody();
@@ -430,37 +437,43 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
     if (enemy != undefined){
         // Attack code for alzheimers
       // if(Math.ceil(enemy.x) === Math.ceil(player.x -10) || Math.ceil(enemy.x) === Math.ceil(player.x + 10) || Math.ceil(enemy.x) === Math.ceil(player.x)){
-      if(Math.ceil(enemy.x) <= Math.ceil(player.x-10) || Math.ceil(enemy.x) >= Math.ceil(player.x)|| Math.ceil(enemy.x) == Math.ceil(player.x) || Math.ceil(enemy.x) == Math.ceil(player.x-2)){
-        console.log(enemy.x + " Player:" + player.x)
+      // if(Math.round(player.x - 2) >= Math.round(enemy.body.x + 100) <= Math.round(player.x-500) ||  Math.round(player.x + 2) >= Math.round(enemy.body.x + 100) <= Math.round(player.x+500)|| Math.round(enemy.body.x) == Math.round(player.x)){
+        if(enemy.body.x <= player.x || enemy.body.x == player.x || enemy.body.x >= player.x){
+        // console.log(Math.round(enemy.x + 100) + " Player:" + Math.round(player.x))
         enemy.body.velocity.x = 0; //stop and attack
-        console.log(enemy.body.velocity.x);
+        // console.log(enemy.body.velocity.x);
         console.log("ye-ouch!")
         // enemy.anims.stop();
         // enemy.once("animationrepeat", () => {
         //   enemy.anims.play("attackR", true);
         // });
         if(enemy.body.velocity.x == 0){
-        enemy.play("attackR", true);
+        // enemy.play("attackR", true);
+        enemy.once("animationrepeat", () => {
+          enemy.anims.play("attackR", true);
+          enemy.anims.play("attackR", true);
+          enemy.anims.play("attackR", true);
+        });
         }
       }
       if (player.x < enemy.x && player.body.velocity.x < 0) {
-              enemy.body.velocity.x = -1 * Phaser.Math.Between(150, 186);
+              enemy.body.velocity.x = -1 * Phaser.Math.Between(150, 240);
               enemy.play("walkingR", true);
           }
       if (player.x > enemy.x && player.body.velocity.x > 0) {
           enemy.play("walkingR", true);
-          enemy.body.velocity.x = Phaser.Math.Between(150, 186);
+          enemy.body.velocity.x = Phaser.Math.Between(150, 240);
       }
 
       if (player.x < enemy.x && player.body.velocity.x === 0) {
               enemy.play("walkingR", true);
-              enemy.body.velocity.x = -1 * Phaser.Math.Between(150, 186);
+              enemy.body.velocity.x = -1 * Phaser.Math.Between(150, 240);
           }
 
       // console.log(enemy.x)
       if (player.x > enemy.x && player.body.velocity.x === 0) {
               enemy.play("walkingR", true);
-              enemy.body.velocity.x = Phaser.Math.Between(150, 186);
+              enemy.body.velocity.x = Phaser.Math.Between(150, 240);
           }
 
       // console.log(enemy.x)
@@ -468,7 +481,7 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
 
       if (player.x < enemy.x && player.body.velocity.x > 0) {
               // enemy.play("walkingR", true);
-              enemy.body.velocity.x = -1 * Phaser.Math.Between(150, 186);
+              enemy.body.velocity.x = -1 * Phaser.Math.Between(150, 240);
 
           }
       if (player.x > enemy.x && player.body.velocity.x < 0) {
@@ -677,6 +690,16 @@ function playerBomb_damage(player, bombs)
 
 }
 
+function alsAttacking(als){
+  Phaser.Actions.Call(als.getChildren(),
+  function moveEnemies(enemy){
+  enemy.once("animationrepeat", () => {
+    enemy.anims.play("attackR", true);
+    enemy.anims.play("attackR", true);
+  });
+});
+}
+
 function tau_damage1(slash, tau_enemy1){
 
   console.log("villain health: ", villainHealth);
@@ -754,17 +777,29 @@ function tau_damage2(slash, tau_enemy2){
 
 function checkAnims(player, enemy)
   {
+    enemy.body.velocity.x = 0;
+    if(enemy.body.velocity.x){
+    enemy.once("animationrepeat", () => {
+      enemy.anims.play("attackR", true);
+      enemy.anims.play("attackR", true);
+    });
+  }
+    attacking = false;
     Phaser.Actions.Call(als.getChildren(),
     function enemyAttack(enemy){
-      if(enemy.anims.isPlaying && player.anims.currentAnim.key === "attackR"){
+      if(enemy.anims.isPlaying && enemy.anims.currentAnim.key === "attackR"){
         console.log("Help!!")
         healthbar.x -= 0.43 * 1
         healthbar.displayWidth -= 1
         heroHealth -= 1
-        player.setTint(0xff0000);
-        this.sound.play("playerDamage")
+        attacking = true;
       }
     });
+
+    if(attacking == true){
+      player.setTint(0xff0000);
+      this.sound.play("playerDamage")
+    }
 
   }
 
