@@ -315,7 +315,6 @@ function u2(){
   // console.log("preon" + preon_timer + " awave_count" + awave_count)
   // console.log("anum_enemies " + anum_enemies)
   // hide pow asset if player is not attacking
-<<<<<<< HEAD
   // console.log("health", heroHealth);
   // console.log("Wave count: ", awave_count
 
@@ -323,10 +322,6 @@ function u2(){
     als.anims.play("attackR", true);
   }
 
-=======
-  console.log("health", heroHealth);
-  // console.log("Wave count: ", awave_count);
->>>>>>> 1c81e5635475bac9a5edc2e988a0b49237da930f
   if(heroHealth < 0)
   {
     console.log("DONEsS")
@@ -470,12 +465,6 @@ if(Math.abs(tau_enemy2.x - tau_enemy.x) < 2)
         // enemy.once("animationrepeat", () => {
         //enemy.anims.play("attackR", true);
         // });
-<<<<<<< HEAD
-
-      }
-      if (player.x < enemy.x && player.body.velocity.x < 0) {
-              enemy.body.velocity.x = -1 * Phaser.Math.Between(10, 186);
-=======
         if(enemy.body.velocity.x == 0){
         // enemy.play("attackR", true);
         enemy.once("animationrepeat", () => {
@@ -487,18 +476,13 @@ if(Math.abs(tau_enemy2.x - tau_enemy.x) < 2)
       }
       if (player.x < enemy.x && player.body.velocity.x < 0) {
               enemy.body.velocity.x = -1 * Phaser.Math.Between(150, 240);
->>>>>>> 1c81e5635475bac9a5edc2e988a0b49237da930f
               enemy.play("walkingR", true);
 
 
           }
       if (player.x > enemy.x && player.body.velocity.x > 0) {
           enemy.play("walkingR", true);
-<<<<<<< HEAD
-          enemy.body.velocity.x = Phaser.Math.Between(10, 186);
-=======
           enemy.body.velocity.x = Phaser.Math.Between(150, 240);
->>>>>>> 1c81e5635475bac9a5edc2e988a0b49237da930f
       }
 
 
@@ -508,25 +492,14 @@ if(Math.abs(tau_enemy2.x - tau_enemy.x) < 2)
       if ((player.x < enemy.x && player.body.velocity.x === 0) && (player.x + 85 < enemy.x)){
                                                                   //must be 5 lower than separation
               enemy.play("walkingR", true);
-<<<<<<< HEAD
-              enemy.body.velocity.x = -1 * Phaser.Math.Between(120, 186);
-              if(enemy.x - player.x < 90){
-                  enemy.body.velocity.x = 0;
-              }
-=======
               enemy.body.velocity.x = -1 * Phaser.Math.Between(150, 240);
->>>>>>> 1c81e5635475bac9a5edc2e988a0b49237da930f
           }
 
       // console.log(enemy.x)
 
       if (player.x > enemy.x && player.body.velocity.x === 0) {
               enemy.play("walkingR", true);
-<<<<<<< HEAD
-              enemy.body.velocity.x = 1 * Phaser.Math.Between(150, 186);
-=======
               enemy.body.velocity.x = Phaser.Math.Between(150, 240);
->>>>>>> 1c81e5635475bac9a5edc2e988a0b49237da930f
           }
 
       // console.log(enemy.x)
@@ -832,11 +805,6 @@ function tau_damage2(slash, tau_enemy2){
 
 function checkAnims(player, enemy)
   {
-<<<<<<< HEAD
-      enemy.anims.stop();
-      if(player.x + 10 < enemy.x){
-        enemy.play("attackR", true);
-=======
     enemy.body.velocity.x = 0;
     if(enemy.body.velocity.x){
     enemy.once("animationrepeat", () => {
@@ -853,21 +821,21 @@ function checkAnims(player, enemy)
         healthbar.displayWidth -= 1
         heroHealth -= 1
         attacking = true;
->>>>>>> 1c81e5635475bac9a5edc2e988a0b49237da930f
       }
       console.log("Help!!")
       healthbar.x -= 0.43 * 1
       healthbar.displayWidth -= 1
       heroHealth -= 1
       player.setTint(0xff0000);
-      this.sound.play("playerDamage");
+      //this.sound.play("playerDamage");
 
     if(attacking == true){
       player.setTint(0xff0000);
       this.sound.play("playerDamage")
     }
 
-  }
+  });
+}
 
 function zapDamage(player, zap)
 {
