@@ -430,16 +430,18 @@ if (preon_timer > 4 && awave_count < 4 && anum_enemies < 5){
     if (enemy != undefined){
         // Attack code for alzheimers
       // if(Math.ceil(enemy.x) === Math.ceil(player.x -10) || Math.ceil(enemy.x) === Math.ceil(player.x + 10) || Math.ceil(enemy.x) === Math.ceil(player.x)){
-      if(Math.ceil(enemy.x) < Math.ceil(player.x) || Math.ceil(enemy.x) > Math.ceil(player.x)|| Math.ceil(enemy.x) === Math.ceil(player.x) || Math.ceil(enemy.x) === Math.ceil(player.x-2)){
+      if(Math.ceil(enemy.x) <= Math.ceil(player.x-10) || Math.ceil(enemy.x) >= Math.ceil(player.x)|| Math.ceil(enemy.x) == Math.ceil(player.x) || Math.ceil(enemy.x) == Math.ceil(player.x-2)){
         console.log(enemy.x + " Player:" + player.x)
-        // enemy.body.velocity.x = 0; //stop and attack
+        enemy.body.velocity.x = 0; //stop and attack
         console.log(enemy.body.velocity.x);
         console.log("ye-ouch!")
         // enemy.anims.stop();
         // enemy.once("animationrepeat", () => {
         //   enemy.anims.play("attackR", true);
         // });
+        if(enemy.body.velocity.x == 0){
         enemy.play("attackR", true);
+        }
       }
       if (player.x < enemy.x && player.body.velocity.x < 0) {
               enemy.body.velocity.x = -1 * Phaser.Math.Between(150, 186);
