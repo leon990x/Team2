@@ -87,8 +87,8 @@ function c1()
 
    // sounds
    tmusic= this.sound.add('tutorialm', {loop: true, volume: 1});
-   this.sound.play("tutorialm")
-   // tmusic.play({loop: true, volume: 0.3});
+   //this.sound.play("tutorialm")
+   tmusic.play({loop: true, volume: 0.2});
    attack = this.sound.add('attack', {volume: 1})
    damage = this.sound.add('damage', {volume: .01})
    playerDamage = this.sound.add("playerDamage", {volume: .5})
