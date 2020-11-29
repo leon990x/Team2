@@ -34,6 +34,7 @@ function p2(){
   this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png');
   this.load.image('pow', 'Assets/Players/damage.png');
   this.load.image('zap', 'Assets/Nervous/impulseOverload.png');
+  this.load.image('frenzy', 'Assets/Powers/frenzy.png');
 
   // particles
   this.load.image('spark', 'Assets/Particles/particlesm.png');
@@ -138,8 +139,11 @@ function c2(){
 
   //Powerups
   healthpacks = this.physics.add.group();
+  frenzy = this.physics.add.group();
   this.physics.add.collider(healthpacks, ground);
+  this.physics.add.collider(frenzy, ground);
   this.physics.add.overlap(player, healthpacks, getHealth, null, this);
+  this.physics.add.overlap(player, frenzy, player_boost, null, this);
 
   //Als Enemy
   als = this.physics.add.group({
@@ -317,6 +321,10 @@ function u2(){
   // hide pow asset if player is not attacking
   // console.log("health", heroHealth);
   // console.log("Wave count: ", awave_count
+  if(v_x === 'undefined')
+  {
+    v_x = 350;
+  }
 
   if(player.x + 80 < als.x){
     als.anims.play("attackR", true);
@@ -539,7 +547,7 @@ if(Math.abs(tau_enemy2.x - tau_enemy.x) < 2)
 
     if (cursors.left.isDown)
     {
-        player.setVelocityX(-350);
+        player.setVelocityX(-v_x);
         player.setTint(0xffffff);
 
         player.anims.play('leftWalking', true);
@@ -591,7 +599,7 @@ if(Math.abs(tau_enemy2.x - tau_enemy.x) < 2)
 
     if (cursors.right.isDown)
     {
-        player.setVelocityX(350);
+        player.setVelocityX(v_x);
         player.setTint(0xffffff);
 
         hit.setX(player.x + 100).setY(player.y);
@@ -838,8 +846,27 @@ function zapDamage(player, zap)
   this.sound.play("playerDamage");
 }
 
+function player_boost(player, frenzy)
+{
+  player.setTint(0xff80ff);
+  v_x = 700;
+  e_damage = 200;
+  start_pt = player.x
+  setTimeout(function(){v_x = 350;}, 6500);
+  frenzy.destroy();
+}
+
 
 function als_damage(als, slash){
+  if(e_damage === "default")
+  {
+    e_damage = 10;
+  }
+  if(e_damage === 200)
+  {
+    setTimeout(function(){e_damage = 10;}, 6500);
+  }
+
     hit.visible = true;
   // var tB_children = tB.getChildren([0]);
 
@@ -848,6 +875,7 @@ function als_damage(als, slash){
     // villainHealthbar.displayWidth -= villainDamageIntensity
     // villainHealth -= villainDamageIntensity
     als_health -= 10;
+    console.log(als_health);
     // console.log(als_health);
 
     if (als_health < 70 && als_health > 40)
@@ -867,6 +895,7 @@ function als_damage(als, slash){
       if(rn === 2)
       {
         var hp = healthpacks.create(als.x, als.y, "healthpack");
+        var fr = frenzy.create(als.x, als.y, "frenzy");
       }
 
       if(ln === 30)
