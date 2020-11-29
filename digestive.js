@@ -27,6 +27,7 @@ var ewave_text;
 var ewave_count = 1;
 var edefeated_text;
 var edefeated = 0; //something's wrong
+var e_damage = 'default';
 
 
 function p1()
@@ -40,6 +41,7 @@ function p1()
     this.load.image('staph', 'Assets/Enemy/staph.png');
     this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png');
     this.load.image('antibody', 'Assets/Powers/antibody.png');
+    this.load.image('frenzy', 'Assets/Powers/frenzy.png');
     this.load.image('sebaceousGland', 'Assets/Tutorial/sebGland.png');
     this.load.image('slash', 'Assets/Players/slash.png');
     this.load.image('pow', 'Assets/Players/damage.png');
@@ -83,7 +85,7 @@ function c1()
    background = this.add.image(0, 0, 'environment2');
 
    //wave text
-   ewave_text = this.add.text(700, 240, "E-Coli:" + "\r\n" + " Wave " + awave_count + " of 3").setScale(4);
+   ewave_text = this.add.text(700, 240, "E-Coli:" + "\r\n" + " Wave " + ewave_count + " of 3").setScale(4);
    edefeated_text = this.add.text(1470, 130, "Enemies left in wave:" + 5 - defeated).setScale(3);
 
    background.setOrigin(0, 0);
@@ -146,6 +148,7 @@ function c1()
    //Powerups
    healthpacks = this.physics.add.group();
    antibodyPowerup = this.physics.add.group();
+   frenzy = this.physics.add.group();
 
    //ecoli Enemy
    ecoli = this.physics.add.group({
@@ -162,6 +165,7 @@ function c1()
 
    this.physics.add.collider(antibodyPowerup, ground);
    this.physics.add.collider(healthpacks, ground);
+   this.physics.add.collider(frenzy, ground);
    this.physics.add.overlap(player, healthpacks, getHealth, null, this);
    this.physics.add.overlap(player, antibodyPowerup, getAntibodyPowerup, null, this);
    this.physics.add.overlap(player, acid, player_damage, null, this);
@@ -172,6 +176,7 @@ function c1()
    //this.physics.add.overlap(theBoss, antibodyStorm, boss_antibody_damage, null, this);
    antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
    this.physics.add.overlap(ecoli, antibodyStorm, ecoli_damage, null, this);
+   this.physics.add.overlap(player, frenzy, player_boost, null, this);
 
 
    // damage image to attach to player
@@ -251,10 +256,17 @@ function c1()
      });
 }
 
+var v_x = 'undefined';
 
 function u1()
 {
   // hide pow asset if player is not attacking
+
+  if(v_x === 'undefined')
+  {
+    v_x = 350;
+  }
+
   if(attackButton.Q.isUp){
     hit.visible = false;
   }
@@ -266,7 +278,7 @@ function u1()
 
     if (cursors.left.isDown)
     {
-        player.setVelocityX(-350);
+        player.setVelocityX(-v_x);
 
         player.anims.play('leftWalking', true);
 
@@ -313,11 +325,12 @@ function u1()
         this.sound.play("jump");
         lookLeft = false;
     }
+
     }
 
     if (cursors.right.isDown)
     {
-        player.setVelocityX(350);
+        player.setVelocityX(v_x);
 
         hit.setX(player.x + 100).setY(player.y);
 
@@ -342,7 +355,6 @@ function u1()
             lookLeft = false;
         }
         }
-
     }
 
     // attacking
@@ -679,12 +691,13 @@ function dropAcidRight()
 
   function player_damage(player, ecoli)
   {
+    v_x = 'undefined';
     healthbar.x -= 0.43 * .5
     healthbar.displayWidth -= .5
     heroHealth -= .5
     player.setTint(0xff0000);
+    setTimeout(function(){player.setTint(0xffffff);}, 400);
     this.sound.play("playerDamage");
-
 
     if(heroHealth < 0)
     {
@@ -695,8 +708,25 @@ function dropAcidRight()
     }
 
   }
+  function player_boost(player, frenzy)
+  {
+    player.setTint(0xff80ff);
+    v_x = 700;
+    start_pt = player.x
+    setTimeout(function(){v_x = 350; player.setTint(0xffffff);}, 6500);
+    frenzy.destroy();
+  }
 
   function ecoli_damage(ecoli, slash){
+      if(e_damage === "default")
+      {
+        e_damage = 10;
+      }
+      if(e_damage === 50)
+      {
+        setTimeout(function(){e_damage = 10;}, 6500);
+      }
+
       hit.visible = true;
     // var tB_children = tB.getChildren([0]);
 
@@ -704,7 +734,7 @@ function dropAcidRight()
       // villainHealthbar.x -= 0.43 * villainDamageIntensity
       // villainHealthbar.displayWidth -= villainDamageIntensity
       // villainHealth -= villainDamageIntensity
-      ecoli_health -= 10;
+      ecoli_health -= e_damage;
       // console.log(als_health);
 
       if (ecoli_health < 70 && ecoli_health > 40)
@@ -724,6 +754,8 @@ function dropAcidRight()
         if(rn === 2)
         {
           var hp = healthpacks.create(ecoli.x, ecoli.y, "healthpack");
+          var frz = frenzy.create(ecoli.x, ecoli.y, "frenzy");
+          frz.setScale(0.3);
         }
 
         if(ln < 10)

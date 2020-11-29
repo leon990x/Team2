@@ -28,6 +28,7 @@ function p1()
     this.load.image('antibody', 'Assets/Powers/antibody.png')
     this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png')
     this.load.image('pow', 'Assets/Players/damage.png');
+    this.load.image('frenzy', 'Assets/Powers/frenzy.png');
     //this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
 // Audio
@@ -125,6 +126,7 @@ function c1()
    antibodyPowerup = this.physics.add.group();
 
    antibodyPowerup = this.physics.add.group();
+
 
    this.physics.add.collider(antibodyPowerup, ground);
    this.physics.add.overlap(player, antibodyPowerup, getAntibodyPowerup, null, this);
@@ -225,6 +227,10 @@ function c1()
    this.physics.add.collider(healthpacks, ground);
    this.physics.add.overlap(player, healthpacks, getHealth, null, this);
 
+   frenzy = this.physics.add.group();
+   this.physics.add.collider(frenzy, ground);
+   this.physics.add.overlap(player, frenzy, player_boost, null, this);
+
    // damage image to attach to player
    hit = this.add.image(player.x, player.y, "pow");
    hit.visible = false;
@@ -289,6 +295,11 @@ function c1()
 function u1()
 {
   // hide pow asset if player is not attacking
+
+  if(v_x === 'undefined')
+  {
+    v_x = 350;
+  }
   if(attackButton.Q.isUp){
     hit.visible = false;
   }
@@ -330,7 +341,7 @@ if (flaser_timer > 4 && wave_count < 4){
     delay: 2000,
     key: 'tb',
     repeat: 0,
-    setXY:{x: player.x - 300, y: 840, stepX: 100},
+    setXY:{x: 2200, y: 840, stepX: 10},
     setScale: {x: .5, y: .5},
     immovable: true,
     allowGravity: false,
@@ -356,7 +367,7 @@ if (flaser_timer > 4 && wave_count < 4){
         delay: 2000,
         key: 'tb',
         repeat: 0,
-        setXY:{x: 1860, y: 750, stepX: 100},
+        setXY:{x: 2300, y: 750, stepX: 10},
         setScale: {x: .5, y: .5},
         immovable: true,
         allowGravity: true,
@@ -367,7 +378,7 @@ if (flaser_timer > 4 && wave_count < 4){
         delay: 2000,
         key: 'tb',
         repeat: 0,
-        setXY:{x: 500, y: 750, stepX: 100},
+        setXY:{x: 2200, y: 750, stepX: 10},
         setScale: {x: .5, y: .5},
         immovable: true,
         allowGravity: false,
@@ -462,7 +473,7 @@ if (flaser_timer > 4 && wave_count < 4){
 
     if (cursors.left.isDown)
     {
-        player.setVelocityX(-350);
+        player.setVelocityX(-v_x);
         player.setTint(0xffffff);
 
         player.anims.play('leftWalking', true);
@@ -514,7 +525,7 @@ if (flaser_timer > 4 && wave_count < 4){
 
     if (cursors.right.isDown)
     {
-        player.setVelocityX(350);
+        player.setVelocityX(v_x);
         player.setTint(0xffffff);
 
         hit.setX(player.x + 100).setY(player.y);
@@ -634,10 +645,13 @@ function tb_damage(tB, slash){
     if (tB_health <= 0){
       //drop healthpacks
       ln = Phaser.Math.Between(1, 10);
-      rn = Phaser.Math.Between(1, 6);
+      rn = Phaser.Math.Between(1, 4);
       if(rn === 2)
       {
         var hp = healthpacks.create(tB.x, tB.y, "healthpack");
+        var frzz = frenzy.create(960, 20, "frenzy");
+        frzz.setScale(0.3);
+        frzz.allowGravity(true);
       }
 
       if(ln === 2)
@@ -731,6 +745,16 @@ function player_damage(player, tB)
 
 }
 
+function player_boost(player, frenzy)
+{
+  player.setTint(0xff80ff);
+  v_x = 700;
+  e_damage = 200;
+  start_pt = player.x
+  setTimeout(function(){v_x = 350;}, 6500);
+  frenzy.destroy();
+}
+
 function getAntibodyPowerup(player, antibodyPowerup)
   {
     this.sound.play("pickup");
@@ -753,12 +777,20 @@ function getAntibodyPowerup(player, antibodyPowerup)
 
 function tb_damage(tB, antibodyStorm){
   // var tB_children = tB.getChildren([0]);
+    if(e_damage === "default")
+      {
+        e_damage = 10;
+      }
+      if(e_damage === 50)
+      {
+        setTimeout(function(){e_damage = 10;}, 6500);
+      }
 
     wave_text.visible = false;
     // villainHealthbar.x -= 0.43 * villainDamageIntensity
     // villainHealthbar.displayWidth -= villainDamageIntensity
     // villainHealth -= villainDamageIntensity
-    tB_health -= 5;
+    tB_health -= e_damage;
     console.log(tB_health);
 
     if (tB_health < 70 && tB_health > 40)
