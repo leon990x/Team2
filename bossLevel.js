@@ -37,6 +37,7 @@ function preload ()
     this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png')
 
     this.load.image('slash', 'Assets/Players/slash.png');
+    this.load.image('fireball', 'Assets/Players/fireball.png');
     this.load.image('pow', 'Assets/Players/damage.png');
 
 // Audio
@@ -109,7 +110,8 @@ function create ()
    // emit.tint.onChange(50C878);
 
    cursors = this.input.keyboard.createCursorKeys();
-   attackButton = this.input.keyboard.addKeys("Q,P");
+   attackButton = this.input.keyboard.addKeys("Q");
+   attackButton2 = this.input.keyboard.addKeys("W");
    redhealth = this.add.image(220, 60, 'red')
    healthbar = this.add.image(220, 60, 'statusbar')
    redhealth.setOrigin(0.45, 0.5)
@@ -172,6 +174,9 @@ function create ()
 
     // slash
     slash = this.physics.add.group({immovable: true, allowGravity: false});
+
+    //fireball
+    ball = this.physics.add.group({immovable:true, allowGravity: false});
 
 
    healthpacks = this.physics.add.group();
@@ -416,6 +421,7 @@ function create ()
      antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
 
      this.physics.add.overlap(theBoss, slash,  attack_boss, null, this);
+     this.physics.add.overlap(theBoss, ball,  attack_boss, null, this);
      this.physics.add.overlap(player, antibodyPowerup, getAntibodyPowerup, null, this);
      this.physics.add.overlap(theBoss, antibodyStorm, boss_antibody_damage, null, this);
      this.physics.add.overlap(theBoss, player, boss_damage, null, this);
@@ -433,27 +439,6 @@ function create ()
      hit.visible = false;
 }
 
-// // function to move all spawns of tentacles
-// function moveTentacles(tentacles){
-//
-// }
-
-// // reveal weakpoints
-// function hideWP(theBoss){
-//   console.log("there is it!!")
-//   theBoss.children.iterate((child) => {
-//     child.setVisible(false);
-//     child.body.enable = false;
-// });
-// }
-//
-// function reveal(theBoss){
-//   console.log("there is it!!")
-//   theBoss.children.iterate((child) => {
-//     child.setVisible(true);
-//     child.body.enable = true;
-// });
-// }
 
 function update()
 {
@@ -461,6 +446,7 @@ function update()
   if(attackButton.Q.isUp){
     hit.visible = false;
   }
+
 
   // walking
 
@@ -551,7 +537,7 @@ function update()
     }
 
 
-    if (attackButton.Q.isDown && qLifted)
+    if (attackButton.Q.isDown && qLifted && !attackButton2.W.isDown)
     {
         qLifted = false;
 
@@ -575,6 +561,39 @@ function update()
             var sl = slash.create((player.x + 45), player.y, "slash")
             sl.setVelocityX(500);
             setTimeout(function(){sl.disableBody(true, true);}, 90);
+      }
+    }
+
+    // Ranged attacking
+    if (!attackButton2.W.isDown) {
+        wLifted = true;
+    }
+
+
+    if (attackButton2.W.isDown && wLifted && !attackButton.Q.isDown)
+    {
+        wLifted = false;
+
+        if (lookLeft == true) {
+            hit.setX(player.x - 500).setY(player.y);
+            player.anims.play('attackLeft');
+            this.sound.play("attack")
+
+            var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
+            fireball.flipX = true;
+            fireball.setVelocityX(-400);
+            setTimeout(function(){fireball.disableBody(true, true);}, 1000);
+      }
+
+        if (lookLeft == false) {
+            hit.setX(player.x + 500).setY(player.y);
+            player.anims.play('attackRight');
+            this.sound.play("attack")
+            lookLeft = false;
+
+            var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
+            fireball.setVelocityX(400);
+            setTimeout(function(){fireball.disableBody(true, true);}, 1000);
       }
     }
 
@@ -664,6 +683,7 @@ function tentacle_damage(player, tentacles)
   healthbar.displayWidth -= 2
   heroHealth -= 2
   player.setTint(0xff0000);
+  tentacles.setTint(0x656565);
   this.sound.play("playerDamage");
 
 
@@ -681,6 +701,7 @@ function tentacle_ss_damage(player, ronaBall)
   healthbar.displayWidth -= 4
   heroHealth -= 4
   player.setTint(0xff0000);
+  ronaBall.setTint(0x656565);
   if (villainHealth < 415)
   {
     villainHealthbar.x -= 0.48 * villainDamageIntensity
@@ -709,6 +730,14 @@ function attack_boss(theBoss, slash)
     villainHealthbar.x += 0.48 * villainDamageIntensity
     villainHealthbar.displayWidth -= villainDamageIntensity
     villainHealth -= villainDamageIntensity
+  }
+
+  if (attackButton2.W.isDown && villainshield === true)
+  {
+    hit.visible = true;
+    villainHealthbar.x += 0.48 * .2
+    villainHealthbar.displayWidth -= .2
+    villainHealth -= .3
   }
 
   if(villainHealth <= 280 && villainHealth > 270)

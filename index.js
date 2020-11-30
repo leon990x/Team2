@@ -2,6 +2,8 @@
 //think of as command center
 
 //Scenes
+title = new Phaser.Scene("title");
+plot = new Phaser.Scene("plot");
 tutorial = new Phaser.Scene("tutorial");
 transition0 = new Phaser.Scene("transition0");
 digestive = new Phaser.Scene("digestive")
@@ -31,8 +33,8 @@ var config = {
             debug: false
         }
     },
-    scene: [tutorial, transition0, digestive, transition1, nervous, transition2, respiratory, transition3, bossScene, gameOver, win]
-    // scene: nervous
+    // scene: [title, plot, tutorial, transition0, digestive, transition1, nervous, transition2, respiratory, transition3, bossScene, gameOver, win]
+    scene: [title, plot, tutorial]
 
 };
 

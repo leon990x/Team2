@@ -44,6 +44,7 @@ function p1()
     this.load.image('frenzy', 'Assets/Powers/frenzy.png');
     this.load.image('sebaceousGland', 'Assets/Tutorial/sebGland.png');
     this.load.image('slash', 'Assets/Players/slash.png');
+    this.load.image('fireball', 'Assets/Players/fireball.png');
     this.load.image('pow', 'Assets/Players/damage.png');
     this.load.image('pipe', 'Assets/Digestive/pipe3.png');
     this.load.image('ecoli', 'Assets/Digestive/Ecoli.png');
@@ -51,7 +52,7 @@ function p1()
 
     // acid particles
     this.load.image('acid1', 'Assets/Digestive/acid1.png')
-    // this.load.image('acid2', 'Assets/Digestive/acid2.png')
+    this.load.image('acid2', 'Assets/Digestive/acid2.png')
     this.load.image('acid3', 'Assets/Digestive/acid3.png')
 
 // Audio
@@ -90,9 +91,10 @@ function c1()
 
    background.setOrigin(0, 0);
    cursors = this.input.keyboard.createCursorKeys();
-   attackButton = this.input.keyboard.addKeys("Q,P");
-   nextButton = this.input.keyboard.addKeys("W");
-   otherNextButton = this.input.keyboard.addKeys("E");
+   attackButton = this.input.keyboard.addKeys("Q");
+   attackButton2 = this.input.keyboard.addKeys("W");
+   // nextButton = this.input.keyboard.addKeys("W");
+   // otherNextButton = this.input.keyboard.addKeys("E");
    redhealth = this.add.image(220, 60, 'red')
    healthbar = this.add.image(220, 60, 'statusbar')
    redhealth.setOrigin(0.45, 0.5)
@@ -145,6 +147,9 @@ function c1()
    // slash
    slash = this.physics.add.group({immovable: true, allowGravity: false});
 
+   //fireball
+   ball = this.physics.add.group({immovable:true, allowGravity: false});
+
    //Powerups
    healthpacks = this.physics.add.group();
    antibodyPowerup = this.physics.add.group();
@@ -171,6 +176,7 @@ function c1()
    this.physics.add.overlap(player, acid, player_damage, null, this);
    this.physics.add.overlap(player, ecoli, player_damage, null, this);
    this.physics.add.overlap(ecoli, slash, ecoli_damage, null, this);
+   this.physics.add.overlap(ecoli, ball, ecoli_damage, null, this);
 
    num_ecoli = 1;
    //this.physics.add.overlap(theBoss, antibodyStorm, boss_antibody_damage, null, this);
@@ -267,7 +273,7 @@ function u1()
     v_x = 350;
   }
 
-  if(attackButton.Q.isUp){
+  if(attackButton.Q.isUp || attackButton2.W.isUp){
     hit.visible = false;
   }
 
@@ -363,7 +369,7 @@ function u1()
     }
 
 
-    if (attackButton.Q.isDown && qLifted)
+    if (attackButton.Q.isDown && qLifted && !attackButton2.W.isDown)
     {
         qLifted = false;
 
@@ -387,6 +393,39 @@ function u1()
             var sl = slash.create((player.x + 45), player.y, "slash")
             sl.setVelocityX(500);
             setTimeout(function(){sl.disableBody(true, true);}, 90);
+      }
+    }
+
+    // Ranged attacking
+    if (!attackButton2.W.isDown) {
+        wLifted = true;
+    }
+
+
+    if (attackButton2.W.isDown && wLifted && !attackButton.Q.isDown)
+    {
+        wLifted = false;
+
+        if (lookLeft == true) {
+            hit.setX(player.x - 500).setY(player.y);
+            player.anims.play('attackLeft');
+            this.sound.play("attack")
+
+            var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
+            fireball.flipX = true;
+            fireball.setVelocityX(-400);
+            setTimeout(function(){fireball.disableBody(true, true);}, 1000);
+      }
+
+        if (lookLeft == false) {
+            hit.setX(player.x + 500).setY(player.y);
+            player.anims.play('attackRight');
+            this.sound.play("attack")
+            lookLeft = false;
+
+            var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
+            fireball.setVelocityX(400);
+            setTimeout(function(){fireball.disableBody(true, true);}, 1000);
       }
     }
 

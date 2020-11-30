@@ -35,6 +35,7 @@ function p1()
     this.load.image('antibody', 'Assets/Powers/antibody.png');
     this.load.image('sebaceousGland', 'Assets/Tutorial/sebGland.png');
     this.load.image('slash', 'Assets/Players/slash.png');
+    this.load.image('fireball', 'Assets/Players/fireball.png');
     this.load.image('pow', 'Assets/Players/damage.png');
     // this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
@@ -68,9 +69,11 @@ function c1()
    background = this.add.image(0, 0, 'environment1');
    background.setOrigin(0, 0);
    cursors = this.input.keyboard.createCursorKeys();
-   attackButton = this.input.keyboard.addKeys("Q,P");
-   nextButton = this.input.keyboard.addKeys("W");
+   attackButton = this.input.keyboard.addKeys("Q");
+   attackButton2 = this.input.keyboard.addKeys("W");
+   nextButton = this.input.keyboard.addKeys("D");
    otherNextButton = this.input.keyboard.addKeys("E");
+   skipButton = this.input.keyboard.addKeys("S");
    redhealth = this.add.image(220, 60, 'red')
    healthbar = this.add.image(220, 60, 'statusbar')
    redhealth.setOrigin(0.45, 0.5)
@@ -109,6 +112,9 @@ function c1()
    // slash
    slash = this.physics.add.group({immovable: true, allowGravity: false});
 
+   //fireball
+   ball = this.physics.add.group({immovable:true, allowGravity: false});
+
    //Powerups
    healthpacks = this.physics.add.group();
    antibodyPowerup = this.physics.add.group();
@@ -126,12 +132,14 @@ function c1()
    this.physics.add.collider(staph_still, ground);
    this.physics.add.overlap(staph_still, player, player_damage, null, this);
    this.physics.add.overlap(staph_still, slash, staph_still_damage, null, this);
+   this.physics.add.overlap(staph_still, ball, staph_still_damage, null, this);
 
    //Staph move
    staph_move = this.physics.add.group();
    this.physics.add.collider(staph_move, ground);
    this.physics.add.overlap(staph_move, player, player_damage, null, this);
    this.physics.add.overlap(staph_move, slash, staph_move_damage, null, this);
+   this.physics.add.overlap(staph_move, ball, staph_move_damage, null, this);
    this.physics.add.overlap(staph_move, antibodyStorm, staph_antibody_damage, null, this);
 
 // Staph Animation
@@ -202,6 +210,9 @@ function c1()
        repeat: -1
      });
 
+  //Skip tutorial text
+  tutorial_text = this.add.text(50, 830, "Press 'S' to skip tutorial", {font: "40px Arial", fill: "black"}).setScale(1);
+
 
 }
 
@@ -209,14 +220,14 @@ function c1()
 function u1()
 {
   // hide pow asset if player is not attacking
-  if(attackButton.Q.isUp){
+  if(attackButton.Q.isUp || attackButton2.W.isUp){
     hit.visible = false;
   }
 
     if (progression == 0) {
-        this.promptl1.setText("Welcome to Fightosis! Press the W key to continue.");
+        this.promptl1.setText("Welcome to Fightosis! Press the D key to continue.");
 
-        if (nextButton.W.isDown) {
+        if (nextButton.D.isDown) {
             progression += 1;
         }
 
@@ -243,10 +254,10 @@ function u1()
     }
 
     if (progression == 3) {
-        this.promptl1.setText("Press the Q key to attack.");
+        this.promptl1.setText("Press the Q key to attack and W key to do a range attack. Click D to continue");
 
 
-        if (attackButton.Q.isDown) {
+        if (nextButton.D.isDown) {
             progression += 1;
             num_staph = 1
             var wave1 = staph_still.create(1100, 500, "staph");
@@ -412,13 +423,13 @@ function u1()
     }
 
 
-    if (attackButton.Q.isDown && qLifted)
+    if (attackButton.Q.isDown && qLifted && !attackButton2.W.isDown)
     {
         qLifted = false;
 
         if (lookLeft == true) {
             hit.setX(player.x - 100).setY(player.y);
-            player.anims.play('attackLeft', true);
+            player.anims.play('attackLeft');
             this.sound.play("attack")
 
             var sl = slash.create((player.x - 45), player.y, "slash")
@@ -429,13 +440,46 @@ function u1()
 
         if (lookLeft == false) {
             hit.setX(player.x + 100).setY(player.y);
-            player.anims.play('attackRight', true);
+            player.anims.play('attackRight');
             this.sound.play("attack")
             lookLeft = false;
 
             var sl = slash.create((player.x + 45), player.y, "slash")
             sl.setVelocityX(500);
             setTimeout(function(){sl.disableBody(true, true);}, 90);
+      }
+    }
+
+    // Ranged attacking
+    if (!attackButton2.W.isDown) {
+        wLifted = true;
+    }
+
+
+    if (attackButton2.W.isDown && wLifted && !attackButton.Q.isDown)
+    {
+        wLifted = false;
+
+        if (lookLeft == true) {
+            hit.setX(player.x - 500).setY(player.y);
+            player.anims.play('attackLeft');
+            this.sound.play("attack")
+
+            var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
+            fireball.flipX = true;
+            fireball.setVelocityX(-400);
+            setTimeout(function(){fireball.disableBody(true, true);}, 1000);
+      }
+
+        if (lookLeft == false) {
+            hit.setX(player.x + 500).setY(player.y);
+            player.anims.play('attackRight');
+            this.sound.play("attack")
+            lookLeft = false;
+
+            var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
+            fireball.setVelocityX(400);
+            setTimeout(function(){fireball.disableBody(true, true);}, 1000);
       }
     }
 
@@ -454,6 +498,14 @@ function u1()
         player.anims.play('turnRight');
         lookLeft = false;
       }
+    }
+
+    //Skip tutorial
+    if(skipButton.S.isDown){
+      heroHealth = 415;
+      villainHealth = 415;
+      tmusic.stop();
+      this.scene.start(transition0);
     }
 
     // ending game

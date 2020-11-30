@@ -24,6 +24,7 @@ function p1()
     this.load.image('flu', 'Assets/Enemy/Flu.png');
     this.load.image('flaser', 'Assets/Enemy/flu_laser.png');
     this.load.image('slash', 'Assets/Players/slash.png');
+    this.load.image('fireball', 'Assets/Players/fireball.png');
 
     this.load.image('antibody', 'Assets/Powers/antibody.png')
     this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png')
@@ -73,7 +74,8 @@ function c1()
    defeated_text = this.add.text(1470, 130, "Enemies left in wave:" + 5 - defeated).setScale(3);
    boss_text = this.add.text(950, 40, "The Flu (Miniboss)").setScale(3);
    cursors = this.input.keyboard.createCursorKeys();
-   attackButton = this.input.keyboard.addKeys("Q,P");
+   attackButton = this.input.keyboard.addKeys("Q");
+   attackButton2 = this.input.keyboard.addKeys("W");
    letterCursors = this.input.keyboard.addKeys("W,A,S,D");
    redhealth = this.add.image(220, 60, 'red');
    healthbar = this.add.image(220, 60, 'statusbar');
@@ -108,6 +110,9 @@ function c1()
 
    // slash
    slash = this.physics.add.group({immovable: true, allowGravity: false});
+
+   //fireball
+   ball = this.physics.add.group({immovable:true, allowGravity: false});
 
    //TB Enemy
    tB = this.physics.add.group({
@@ -149,6 +154,7 @@ function c1()
    this.physics.add.collider(tB, floor);
    this.physics.add.overlap(tB, player, player_damage, null, this);
    this.physics.add.overlap(tB, slash, tb_damage, null, this);
+   this.physics.add.overlap(tB, ball, tb_damage, null, this);
    this.physics.add.overlap(tB, antibodyStorm, tb_damage, null, this);
    num_enemies = 1;
 
@@ -161,6 +167,7 @@ function c1()
    flu_enemy.body.immovable = true; //Makes it so nothing moves it
    this.physics.add.collider(flu_enemy, floor);
    this.physics.add.overlap(flu_enemy, slash, flu_damage, null, this);
+   // this.physics.add.overlap(flu_enemy, ball, flu_damage, null, this);
    flu_enemy.setTint(0X00000);
 
    moveFlu = this.tweens.add({
@@ -189,37 +196,8 @@ function c1()
          allowGravity: false,
          runChildUpdate: true,
        });
-          //
-          //
-          // Phaser.Actions.SetXY(flasers.getChildren(), 1950, 600, 300);
-          // Phaser.Actions.Call(flasers.getChildren(),
-          //
-          // function moveT(move){
-          //   move.setVelocityX(-250)
-          //   // reset Tentacle attack
-          //   flasers.children.iterate((child) =>{
-          //     let x= Phaser.Math.Between(1910, 0);
-          //     let y= Phaser.Math.Between(flu_enemy.y, 800);
-          //     child.setX(x);
-          //     child.setY(y);
-          //
-          //     child.update = function(){
-          //       // console.log("please")
-          //       if(this.x <= 0 || this.y >= 1080) {
-          //         // console.log(this.x, "ok");
-          //         if (flaser_timer <= 5 && wave_count < 4){
-          //         flaser_timer += 1;
-          //         }
-          //         this.x = flu_enemy.x;
-          //         this.y = Phaser.Math.Between(flu_enemy.y, 800);
-          //       }
-          //     };
-          //   })
-          // })
 
            this.physics.add.overlap(flasers, player, player_damage, null, this);
-     // }
-   // })
 
 
    //Powerups
@@ -359,8 +337,6 @@ if (flaser_timer > 4 && wave_count < 4){
 
 
   console.log(" timer: " + flaser_timer)
-  // for (i = 0; i < 5; i ++){
-    // setTimeout(() => console.log("First"), 6000)
   if(num_enemies < 5 && wave_count < 4){
       // wave_count -= 1;
       tB.createMultiple({
@@ -561,7 +537,7 @@ if (flaser_timer > 4 && wave_count < 4){
     }
 
 
-    if (attackButton.Q.isDown && qLifted)
+    if (attackButton.Q.isDown && qLifted && !attackButton2.W.isDown)
     {
         qLifted = false;
 
@@ -585,6 +561,39 @@ if (flaser_timer > 4 && wave_count < 4){
             var sl = slash.create((player.x + 45), player.y, "slash")
             sl.setVelocityX(500);
             setTimeout(function(){sl.disableBody(true, true);}, 90);
+      }
+    }
+
+    // Ranged attacking
+    if (!attackButton2.W.isDown) {
+        wLifted = true;
+    }
+
+
+    if (attackButton2.W.isDown && wLifted && !attackButton.Q.isDown)
+    {
+        wLifted = false;
+
+        if (lookLeft == true) {
+            hit.setX(player.x - 500).setY(player.y);
+            player.anims.play('attackLeft');
+            this.sound.play("attack")
+
+            var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
+            fireball.flipX = true;
+            fireball.setVelocityX(-400);
+            setTimeout(function(){fireball.disableBody(true, true);}, 1000);
+      }
+
+        if (lookLeft == false) {
+            hit.setX(player.x + 500).setY(player.y);
+            player.anims.play('attackRight');
+            this.sound.play("attack")
+            lookLeft = false;
+
+            var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
+            fireball.setVelocityX(400);
+            setTimeout(function(){fireball.disableBody(true, true);}, 1000);
       }
     }
 

@@ -29,6 +29,7 @@ function p2(){
   this.load.image('flu', 'Assets/Enemy/Flu.png');
   this.load.image('flaser', 'Assets/Enemy/flu_laser.png');
   this.load.image('slash', 'Assets/Players/slash.png');
+  this.load.image('fireball', 'Assets/Players/fireball.png');
 
   this.load.image('antibody', 'Assets/Powers/antibody.png');
   this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png');
@@ -75,7 +76,8 @@ function c2(){
   awave_text = this.add.text(700, 240, "Alzheimers:" + "\r\n" + " Wave " + awave_count + " of 3").setScale(4);
   adefeated_text = this.add.text(1470, 130, "Enemies left in wave:" + 5 - defeated).setScale(3);
   cursors = this.input.keyboard.createCursorKeys();
-  attackButton = this.input.keyboard.addKeys("Q,P");
+  attackButton = this.input.keyboard.addKeys("Q");
+  attackButton2 = this.input.keyboard.addKeys("W");
   redhealth = this.add.image(220, 60, 'red');
   healthbar = this.add.image(220, 60, 'statusbar');
   redhealth.setOrigin(0.45, 0.5);
@@ -129,6 +131,9 @@ function c2(){
   // slash
   slash = this.physics.add.group({immovable: true, allowGravity: false});
 
+  //fireball
+  ball = this.physics.add.group({immovable:true, allowGravity: false});
+
   antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
   antibodyPowerup = this.physics.add.group();
 
@@ -165,6 +170,7 @@ function c2(){
   this.physics.add.collider(als, floor);
   this.physics.add.overlap(player, als, checkAnims, null, this);
   this.physics.add.overlap(als, slash, als_damage, null, this);
+  this.physics.add.overlap(als, ball, als_damage, null, this);
   this.physics.add.overlap(als, antibodyStorm, als_damage, null, this);
   //this.physics.add.overlap(player, zap, zapDamage, null, this);
   anum_enemies = 1;
@@ -256,6 +262,7 @@ function c2(){
     tau_enemy.setTint(0X767676);
     this.physics.add.collider(tau_enemy, floor);
     this.physics.add.overlap(slash, tau_enemy, tau_damage1, null, this);
+    this.physics.add.overlap(ball, tau_enemy, tau_damage1, null, this);
     // flu_enemy.setTint(0X00000);
 
     moveTau = this.tweens.add({
@@ -278,6 +285,7 @@ function c2(){
     tau_enemy2.setTint(0X767676);
     this.physics.add.collider(tau_enemy2, floor);
     this.physics.add.overlap(slash, tau_enemy2, tau_damage2, null, this);
+    this.physics.add.overlap(ball, tau_enemy2, tau_damage2, null, this);
 
     moveTau2 = this.tweens.add({
       targets: tau_enemy2,
@@ -635,7 +643,7 @@ if(Math.abs(tau_enemy2.x - tau_enemy.x) < 2)
     }
 
 
-    if (attackButton.Q.isDown && qLifted)
+    if (attackButton.Q.isDown && qLifted && !attackButton2.W.isDown)
     {
         qLifted = false;
 
@@ -659,6 +667,39 @@ if(Math.abs(tau_enemy2.x - tau_enemy.x) < 2)
             var sl = slash.create((player.x + 45), player.y, "slash")
             sl.setVelocityX(500);
             setTimeout(function(){sl.disableBody(true, true);}, 90);
+      }
+    }
+
+    // Ranged attacking
+    if (!attackButton2.W.isDown) {
+        wLifted = true;
+    }
+
+
+    if (attackButton2.W.isDown && wLifted && !attackButton.Q.isDown)
+    {
+        wLifted = false;
+
+        if (lookLeft == true) {
+            hit.setX(player.x - 500).setY(player.y);
+            player.anims.play('attackLeft');
+            this.sound.play("attack")
+
+            var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
+            fireball.flipX = true;
+            fireball.setVelocityX(-400);
+            setTimeout(function(){fireball.disableBody(true, true);}, 1000);
+      }
+
+        if (lookLeft == false) {
+            hit.setX(player.x + 500).setY(player.y);
+            player.anims.play('attackRight');
+            this.sound.play("attack")
+            lookLeft = false;
+
+            var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
+            fireball.setVelocityX(400);
+            setTimeout(function(){fireball.disableBody(true, true);}, 1000);
       }
     }
 
@@ -895,7 +936,7 @@ function als_damage(als, slash){
       if(rn === 2)
       {
         var hp = healthpacks.create(als.x, als.y, "healthpack");
-        var fr = frenzy.create(als.x, als.y, "frenzy");
+        var fr = frenzy.create(als.x, als.y-10, "frenzy").setScale(.4);
       }
 
       if(ln === 30)
