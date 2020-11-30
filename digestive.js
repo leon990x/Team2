@@ -37,6 +37,7 @@ function p1()
     this.load.image('platform', 'Assets/Boss/platform.png');
     this.load.image('red', 'Assets/Boss/redHealth.png');
     this.load.image('statusbar', 'Assets/Boss/health.png');
+    this.load.image('manabar', 'Assets/Players/manabar.png');
     this.load.image('healthpack', 'Assets/Boss/heart.png');
     this.load.image('staph', 'Assets/Enemy/staph.png');
     this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png');
@@ -97,6 +98,10 @@ function c1()
    // otherNextButton = this.input.keyboard.addKeys("E");
    redhealth = this.add.image(220, 60, 'red')
    healthbar = this.add.image(220, 60, 'statusbar')
+
+   red = this.add.image(140, 120, 'red').setScale(0.5);
+   manabar = this.add.image(140, 120, 'manabar').setScale(0.5);
+
    redhealth.setOrigin(0.45, 0.5)
    healthbar.setOrigin(0.45, 0.5)
    pipe = this.add
@@ -129,7 +134,7 @@ function c1()
 
    // sounds
    dmusic= this.sound.add('digestm', {loop: true, volume: 3});
-   dmusic.play();
+   dmusic.play({volume: vm});
    attack = this.sound.add('attack', {volume: 1})
    damage = this.sound.add('damage', {volume: 3})
    playerDamage = this.sound.add("playerDamage", {volume: 1})
@@ -267,6 +272,36 @@ var v_x = 'undefined';
 function u1()
 {
   // hide pow asset if player is not attacking
+  //Health colors
+  if(healthbar.displayWidth < 415/2 && healthbar.displayWidth > 100)
+  {
+    healthbar.setTintFill(0xffff00);
+  }
+
+  if(healthbar.displayWidth <= 100)
+  {
+    healthbar.setTintFill(0xff9900);
+  }
+
+  if(healthbar.displayWidth >= 415/2)
+  {
+    healthbar.clearTint();
+  }
+
+
+
+
+    setTimeout(
+
+      function()
+      {
+        if(heroMana < 415 && manabar.displayWidth < 415)
+        {
+        manabar.x += 0.48 * 0.2;
+        manabar.displayWidth +=  0.2;
+        heroMana += 0.2;
+        }
+      }, 5000);
 
   if(v_x === 'undefined')
   {
@@ -300,13 +335,13 @@ function u1()
             if (lookLeft == true){
                 hit.setX(player.x - 100).setY(player.y);
                 player.anims.play('jumpLeft');
-                this.sound.play("jump");
+                jump.play({volume: vfx});
         }
 
             if (lookLeft == false) {
                 hit.setX(player.x + 100).setY(player.y);
                 player.anims.play('jumpRight');
-                this.sound.play("jump");
+                jump.play({volume: vfx});
                 lookLeft = false;
         }
         }
@@ -322,13 +357,13 @@ function u1()
         if (lookLeft == true) {
         hit.setX(player.x - 100).setY(player.y);
         player.anims.play('jumpLeft');
-        this.sound.play("jump");
+        jump.play({volume: vfx});
     }
 
         if (lookLeft == false) {
         hit.setX(player.x + 100).setY(player.y);
         player.anims.play('jumpRight');
-        this.sound.play("jump");
+        jump.play({volume: vfx});
         lookLeft = false;
     }
 
@@ -351,13 +386,13 @@ function u1()
             if (lookLeft == true){
             hit.setX(player.x - 100).setY(player.y);
             player.anims.play('jumpLeft');
-            this.sound.play("jump");
+            jump.play({volume: vfx});
         }
 
         if (!(cursors.up.isDown && player.body.touching.down)){
             hit.setX(player.x + 100).setY(player.y);
             player.anims.play('jumpRight');
-            this.sound.play("jump");
+            jump.play({volume: vfx});
             lookLeft = false;
         }
         }
@@ -376,7 +411,7 @@ function u1()
         if (lookLeft == true) {
             hit.setX(player.x - 100).setY(player.y);
             player.anims.play('attackLeft', true);
-            this.sound.play("attack")
+            attack.play({volume: vfx});
 
             var sl = slash.create((player.x - 45), player.y, "slash")
             sl.flipX = true;
@@ -387,7 +422,7 @@ function u1()
         if (lookLeft == false) {
             hit.setX(player.x + 100).setY(player.y);
             player.anims.play('attackRight', true);
-            this.sound.play("attack")
+            attack.play({volume: vfx});
             lookLeft = false;
 
             var sl = slash.create((player.x + 45), player.y, "slash")
@@ -402,30 +437,40 @@ function u1()
     }
 
 
-    if (attackButton2.W.isDown && wLifted && !attackButton.Q.isDown)
+    if (attackButton2.W.isDown && wLifted && !attackButton.Q.isDown && manabar.displayWidth >= 83/2)
     {
         wLifted = false;
 
-        if (lookLeft == true) {
+
+
+        if (lookLeft == true && heroMana > 0) {
             hit.setX(player.x - 500).setY(player.y);
             player.anims.play('attackLeft');
-            this.sound.play("attack")
+            attack.play({volume: vfx});
+
+            manabar.x -= 0.48 * (83/2);
+            manabar.displayWidth -= 83/2;
+            heroMana -= 83/2;
 
             var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
             fireball.flipX = true;
-            fireball.setVelocityX(-400);
-            setTimeout(function(){fireball.disableBody(true, true);}, 1000);
+            fireball.setVelocityX(-650);
+            setTimeout(function(){fireball.disableBody(true, true);}, 1500);
       }
 
-        if (lookLeft == false) {
+        if (lookLeft == false && heroMana > 83) {
             hit.setX(player.x + 500).setY(player.y);
             player.anims.play('attackRight');
-            this.sound.play("attack")
+            attack.play({volume: vfx});
             lookLeft = false;
 
+            manabar.x -= 0.48 * (83/2);
+            manabar.displayWidth -= 83/2;
+            heroMana -= 83/2;
+
             var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
-            fireball.setVelocityX(400);
-            setTimeout(function(){fireball.disableBody(true, true);}, 1000);
+            fireball.setVelocityX(650);
+            setTimeout(function(){fireball.disableBody(true, true);}, 1500);
       }
     }
 
@@ -453,7 +498,7 @@ function u1()
 
     // Hero taking damage
     if (heroTakingDamage) {
-        this.sound.play("playerDamage");
+        playerDamage.play({volume: vfx});
         healthbar.x -= 0.43 * heroDamageIntensity
         healthbar.displayWidth -= heroDamageIntensity
         heroHealth -= heroDamageIntensity
@@ -534,6 +579,7 @@ function u1()
   if(ewave_count > 3)
   {
     this.sound.stopAll();
+    heroMana = 415;
     this.scene.start(transition1);
   }
 
@@ -629,7 +675,7 @@ function staph_still_damage(staph_still, slash){
 
     staph_still_health -= 1;
     hit.visible = true;
-    this.sound.play("damage");
+    damage.play({volume: vfx});
     console.log(staph_still_health);
 
 
@@ -654,7 +700,7 @@ function player_damage_acid(player, acid)
   console.log("hit!" + hitTimer)
   if (hitTimer % 10 === 0){
     console.log("hit!" + hitTimer)
-    this.sound.play("playerDamage");
+    playerDamage.play({volume: vfx});
   }
 
   if(heroHealth < 0)
@@ -670,7 +716,7 @@ function player_damage_acid(player, acid)
 
 function getAntibodyPowerup(player, antibodyPowerup)
   {
-    this.sound.play("pickup");
+    pickup.play({volume: vfx});
     var i;
     for (i = 0; i < 100; i++)
         {
@@ -736,7 +782,7 @@ function dropAcidRight()
     heroHealth -= .5
     player.setTint(0xff0000);
     setTimeout(function(){player.setTint(0xffffff);}, 400);
-    this.sound.play("playerDamage");
+    playerDamage.play({volume: vfx});
 
     if(heroHealth < 0)
     {
@@ -810,7 +856,7 @@ function dropAcidRight()
 
         num_ecoli -= 1;
         ecoli_health = 75;
-        this.sound.play("damage");
+        damage.play({volume: vfx});
         if (edefeated == 5){
           edefeated = 0;
           edefeated_text.visible = false;

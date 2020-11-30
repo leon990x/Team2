@@ -20,6 +20,7 @@ function p1()
     this.load.image('platform', 'Assets/Boss/platform.png');
     this.load.image('red', 'Assets/Boss/redHealth.png');
     this.load.image('statusbar', 'Assets/Boss/health.png');
+    this.load.image('manabar', 'Assets/Players/manabar.png');
     this.load.image('healthpack', 'Assets/Boss/heart.png');
     this.load.image('flu', 'Assets/Enemy/Flu.png');
     this.load.image('flaser', 'Assets/Enemy/flu_laser.png');
@@ -79,6 +80,10 @@ function c1()
    letterCursors = this.input.keyboard.addKeys("W,A,S,D");
    redhealth = this.add.image(220, 60, 'red');
    healthbar = this.add.image(220, 60, 'statusbar');
+
+   red = this.add.image(140, 120, 'red').setScale(0.5);
+   manabar = this.add.image(140, 120, 'manabar').setScale(0.5);
+
    redhealth.setOrigin(0.45, 0.5);
    healthbar.setOrigin(0.45, 0.5);
    //Max 415
@@ -94,7 +99,7 @@ function c1()
 
    // sounds
    rmusic= this.sound.add('respm', {loop: true, volume: 3});
-   rmusic.play();
+   rmusic.play({volume: vm});
    attack = this.sound.add('attack', {volume: 0.5})
    damage = this.sound.add('damage', {volume: 3})
    playerDamage = this.sound.add("playerDamage", {volume: 1})
@@ -273,6 +278,33 @@ function c1()
 function u1()
 {
   // hide pow asset if player is not attacking
+
+  if(healthbar.displayWidth < 415/2 && healthbar.displayWidth > 100)
+  {
+    healthbar.setTintFill(0xffff00);
+  }
+
+  if(healthbar.displayWidth <= 100)
+  {
+    healthbar.setTintFill(0xff9900);
+  }
+
+  if(healthbar.displayWidth >= 415/2)
+  {
+    healthbar.clearTint();
+  }
+
+  setTimeout(
+
+    function()
+    {
+      if(heroMana < 415 && manabar.displayWidth < 415)
+      {
+      manabar.x += 0.48 * 0.2;
+      manabar.displayWidth +=  0.2;
+      heroMana += 0.2;
+      }
+    }, 5000);
 
   if(v_x === 'undefined')
   {
@@ -466,13 +498,13 @@ if (flaser_timer > 4 && wave_count < 4){
             if (lookLeft == true){
                 hit.setX(player.x - 100).setY(player.y);
                 player.anims.play('jumpLeft');
-                this.sound.play("jump");
+                jump.play({volume: vfx});
         }
 
             if (lookLeft == false) {
                 hit.setX(player.x + 100).setY(player.y);
                 player.anims.play('jumpRight');
-                this.sound.play("jump");
+                jump.play({volume: vfx});
                 lookLeft = false;
         }
         }
@@ -488,13 +520,13 @@ if (flaser_timer > 4 && wave_count < 4){
         if (lookLeft == true) {
         hit.setX(player.x - 100).setY(player.y);
         player.anims.play('jumpLeft');
-        this.sound.play("jump");
+        jump.play({volume: vfx});
     }
 
         if (lookLeft == false) {
         hit.setX(player.x + 100).setY(player.y);
         player.anims.play('jumpRight');
-        this.sound.play("jump");
+        jump.play({volume: vfx});
         lookLeft = false;
     }
     }
@@ -517,13 +549,13 @@ if (flaser_timer > 4 && wave_count < 4){
             if (lookLeft == true){
             hit.setX(player.x - 100).setY(player.y);
             player.anims.play('jumpLeft');
-            this.sound.play("jump");
+            jump.play({volume: vfx});
         }
 
         if (!(cursors.up.isDown && player.body.touching.down)){
           hit.setX(player.x + 100).setY(player.y);
             player.anims.play('jumpRight');
-            this.sound.play("jump");
+            jump.play({volume: vfx});
             lookLeft = false;
         }
         }
@@ -544,7 +576,7 @@ if (flaser_timer > 4 && wave_count < 4){
         if (lookLeft == true) {
             hit.setX(player.x - 100).setY(player.y);
             player.anims.play('attackLeft', true);
-            this.sound.play("attack")
+            attack.play({volume: vfx});
 
             var sl = slash.create((player.x - 45), player.y, "slash")
             sl.flipX = true;
@@ -555,7 +587,7 @@ if (flaser_timer > 4 && wave_count < 4){
         if (lookLeft == false) {
             hit.setX(player.x + 100).setY(player.y);
             player.anims.play('attackRight', true);
-            this.sound.play("attack")
+            attack.play({volume: vfx});
             lookLeft = false;
 
             var sl = slash.create((player.x + 45), player.y, "slash")
@@ -570,30 +602,40 @@ if (flaser_timer > 4 && wave_count < 4){
     }
 
 
-    if (attackButton2.W.isDown && wLifted && !attackButton.Q.isDown)
+    if (attackButton2.W.isDown && wLifted && !attackButton.Q.isDown && manabar.displayWidth >= 83/2)
     {
         wLifted = false;
 
-        if (lookLeft == true) {
+
+
+        if (lookLeft == true && heroMana > 0) {
             hit.setX(player.x - 500).setY(player.y);
             player.anims.play('attackLeft');
-            this.sound.play("attack")
+            attack.play({volume: vfx});
+
+            manabar.x -= 0.48 * (83/2);
+            manabar.displayWidth -= 83/2;
+            heroMana -= 83/2;
 
             var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
             fireball.flipX = true;
-            fireball.setVelocityX(-400);
-            setTimeout(function(){fireball.disableBody(true, true);}, 1000);
+            fireball.setVelocityX(-650);
+            setTimeout(function(){fireball.disableBody(true, true);}, 1500);
       }
 
-        if (lookLeft == false) {
+        if (lookLeft == false && heroMana > 83) {
             hit.setX(player.x + 500).setY(player.y);
             player.anims.play('attackRight');
-            this.sound.play("attack")
+            attack.play({volume: vfx});
             lookLeft = false;
 
+            manabar.x -= 0.48 * (83/2);
+            manabar.displayWidth -= 83/2;
+            heroMana -= 83/2;
+
             var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
-            fireball.setVelocityX(400);
-            setTimeout(function(){fireball.disableBody(true, true);}, 1000);
+            fireball.setVelocityX(650);
+            setTimeout(function(){fireball.disableBody(true, true);}, 1500);
       }
     }
 
@@ -624,7 +666,7 @@ if (flaser_timer > 4 && wave_count < 4){
         healthbar.x -= 0.43 * heroDamageIntensity
         healthbar.displayWidth -= heroDamageIntensity
         heroHealth -= heroDamageIntensity
-        this.sound.play("damage");
+        damage.play({volume: vfx});
     }
 }
 
@@ -676,7 +718,7 @@ function tb_damage(tB, slash){
 
       num_enemies -= 1;
       tB_health = 100;
-      this.sound.play("damage");
+      damage.play({volume: vfx});
       if (defeated == 5){
         defeated = 0;
         defeated_text.visible = false;
@@ -699,7 +741,7 @@ function flu_damage(slash, flu_enemy){
     villainHealthbar.displayWidth -= 4
     villainHealth -= 4
     flu_enemy.clearTint();
-    this.sound.play("damage");
+    damage.play({volume: vfx});
   }
 
   if(villainHealth <= 280 && villainHealth > 270)
@@ -718,6 +760,7 @@ function flu_damage(slash, flu_enemy){
   {
     heroHealth = 415;
     villainHealth = 415;
+    heroMana = 415;
     this.sound.stopAll();
     this.scene.start(transition3);
   }
@@ -727,10 +770,10 @@ function getHealth(player, healthpack)
 {
   if(heroHealth < 415)
   {
-    this.sound.play("pickup");
-    healthbar.x += 0.43 * 20
-    healthbar.displayWidth += 20
-    heroHealth += 20
+    pickup.play({volume: vfx});
+    healthbar.x += 0.43 * 50
+    healthbar.displayWidth += 50
+    heroHealth += 50
     player.setTint(0x00ff00);
     healthpack.disableBody(true, true);
   }
@@ -741,7 +784,7 @@ function player_damage(player, tB)
   healthbar.displayWidth -= .3
   heroHealth -= .3
   player.setTint(0xff0000);
-  this.sound.play("playerDamage");
+  playerDamage.play({volume: vfx});
 
 
   if(heroHealth < 0)
@@ -766,7 +809,7 @@ function player_boost(player, frenzy)
 
 function getAntibodyPowerup(player, antibodyPowerup)
   {
-    this.sound.play("pickup");
+    pickup.play({volume: vfx});
     var i;
     for (i = 0; i < 100; i++)
         {
@@ -834,7 +877,7 @@ function tb_damage(tB, antibodyStorm){
 
       num_enemies -= 1;
       tB_health = 100;
-      this.sound.play("damage");
+      damage.play({volume: vfx});
       if (defeated == 5){
         defeated = 0;
         defeated_text.visible = false;

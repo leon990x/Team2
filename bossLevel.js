@@ -19,6 +19,7 @@ function preload ()
     this.load.image('tentacle', 'Assets/Boss/tentacle.png');
     this.load.image('red', 'Assets/Boss/redHealth.png');
     this.load.image('statusbar', 'Assets/Boss/health.png');
+    this.load.image('manabar', 'Assets/Players/manabar.png');
     this.load.image('laser', 'Assets/Boss/laser.png');
     this.load.image('ball', 'Assets/Boss/ronaBall.png');
 
@@ -114,6 +115,10 @@ function create ()
    attackButton2 = this.input.keyboard.addKeys("W");
    redhealth = this.add.image(220, 60, 'red')
    healthbar = this.add.image(220, 60, 'statusbar')
+
+   red = this.add.image(140, 120, 'red').setScale(0.5);
+   manabar = this.add.image(140, 120, 'manabar').setScale(0.5);
+
    redhealth.setOrigin(0.45, 0.5)
    healthbar.setOrigin(0.45, 0.5)
    //Max 415
@@ -138,7 +143,7 @@ function create ()
 
    // sounds
    bmusic= this.sound.add('bossm', {loop: true, volume: .5});
-   bmusic.play();
+   bmusic.play({volume: vm});
    attack = this.sound.add('attack', {volume: 0.5})
    damage = this.sound.add('damage', {volume: 3})
    playerDamage = this.sound.add("playerDamage", {volume: 1})
@@ -421,7 +426,7 @@ function create ()
      antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
 
      this.physics.add.overlap(theBoss, slash,  attack_boss, null, this);
-     this.physics.add.overlap(theBoss, ball,  attack_boss, null, this);
+     this.physics.add.overlap(theBoss, ball, ball_boss, null, this);
      this.physics.add.overlap(player, antibodyPowerup, getAntibodyPowerup, null, this);
      this.physics.add.overlap(theBoss, antibodyStorm, boss_antibody_damage, null, this);
      this.physics.add.overlap(theBoss, player, boss_damage, null, this);
@@ -443,6 +448,34 @@ function create ()
 function update()
 {
   // hide pow asset if player is not attacking
+  if(healthbar.displayWidth < 415/2 && healthbar.displayWidth > 100)
+  {
+    healthbar.setTintFill(0xffff00);
+  }
+
+  if(healthbar.displayWidth <= 100)
+  {
+    healthbar.setTintFill(0xff9900);
+  }
+
+  if(healthbar.displayWidth >= 415/2)
+  {
+    healthbar.clearTint();
+  }
+
+
+  setTimeout(
+
+    function()
+    {
+      if(heroMana < 415 && manabar.displayWidth < 415)
+      {
+      manabar.x += 0.48 * 0.2;
+      manabar.displayWidth +=  0.2;
+      heroMana += 0.2;
+      }
+    }, 5000);
+
   if(attackButton.Q.isUp){
     hit.visible = false;
   }
@@ -468,13 +501,13 @@ function update()
             if (lookLeft == true){
                 hit.setX(player.x - 100).setY(player.y);
                 player.anims.play('jumpLeft');
-                this.sound.play("jump");
+                jump.play({volume: vfx});
         }
 
             if (lookLeft == false) {
                 hit.setX(player.x + 100).setY(player.y);
                 player.anims.play('jumpRight');
-                this.sound.play("jump");
+                jump.play({volume: vfx});
                 lookLeft = false;
         }
         }
@@ -490,13 +523,13 @@ function update()
         if (lookLeft == true) {
         hit.setX(player.x - 100).setY(player.y);
         player.anims.play('jumpLeft');
-        this.sound.play("jump");
+        jump.play({volume: vfx});
     }
 
         if (lookLeft == false) {
         hit.setX(player.x + 100).setY(player.y);
         player.anims.play('jumpRight');
-        this.sound.play("jump");
+        jump.play({volume: vfx});
         lookLeft = false;
     }
     }
@@ -518,13 +551,13 @@ function update()
             if (lookLeft == true){
             hit.setX(player.x - 100).setY(player.y);
             player.anims.play('jumpLeft');
-            this.sound.play("jump");
+            jump.play({volume: vfx});
         }
 
         if (!(cursors.up.isDown && player.body.touching.down)){
             hit.setX(player.x + 100).setY(player.y);
             player.anims.play('jumpRight');
-            this.sound.play("jump");
+            jump.play({volume: vfx});
             lookLeft = false;
         }
         }
@@ -544,7 +577,7 @@ function update()
         if (lookLeft == true) {
             hit.setX(player.x - 100).setY(player.y);
             player.anims.play('attackLeft', true);
-            this.sound.play("attack")
+            attack.play({volume: vfx});
 
             var sl = slash.create((player.x - 45), player.y, "slash")
             sl.flipX = true;
@@ -555,7 +588,7 @@ function update()
         if (lookLeft == false) {
             hit.setX(player.x + 100).setY(player.y);
             player.anims.play('attackRight', true);
-            this.sound.play("attack")
+            attack.play({volume: vfx});
             lookLeft = false;
 
             var sl = slash.create((player.x + 45), player.y, "slash")
@@ -570,32 +603,43 @@ function update()
     }
 
 
-    if (attackButton2.W.isDown && wLifted && !attackButton.Q.isDown)
+    if (attackButton2.W.isDown && wLifted && !attackButton.Q.isDown && manabar.displayWidth >= 83/2)
     {
         wLifted = false;
 
-        if (lookLeft == true) {
+
+
+        if (lookLeft == true && heroMana > 0) {
             hit.setX(player.x - 500).setY(player.y);
             player.anims.play('attackLeft');
-            this.sound.play("attack")
+            attack.play({volume: vfx});
+
+            manabar.x -= 0.48 * (83/2);
+            manabar.displayWidth -= 83/2;
+            heroMana -= 83/2;
 
             var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
             fireball.flipX = true;
-            fireball.setVelocityX(-400);
-            setTimeout(function(){fireball.disableBody(true, true);}, 1000);
+            fireball.setVelocityX(-650);
+            setTimeout(function(){fireball.disableBody(true, true);}, 1500);
       }
 
-        if (lookLeft == false) {
+        if (lookLeft == false && heroMana > 83) {
             hit.setX(player.x + 500).setY(player.y);
             player.anims.play('attackRight');
-            this.sound.play("attack")
+            attack.play({volume: vfx});
             lookLeft = false;
 
+            manabar.x -= 0.48 * (83/2);
+            manabar.displayWidth -= 83/2;
+            heroMana -= 83/2;
+
             var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
-            fireball.setVelocityX(400);
-            setTimeout(function(){fireball.disableBody(true, true);}, 1000);
+            fireball.setVelocityX(650);
+            setTimeout(function(){fireball.disableBody(true, true);}, 1500);
       }
     }
+
 
     // turn direction
     if (!cursors.left.isDown && !cursors.right.isDown)
@@ -648,7 +692,7 @@ function laser_damage(player, lasers)
   healthbar.displayWidth -= 0.4;
   heroHealth -= 0.4;
   player.setTint(0xff0000);
-  this.sound.play("playerDamage");
+  playerDamage.play({volume: vfx});
   console.log("inside if player damage")
 
   if(heroHealth < 0)
@@ -684,7 +728,7 @@ function tentacle_damage(player, tentacles)
   heroHealth -= 2
   player.setTint(0xff0000);
   tentacles.setTint(0x656565);
-  this.sound.play("playerDamage");
+  playerDamage.play({volume: vfx});
 
 
   if(heroHealth < 0)
@@ -708,7 +752,7 @@ function tentacle_ss_damage(player, ronaBall)
     villainHealthbar.displayWidth += villainDamageIntensity
     villainHealth += villainDamageIntensity
   }
-  this.sound.play("playerDamage");
+  playerDamage.play({volume: vfx});
 
 
   if(heroHealth < 0)
@@ -737,7 +781,7 @@ function attack_boss(theBoss, slash)
     hit.visible = true;
     villainHealthbar.x += 0.48 * .2
     villainHealthbar.displayWidth -= .2
-    villainHealth -= .3
+    villainHealth -= .2
   }
 
   if(villainHealth <= 280 && villainHealth > 270)
@@ -761,13 +805,20 @@ function attack_boss(theBoss, slash)
     }
 }
 
+function ball_boss(theBoss, ball)
+{
+  hit.visible = true;
+  villainHealthbar.x += 0.48 * villainDamageIntensity
+  villainHealthbar.displayWidth -= villainDamageIntensity
+  villainHealth -= villainDamageIntensity
+}
 
 
 function getHealth(player, healthpack)
 {
   if(heroHealth < 415)
   {
-    this.sound.play("pickup");
+    pickup.play({volume: vfx});
     healthbar.x += 0.43 * 20
     healthbar.displayWidth += 20
     heroHealth += 20
@@ -795,7 +846,7 @@ function boss_damage(theBoss, player, storm){
     villainHealthbar.displayWidth -= villainDamageIntensity
     villainHealth -= villainDamageIntensity
     villainDamageIntensity = 2
-    this.sound.play("attack");
+    attack.play({volume: vfx});
   if(villainHealth < 0)
   {
     heroHealth = 415;
@@ -807,7 +858,7 @@ function boss_damage(theBoss, player, storm){
 
   function getAntibodyPowerup(player, antibodyPowerup)
   {
-    this.sound.play("pickup");
+    pickup.play({volume: vfx});
     var i;
     for (i = 0; i < 100; i++)
         {

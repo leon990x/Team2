@@ -25,6 +25,7 @@ function p2(){
   this.load.image('platform2', 'Assets/Nervous/platform2.png');
   this.load.image('red', 'Assets/Boss/redHealth.png');
   this.load.image('statusbar', 'Assets/Boss/health.png');
+  this.load.image('manabar', 'Assets/Players/manabar.png');
   this.load.image('healthpack', 'Assets/Boss/heart.png');
   this.load.image('flu', 'Assets/Enemy/Flu.png');
   this.load.image('flaser', 'Assets/Enemy/flu_laser.png');
@@ -89,6 +90,9 @@ function c2(){
   villainHealthbar = this.add.image(1700, 60, 'statusbar')
   villainHealthbar.displayWidth = 415
 
+  red = this.add.image(140, 120, 'red').setScale(0.5);
+  manabar = this.add.image(140, 120, 'manabar').setScale(0.5);
+
   //Edge colliders
   ground = this.physics.add.staticGroup();
   ground.create(960, 750, "platform2").setScale(1.5).refreshBody();
@@ -98,7 +102,7 @@ function c2(){
 
   // sounds
   nmusic= this.sound.add('nervem', {loop: true, volume: 3});
-  nmusic.play();
+  nmusic.play({volume: vm});
   attack = this.sound.add('attack', {volume: 0.5})
   damage = this.sound.add('damage', {volume: 3})
   playerDamage = this.sound.add("playerDamage", {volume: 1})
@@ -329,6 +333,33 @@ function u2(){
   // hide pow asset if player is not attacking
   // console.log("health", heroHealth);
   // console.log("Wave count: ", awave_count
+  if(healthbar.displayWidth < 415/2 && healthbar.displayWidth > 100)
+  {
+    healthbar.setTintFill(0xffff00);
+  }
+
+  if(healthbar.displayWidth <= 100)
+  {
+    healthbar.setTintFill(0xff9900);
+  }
+
+  if(healthbar.displayWidth >= 415/2)
+  {
+    healthbar.clearTint();
+  }
+
+  setTimeout(
+
+    function()
+    {
+      if(heroMana < 415 && manabar.displayWidth < 415)
+      {
+      manabar.x += 0.48 * 0.2;
+      manabar.displayWidth +=  0.2;
+      heroMana += 0.2;
+      }
+    }, 5000);
+
   if(v_x === 'undefined')
   {
     v_x = 350;
@@ -572,13 +603,13 @@ if(Math.abs(tau_enemy2.x - tau_enemy.x) < 2)
             if (lookLeft == true){
                 hit.setX(player.x - 100).setY(player.y);
                 player.anims.play('jumpLeft');
-                this.sound.play("jump");
+                jump.play({volume: vfx});
         }
 
             if (lookLeft == false) {
                 hit.setX(player.x + 100).setY(player.y);
                 player.anims.play('jumpRight');
-                this.sound.play("jump");
+                jump.play({volume: vfx});
                 lookLeft = false;
         }
         }
@@ -594,13 +625,13 @@ if(Math.abs(tau_enemy2.x - tau_enemy.x) < 2)
         if (lookLeft == true) {
         hit.setX(player.x - 100).setY(player.y);
         player.anims.play('jumpLeft');
-        this.sound.play("jump");
+        jump.play({volume: vfx});
     }
 
         if (lookLeft == false) {
         hit.setX(player.x + 100).setY(player.y);
         player.anims.play('jumpRight');
-        this.sound.play("jump");
+        jump.play({volume: vfx});
         lookLeft = false;
     }
     }
@@ -623,13 +654,13 @@ if(Math.abs(tau_enemy2.x - tau_enemy.x) < 2)
             if (lookLeft == true){
             hit.setX(player.x - 100).setY(player.y);
             player.anims.play('jumpLeft');
-            this.sound.play("jump");
+            jump.play({volume: vfx});
         }
 
         if (!(cursors.up.isDown && player.body.touching.down)){
           hit.setX(player.x + 100).setY(player.y);
             player.anims.play('jumpRight');
-            this.sound.play("jump");
+            jump.play({volume: vfx});
             lookLeft = false;
         }
         }
@@ -650,7 +681,7 @@ if(Math.abs(tau_enemy2.x - tau_enemy.x) < 2)
         if (lookLeft == true) {
             hit.setX(player.x - 100).setY(player.y);
             player.anims.play('attackLeft', true);
-            this.sound.play("attack")
+            attack.play({volume: vfx});
 
             var sl = slash.create((player.x - 45), player.y, "slash")
             sl.flipX = true;
@@ -661,7 +692,7 @@ if(Math.abs(tau_enemy2.x - tau_enemy.x) < 2)
         if (lookLeft == false) {
             hit.setX(player.x + 100).setY(player.y);
             player.anims.play('attackRight', true);
-            this.sound.play("attack")
+            attack.play({volume: vfx});
             lookLeft = false;
 
             var sl = slash.create((player.x + 45), player.y, "slash")
@@ -676,30 +707,40 @@ if(Math.abs(tau_enemy2.x - tau_enemy.x) < 2)
     }
 
 
-    if (attackButton2.W.isDown && wLifted && !attackButton.Q.isDown)
+    if (attackButton2.W.isDown && wLifted && !attackButton.Q.isDown && manabar.displayWidth >= 83/2)
     {
         wLifted = false;
 
-        if (lookLeft == true) {
+
+
+        if (lookLeft == true && heroMana > 0) {
             hit.setX(player.x - 500).setY(player.y);
             player.anims.play('attackLeft');
-            this.sound.play("attack")
+            attack.play({volume: vfx});
+
+            manabar.x -= 0.48 * (83/2);
+            manabar.displayWidth -= 83/2;
+            heroMana -= 83/2;
 
             var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
             fireball.flipX = true;
-            fireball.setVelocityX(-400);
-            setTimeout(function(){fireball.disableBody(true, true);}, 1000);
+            fireball.setVelocityX(-650);
+            setTimeout(function(){fireball.disableBody(true, true);}, 1500);
       }
 
-        if (lookLeft == false) {
+        if (lookLeft == false && heroMana > 83) {
             hit.setX(player.x + 500).setY(player.y);
             player.anims.play('attackRight');
-            this.sound.play("attack")
+            attack.play({volume: vfx});
             lookLeft = false;
 
+            manabar.x -= 0.48 * (83/2);
+            manabar.displayWidth -= 83/2;
+            heroMana -= 83/2;
+
             var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
-            fireball.setVelocityX(400);
-            setTimeout(function(){fireball.disableBody(true, true);}, 1000);
+            fireball.setVelocityX(650);
+            setTimeout(function(){fireball.disableBody(true, true);}, 1500);
       }
     }
 
@@ -751,7 +792,7 @@ function playerBomb_damage(player, bombs)
   bombs.destroy(bombs,true);
   spark.emitParticleAt(bombs.x, bombs.y, 50);
   // bombs.disableBody(true, true);
-  this.sound.play("playerDamage");
+  playerDamage.play({volume: vfx});
   // Phaser.Actions.Call(this.bombs.getChildren(), function(child){bombs.kill();});
 
 
@@ -786,7 +827,7 @@ function tau_damage1(slash, tau_enemy1){
     villainHealthbar.x -= 0.48 * 4
     villainHealthbar.displayWidth -= 4
     villainHealth -= 6
-    this.sound.play("damage");
+    damage.play({volume: vfx});
   }
 
   if(villainHealth <= 110 && villainHealth > 105)
@@ -803,6 +844,7 @@ function tau_damage1(slash, tau_enemy1){
   if (villainHealth < 0 && villainHealth2 < 0)
   {
     heroHealth = 415;
+    heroMana = 415;
     villainHealth = 415;
     this.sound.stopAll();
     this.scene.start(transition2);
@@ -818,7 +860,7 @@ function tau_damage2(slash, tau_enemy2){
     villainHealthbar.x -= 0.48 * 4
     villainHealthbar.displayWidth -= 4
     villainHealth2 -= 6
-    this.sound.play("damage");
+    damage.play({volume: vfx});
   }
 
   if(villainHealth2 <= 110 && villainHealth2 > 105)
@@ -874,7 +916,7 @@ function checkAnims(player, enemy)
   });
   if(attacking == true){
     player.setTint(0xff0000);
-    this.sound.play("playerDamage");
+    playerDamage.play({volume: vfx});
   }
 }
 
@@ -884,7 +926,7 @@ function zapDamage(player, zap)
   healthbar.displayWidth -= 50
   heroHealth -= 50
   player.setTint(0xff0000);
-  this.sound.play("playerDamage");
+  playerDamage.play({volume: vfx});
 }
 
 function player_boost(player, frenzy)
@@ -936,7 +978,7 @@ function als_damage(als, slash){
       if(rn === 2)
       {
         var hp = healthpacks.create(als.x, als.y, "healthpack");
-        var fr = frenzy.create(als.x, als.y-10, "frenzy").setScale(.4);
+        var fr = frenzy.create(als.x, als.y-10, "frenzy").setScale(.3);
       }
 
       if(ln === 30)
@@ -952,7 +994,7 @@ function als_damage(als, slash){
 
       anum_enemies -= 1;
       als_health = 100;
-      this.sound.play("damage");
+      damage.play({volume: vfx});
       if (adefeated == 5){
         adefeated = 0;
         adefeated_text.visible = false;

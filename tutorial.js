@@ -90,13 +90,14 @@ function c1()
 
    // sounds
    tmusic= this.sound.add('tutorialm', {loop: true, volume: 1});
+   pickup = this.sound.add('pickup');
+   attack = this.sound.add('attack');
+   jump = this.sound.add('jump');
+   playerDamage = this.sound.add('playerDamage')
+   tutorialm = this.sound.add('tutorialm')
    //this.sound.play("tutorialm")
-   tmusic.play({loop: true, volume: 0.2});
-   attack = this.sound.add('attack', {volume: 1})
-   damage = this.sound.add('damage', {volume: .01})
-   playerDamage = this.sound.add("playerDamage", {volume: .5})
-   jump = this.sound.add('jump', {volume: 1})
-   pickup = this.sound.add('pickup')
+   tmusic.play({loop: true, volume: vm});
+
 
    // prompt
    this.promptl1 = this.add.text(520, 50, "did it work?", {font: "40px Arial", fill: "black"})
@@ -291,7 +292,7 @@ function u1()
         if (player.x < 175) {
             progression += 1;
             num_staph = 6
-            this.sound.play("pickup");
+            pickup.play({loop: false, volume: 0.3});
             var ap = antibodyPowerup.create(250, 20, "antibodyPowerup").setScale(0.25);
             ap.setBounce(0.5);
             ap.setCollideWorldBounds(true);
@@ -354,13 +355,13 @@ function u1()
             if (lookLeft == true){
                 hit.setX(player.x - 100).setY(player.y);
                 player.anims.play('jumpLeft');
-                this.sound.play("jump");
+                jump.play({volume: vfx});
         }
 
             if (lookLeft == false) {
                 hit.setX(player.x + 100).setY(player.y);
                 player.anims.play('jumpRight');
-                this.sound.play("jump");
+                jump.play({volume: vfx});
                 lookLeft = false;
         }
         }
@@ -376,13 +377,13 @@ function u1()
         if (lookLeft == true) {
         hit.setX(player.x - 100).setY(player.y);
         player.anims.play('jumpLeft');
-        this.sound.play("jump");
+        jump.play({volume: vfx});
     }
 
         if (lookLeft == false) {
         hit.setX(player.x + 100).setY(player.y);
         player.anims.play('jumpRight');
-        this.sound.play("jump");
+        jump.play({volume: vfx});
         lookLeft = false;
     }
     }
@@ -404,13 +405,13 @@ function u1()
             if (lookLeft == true){
             hit.setX(player.x - 100).setY(player.y);
             player.anims.play('jumpLeft');
-            this.sound.play("jump");
+            jump.play({volume: vfx});
         }
 
         if (!(cursors.up.isDown && player.body.touching.down)){
             hit.setX(player.x + 100).setY(player.y);
             player.anims.play('jumpRight');
-            this.sound.play("jump");
+            jump.play({volume: vfx});
             lookLeft = false;
         }
         }
@@ -430,7 +431,7 @@ function u1()
         if (lookLeft == true) {
             hit.setX(player.x - 100).setY(player.y);
             player.anims.play('attackLeft');
-            this.sound.play("attack")
+            attack.play({volume: vfx});
 
             var sl = slash.create((player.x - 45), player.y, "slash")
             sl.flipX = true;
@@ -441,7 +442,7 @@ function u1()
         if (lookLeft == false) {
             hit.setX(player.x + 100).setY(player.y);
             player.anims.play('attackRight');
-            this.sound.play("attack")
+            attack.play({volume: vfx});
             lookLeft = false;
 
             var sl = slash.create((player.x + 45), player.y, "slash")
@@ -463,7 +464,7 @@ function u1()
         if (lookLeft == true) {
             hit.setX(player.x - 500).setY(player.y);
             player.anims.play('attackLeft');
-            this.sound.play("attack")
+            attack.play({volume: vfx});
 
             var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
             fireball.flipX = true;
@@ -474,7 +475,7 @@ function u1()
         if (lookLeft == false) {
             hit.setX(player.x + 500).setY(player.y);
             player.anims.play('attackRight');
-            this.sound.play("attack")
+            attack.play({volume: vfx});
             lookLeft = false;
 
             var fireball = ball.create((player.x), player.y, "fireball").setScale(1.2);
@@ -515,7 +516,7 @@ function u1()
 
     // Hero taking damage
     if (heroTakingDamage) {
-        this.sound.play("playerDamage");
+        playerDamage.play({volume: vfx});
         healthbar.x -= 0.43 * heroDamageIntensity
         healthbar.displayWidth -= heroDamageIntensity
         heroHealth -= heroDamageIntensity
@@ -527,7 +528,7 @@ function staph_still_damage(staph_still, slash){
 
     staph_still_health -= 1;
     hit.visible = true;
-    this.sound.play("damage");
+    damage.play({volume: vfx});
     console.log(staph_still_health);
 
 
@@ -553,7 +554,7 @@ function staph_move_damage(staph_move, slash){
 function staph_antibody_damage(staph_move, antibodyStorm){
 
     staph_move.health -= 1;
-    this.sound.play("damage");
+    damage.play({volume: vfx});
 
     if (staph_move.health <= 0) {
         staph_move.disableBody(true, true);
@@ -583,7 +584,7 @@ function player_damage(player, tb_enemy)
   console.log("hit!" + hitTimer)
   if (hitTimer % 10 === 0){
     console.log("hit!" + hitTimer)
-    this.sound.play("playerDamage");
+    playerDamage.play({volume: vfx});
   }
 
   if(heroHealth < 0)
@@ -599,7 +600,7 @@ function player_damage(player, tb_enemy)
 
 function getAntibodyPowerup(player, antibodyPowerup)
   {
-    this.sound.play("pickup");
+    pickup.play({volume: vfx});
     var i;
     for (i = 0; i < 100; i++)
         {

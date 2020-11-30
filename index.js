@@ -33,8 +33,8 @@ var config = {
             debug: false
         }
     },
-    // scene: [title, plot, tutorial, transition0, digestive, transition1, nervous, transition2, respiratory, transition3, bossScene, gameOver, win]
-    scene: [title, plot, tutorial]
+    scene: [title, plot, tutorial, transition0, digestive, transition1, nervous, transition2, respiratory, transition3, bossScene, gameOver, win]
+    //scene: [respiratory]
 
 };
 
@@ -46,6 +46,7 @@ var ground;
 var lookLeft = false;
 var acceleration = 0;
 var heroHealth = 415;
+var heroMana = 415;
 var villainHealth = 415;
 var heroTakingDamage = false;
 var villainTakingDamage = false;
@@ -57,3 +58,7 @@ var hitTimer = 0;
 
 //For Powerups
 var heroHealIntensity = 42;
+
+//Volume Mixer
+var vfx = 0.4; // controls sound effects
+var vm = 0.3; // controls music
