@@ -5,6 +5,7 @@
 title = new Phaser.Scene("title");
 credit = new Phaser.Scene("credit");
 plot = new Phaser.Scene("plot");
+plot2 = new Phaser.Scene("plot2");
 tutorial = new Phaser.Scene("tutorial");
 transition0 = new Phaser.Scene("transition0");
 digestive = new Phaser.Scene("digestive")
@@ -34,8 +35,8 @@ var config = {
             debug: false
         }
     },
-    scene: [title, credit, plot, tutorial, transition0, digestive, transition1, nervous, transition2, respiratory, transition3, bossScene, gameOver, win]
-    // scene: nervous
+    scene: [title, credit, plot, plot2, tutorial, transition0, digestive, transition1, nervous, transition2, respiratory, transition3, bossScene, gameOver, win]
+     //scene: plot2
 
 };
 

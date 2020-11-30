@@ -23,13 +23,13 @@ function tc()
   credits = this.add.text(1200, 600,"Credits").setScale(3);
 
   //Character and Enemy text
-  whiteCell = this.add.text(400, 1000,"White Blood Cell",{fill: "black"}).setScale(2);
-  ecoli = this.add.text(1010, 1000,"Ecoli",{fill: "black"}).setScale(2);
-  alzheimers = this.add.text(1150, 1000,"Alzheimers",{fill: "black"}).setScale(2);
-  staph = this.add.text(1340, 970,"Staph",{fill: "black"}).setScale(2);
-  tauProtein = this.add.text(1640, 830,"Tau Protein",{fill: "black"}).setScale(2);
-  tuberculosis = this.add.text(1450, 1000,"Tuberculosis",{fill: "black"}).setScale(2);
-  theFlu = this.add.text(1810, 700,"Flu",{fill: "black"}).setScale(2);
+  // whiteCell = this.add.text(400, 1000,"White Blood Cell",{fill: "black"}).setScale(2);
+  // ecoli = this.add.text(1010, 1000,"Ecoli",{fill: "black"}).setScale(2);
+  // alzheimers = this.add.text(1150, 1000,"Alzheimers",{fill: "black"}).setScale(2);
+  // staph = this.add.text(1340, 970,"Staph",{fill: "black"}).setScale(2);
+  // tauProtein = this.add.text(1640, 830,"Tau Protein",{fill: "black"}).setScale(2);
+  // tuberculosis = this.add.text(1450, 1000,"Tuberculosis",{fill: "black"}).setScale(2);
+  // theFlu = this.add.text(1810, 700,"Flu",{fill: "black"}).setScale(2);
 
   //Clickable areas
   credits = this.add.text(1110, 600, "             ").setScale(3).setInteractive();
