@@ -47,7 +47,7 @@ function tc()
   credits.on("pointerdown", () =>
     {
       this.sound.stopAll()
-      this.scene.start(respiratory)
+      this.scene.start(credit)
     });
 
     starting.on("pointerdown", () =>

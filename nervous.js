@@ -74,7 +74,7 @@ function p2(){
 function c2(){
   background = this.add.image(960, 540, 'environment3');
   tau_text = this.add.text(1130, 40, "Tau Proteins").setScale(3);
-  awave_text = this.add.text(700, 240, "Alzheimers:" + "\r\n" + " Wave " + awave_count + " of 3").setScale(4);
+  awave_text = this.add.text(750, 240, " Alzheimers:" + "\r\n" + " Wave " + awave_count + " of 3").setScale(4);
   adefeated_text = this.add.text(1470, 130, "Enemies left in wave:" + 5 - defeated).setScale(3);
   cursors = this.input.keyboard.createCursorKeys();
   attackButton = this.input.keyboard.addKeys("Q");
@@ -1002,7 +1002,7 @@ function als_damage(als, slash){
         awave_count += 1;
       if (awave_count < 4){
         awave_text.visible = true;
-        awave_text.setText("Tuberculosis:" + "\r\n" + " Wave " + awave_count + " of 3").setScale(4);
+        awave_text.setText(" Alzheimers:" + "\r\n" + " Wave " + awave_count + " of 3").setScale(4);
         }
       }
     }

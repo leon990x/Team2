@@ -21,7 +21,7 @@ function pc()
   paragraph1  = this.add.text(100, 300,"The patient, Bee Cureful has been infected by some of the worst bacteria and viruses.").setScale(2);
   paragraph2  = this.add.text(100, 350,"As their white blood cell, you must travel to the infected areas and cure the patient").setScale(2);
   paragraph3  = this.add.text(100, 400,"of such terrible diseases. Be careful as you might come across some very strong apponents.").setScale(2);
-  paragraph4  = this.add.text(100, 450,"Powerup and look out for opponents that are visible, that means they can be attacked.").setScale(2);
+  paragraph4  = this.add.text(100, 450,"Powerup and look out for enemies that are not darkened, that means they can be attacked.").setScale(2);
   paragraph5  = this.add.text(100, 500,"Remember, be too patient and you will lose the patient.").setScale(2);
 
 
