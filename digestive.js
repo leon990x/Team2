@@ -28,6 +28,8 @@ var ewave_count = 1;
 var edefeated_text;
 var edefeated = 0; //something's wrong
 var e_damage = 'default';
+var damage;
+var playerDamage;
 
 
 function p1()
@@ -53,7 +55,7 @@ function p1()
 
     // acid particles
     this.load.image('acid1', 'Assets/Digestive/acid1.png')
-    this.load.image('acid2', 'Assets/Digestive/acid2.png')
+    // this.load.image('acid2', 'Assets/Digestive/acid2.png')
     this.load.image('acid3', 'Assets/Digestive/acid3.png')
 
 // Audio

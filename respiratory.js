@@ -365,7 +365,7 @@ if (flaser_timer > 4 && wave_count < 4){
     flaser_timer = 0;
   }
 }
-  // console.log(num_enemies);
+  console.log(villainHealth);
 
 
   console.log(" timer: " + flaser_timer)

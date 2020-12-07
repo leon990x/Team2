@@ -93,6 +93,7 @@ function c1()
    pickup = this.sound.add('pickup');
    attack = this.sound.add('attack');
    jump = this.sound.add('jump');
+   damage = this.sound.add('damage', {volume: 3})
    playerDamage = this.sound.add('playerDamage')
    tutorialm = this.sound.add('tutorialm')
    //this.sound.play("tutorialm")
