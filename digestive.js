@@ -929,4 +929,5 @@ function getAntibodyPowerup(player, antibodyPowerup)
         salAlive = false;
 
       }
+      damage.play({volume: vfx});
   }
