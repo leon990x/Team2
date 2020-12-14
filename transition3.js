@@ -26,7 +26,6 @@ function ct3()
     }
   });
 
-  // this.input.on("pointerdown", () => finaltrmusic.stop());
   clickableBoss.on("pointerdown", () =>
   {
   this.sound.stopAll();

@@ -35,8 +35,8 @@ var config = {
             debug: false
         }
     },
-    scene: [title, credit, plot, plot2, tutorial, transition0, digestive, transition1, nervous, transition2, respiratory, transition3, bossScene, gameOver, win]
-     // scene: respiratory
+    // scene: [title, credit, plot, plot2, tutorial, transition0, digestive, transition1, nervous, transition2, respiratory, transition3, bossScene, gameOver, win]
+     scene: plot2
 
 };
 

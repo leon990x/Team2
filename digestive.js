@@ -1,22 +1,7 @@
-// let respiratory = new Phaser.Scene("respiratory");
-
 digestive.preload = p1;
 digestive.create = c1;
 digestive.update = u1;
 
-// var player;
-// var ground;
-// var lookLeft = false;
-// var acceleration = 0;
-// var heroHealth = 415;
-// var villainHealth = 415;
-// var heroTakingDamage = false;
-// var villainTakingDamage = false;
-// var heroDamageIntensity = 2;
-// var villainDamageIntensity = 2;
-//
-// //For Powerups
-// var heroHealIntensity = 42;
 var progression = 0;
 var path = "none";
 var staph_still_health = 100;
@@ -26,10 +11,15 @@ var ecoli_health = 75;
 var ewave_text;
 var ewave_count = 1;
 var edefeated_text;
-var edefeated = 0; //something's wrong
+var edefeated = 0;
 var e_damage = 'default';
 var damage;
 var playerDamage;
+var X = 1800;
+var salAlive = false;
+var fireTimer = 0;
+var finalWave = false;
+var sal_health = 1075;
 
 
 function p1()
@@ -51,11 +41,11 @@ function p1()
     this.load.image('pow', 'Assets/Players/damage.png');
     this.load.image('pipe', 'Assets/Digestive/pipe3.png');
     this.load.image('ecoli', 'Assets/Digestive/Ecoli.png');
-    // this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
+    this.load.image('salmonella', 'Assets/Enemy/Salmonella.png');
+    this.load.image('fire', 'Assets/Digestive/fire.png');
 
     // acid particles
     this.load.image('acid1', 'Assets/Digestive/acid1.png')
-    // this.load.image('acid2', 'Assets/Digestive/acid2.png')
     this.load.image('acid3', 'Assets/Digestive/acid3.png')
 
 // Audio
@@ -85,19 +75,16 @@ function p1()
 
 function c1()
 {
-   console.log(digestive)
    background = this.add.image(0, 0, 'environment2');
 
    //wave text
    ewave_text = this.add.text(700, 240, "E-Coli:" + "\r\n" + " Wave " + ewave_count + " of 3").setScale(4);
-   edefeated_text = this.add.text(1470, 130, "Enemies left in wave:" + 5 - defeated).setScale(3);
+   edefeated_text = this.add.text(1470, 130, "Enemies left in wave:" + 5 - edefeated).setScale(3);
 
    background.setOrigin(0, 0);
    cursors = this.input.keyboard.createCursorKeys();
    attackButton = this.input.keyboard.addKeys("Q");
    attackButton2 = this.input.keyboard.addKeys("W");
-   // nextButton = this.input.keyboard.addKeys("W");
-   // otherNextButton = this.input.keyboard.addKeys("E");
    redhealth = this.add.image(220, 60, 'red')
    healthbar = this.add.image(220, 60, 'statusbar')
 
@@ -125,13 +112,22 @@ function c1()
    //acid
    acid = this.physics.add.group();
    this.physics.add.collider(acid, floor);
-   //this.physics.add.overlap(player, acid, player_damage_acid, null this);
    myVar1 = setInterval(dropAcidRight, 12000);
    myVar2 = setInterval(dropAcidLeft, 9000);
 
    //ecoli
    ecoli = this.physics.add.group();
    this.physics.add.collider(ecoli, floor);
+   num_ecoli = 1;
+
+   //salmonella
+   salmonella = this.physics.add.group();
+   this.physics.add.collider(salmonella, floor);
+   var sal = salmonella.create((X), (750), "salmonella");
+   sal.setScale(1.5);
+   salAlive = true;
+
+   fire = this.physics.add.group({immovable: true, allowGravity: false});
 
 
    // sounds
@@ -185,8 +181,13 @@ function c1()
    this.physics.add.overlap(ecoli, slash, ecoli_damage, null, this);
    this.physics.add.overlap(ecoli, ball, ecoli_damage, null, this);
 
-   num_ecoli = 1;
-   //this.physics.add.overlap(theBoss, antibodyStorm, boss_antibody_damage, null, this);
+   //Salmonella and fireball overlaps
+   this.physics.add.overlap(player, fire, heavy_player_damage, null, this);
+   this.physics.add.overlap(salmonella, slash, right_sal_damage, null, this);
+   this.physics.add.overlap(salmonella, ball, right_sal_damage, null, this);
+   this.physics.add.overlap(ecoli, ball, right_sal_damage, null, this);
+
+
    antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
    this.physics.add.overlap(ecoli, antibodyStorm, ecoli_damage, null, this);
    this.physics.add.overlap(player, frenzy, player_boost, null, this);
@@ -506,11 +507,22 @@ function u1()
         heroHealth -= heroDamageIntensity
     }
 
+    if (salAlive && (fireTimer % 150) == 0){
+      var f = fire.create((1800), (800), "fire");
+      f.flipX = true;
+      f.setScale(0.1);
+      f.setVelocityY(0);
+      f.setVelocityX(-400);
+      fireTimer = 0;
+
+}
+
+fireTimer += 1;
+
     if(num_ecoli < 4 && ewave_count < 4){
 
       rand = Phaser.Math.Between(1, 10);
       if(rand > 3){
-        // wave_count -= 1;
         ecoli.createMultiple({
           delay: 4000,
           key: 'ecoli',
@@ -577,8 +589,14 @@ function u1()
 
   }
 
+  if (ewave_count >= 4){
+    edefeated_text.visible = false;
+    ewave_text.setText("Wave Over").setScale(4);
+    ewave_text.visible = true;
+  }
 
-  if(ewave_count > 3)
+
+  if(ewave_count > 3 && salAlive == false)
   {
     this.sound.stopAll();
     heroMana = 415;
@@ -587,9 +605,9 @@ function u1()
 
   //follow player
   if (num_ecoli != 0 && ewave_count < 4){
+    rand = Phaser.Math.Between(1, 10);
   Phaser.Actions.Call(ecoli.getChildren(),
   function moveEnemies(enemy){
-    // console.log(enemy.x)
     if (enemy != undefined){
       if (player.x < enemy.x && player.body.velocity.x < 0) {
               enemy.body.velocity.x = -1 * Phaser.Math.Between(60, 120);
@@ -621,7 +639,6 @@ function u1()
               }
           }
 
-      // console.log(enemy.x)
       if (player.x > enemy.x && player.body.velocity.x === 0) {
               enemy.body.velocity.x = Phaser.Math.Between(60, 120);
               enemy.play("walkR", true);
@@ -631,8 +648,6 @@ function u1()
                 enemy.play("walkR", true);
               }
           }
-
-      // console.log(enemy.x)
 
 
       if (player.x < enemy.x && player.body.velocity.x > 0) {
@@ -656,7 +671,7 @@ function u1()
           }
 
       //fail safes
-      if (wave_count == 4)
+      if (ewave_count >= 4)
       {
         if (enemy.x > 1920 || enemy.x < 0)
         {
@@ -678,7 +693,6 @@ function staph_still_damage(staph_still, slash){
     staph_still_health -= 1;
     hit.visible = true;
     damage.play({volume: vfx});
-    console.log(staph_still_health);
 
 
   if (staph_still_health <= 0) {
@@ -694,14 +708,12 @@ function staph_still_damage(staph_still, slash){
 
 function player_damage_acid(player, acid)
 {
-  console.log("hey!")
   hitTimer += 1;
   healthbar.x -= 0.43 * .5
   healthbar.displayWidth -= .5
   heroHealth -= .5
-  console.log("hit!" + hitTimer)
+
   if (hitTimer % 10 === 0){
-    console.log("hit!" + hitTimer)
     playerDamage.play({volume: vfx});
   }
 
@@ -736,45 +748,39 @@ function getAntibodyPowerup(player, antibodyPowerup)
         }
   }
 
-function test() {
-    console.log("worked")
-}
 
-function dropAcidLeft()
-  {
-    var i;
-    for (i = 0; i < 10; i++)
-        {
+  function dropAcidLeft()
+    {
+      var i;
+      for (i = 0; i < 4; i++)
+          {
 
 
-        var drop1 = acid.create(500, 230, "acid3");
-        //drop1.setScale(0.1);
-        //drop1.angle = (Phaser.Math.FloatBetween(0, 359));
-        drop1.setVelocityY(0);
-        drop1.setVelocityX(Phaser.Math.FloatBetween(80, 230));
-        drop1.setBounce(Phaser.Math.FloatBetween(.1, .5));
-        setTimeout(function(){drop1.destroy();}, 50);
-        //setTimeout(function(){sl.disableBody(true, true);}, 90);
-        }
+          var drop1 = acid.create(500, 230, "acid3");
+          drop1.setScale(1.5);
+          drop1.setVelocityY(0);
+          drop1.setVelocityX(Phaser.Math.FloatBetween(80, 230));
+          drop1.setBounce(Phaser.Math.FloatBetween(.2, .7));
+          setTimeout(function(){drop1.destroy();}, 50);
+          }
 
-    drop1.disableBody(true, true);
-  }
+      drop1.disableBody(true, true);
+    }
 
-function dropAcidRight()
-  {
-    var i;
-    for (i = 0; i < 10; i++)
-        {
+  function dropAcidRight()
+    {
+      var i;
+      for (i = 0; i < 4; i++)
+          {
 
 
-        var drop1 = acid.create(1660, 230, "acid1");
-        //drop1.setScale(0.1);
-        //drop1.angle = (Phaser.Math.FloatBetween(0, 359));
-        drop1.setVelocityY(0);
-        drop1.setVelocityX(Phaser.Math.FloatBetween(-100, -260));
-        drop1.setBounce(Phaser.Math.FloatBetween(.1, .5));
-        }
-  }
+          var drop1 = acid.create(1660, 230, "acid1");
+          drop1.setScale(1.5);
+          drop1.setVelocityY(0);
+          drop1.setVelocityX(Phaser.Math.FloatBetween(-100, -260));
+          drop1.setBounce(Phaser.Math.FloatBetween(.3, .5));
+          }
+    }
 
   function player_damage(player, ecoli)
   {
@@ -795,6 +801,7 @@ function dropAcidRight()
     }
 
   }
+
   function player_boost(player, frenzy)
   {
     player.setTint(0xff80ff);
@@ -803,6 +810,27 @@ function dropAcidRight()
     setTimeout(function(){v_x = 350; player.setTint(0xffffff);}, 6500);
     frenzy.destroy();
   }
+
+  function heavy_player_damage(player, ecoli)   //newcode
+  {
+    healthbar.x -= 0.43 * 1.5
+    healthbar.displayWidth -= 1.5
+    heroHealth -= 1.5
+    player.setTint(0xff0000);
+    setTimeout(function(){player.setTint(0xffffff);}, 400);
+    playerDamage.play({volume: vfx});
+
+
+    if(heroHealth < 0)
+    {
+      heroHealth = 415;
+      villainHealth = 415;
+      this.sound.stopAll();
+      this.scene.start(gameOver);
+    }
+
+  }
+
 
   function ecoli_damage(ecoli, slash){
       if(e_damage === "default")
@@ -815,14 +843,9 @@ function dropAcidRight()
       }
 
       hit.visible = true;
-    // var tB_children = tB.getChildren([0]);
 
       ewave_text.visible = false;
-      // villainHealthbar.x -= 0.43 * villainDamageIntensity
-      // villainHealthbar.displayWidth -= villainDamageIntensity
-      // villainHealth -= villainDamageIntensity
       ecoli_health -= e_damage;
-      // console.log(als_health);
 
       if (ecoli_health < 70 && ecoli_health > 40)
       {
@@ -835,6 +858,7 @@ function dropAcidRight()
       }
 
       if (ecoli_health <= 0){
+
         //drop healthpacks
         ln = Phaser.Math.Between(1, 70);
         rn = Phaser.Math.Between(1, 6);
@@ -862,12 +886,47 @@ function dropAcidRight()
         if (edefeated == 5){
           edefeated = 0;
           edefeated_text.visible = false;
-          // console.log(awave_count, adefeated)
           ewave_count += 1;
+
         if (ewave_count < 4){
           ewave_text.visible = true;
           ewave_text.setText("E-Coli:" + "\r\n" + " Wave " + ewave_count + " of 3").setScale(4);
           }
         }
+      }
+  }
+
+  function right_sal_damage(ecoli, slash){
+      hit.visible = true;
+
+      ewave_text.visible = false;
+      sal_health -= 10;
+
+      if (sal_health < 70 && sal_health > 40)
+      {
+        ecoli.setTint(0x999999);
+      }
+
+      if (sal_health < 40 && sal_health > 0)
+      {
+        ecoli.setTint(0x404040);
+      }
+
+      if (sal_health <= 0){
+        //drop healthpacks
+        ln = Phaser.Math.Between(1, 130);
+        rn = Phaser.Math.Between(1, 6);
+        if(rn === 2)
+        {
+          var hp = healthpacks.create(ecoli.x, ecoli.y, "healthpack");
+        }
+
+        if(ln < 10)
+        {
+          var ap = antibodyPowerup.create(960, 20, "antibodyPowerup").setScale(0.25);
+        }
+        ecoli.destroy();
+        salAlive = false;
+
       }
   }

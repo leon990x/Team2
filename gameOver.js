@@ -10,7 +10,6 @@
 
   function createGO(){
     const self = this;
-    console.log('hello!')
     background = this.add.image(960, 540, 'over_background');
     gameOver = this.add.text(780, 540, "GAME OVER!").setScale(4);
     // retryButton = this.add.image(880, 940, 'retryButton');

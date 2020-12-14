@@ -13,11 +13,10 @@ function pp2()
   this.load.image('tau', 'Assets/Enemy/tau.png');
   this.load.image('flu', 'Assets/Enemy/Flu.png');
   this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
+  this.load.image('salmonella', 'Assets/Enemy/Salmonella.png');
 
-  console.log("title!!")
 }
 
-console.log("title!!")
 
 function pc2()
 {
@@ -26,29 +25,34 @@ function pc2()
   startButton2 = this.add.image(950, 620, 'sbutton').setScale(.9).setTint(0Xf7eb62);
   start = this.add.text(840, 600,"Go Back").setScale(3);
   levels = this.add.text(750, 100,"Elevated Levels:", {fill: "black"}).setScale(3);
+
   //Character and Enemy text
-  ecoli = this.add.text(400, 200,"Ecoli",{fill: "black"}).setScale(2);
-  ecoli_img = this.add.image(480, 370, 'ecoli');
+  sal = this.add.text(300, 200,"Salmonella",{fill: "black"}).setScale(2);
+  sal_img = this.add.image(390, 370, 'salmonella');
+  sal_img.setScale(1.5);
+
+  ecoli = this.add.text(600, 200,"Ecoli",{fill: "black"}).setScale(2);
+  ecoli_img = this.add.image(650, 370, 'ecoli');
   ecoli_img.setScale(1.5);
 
-  alzheimers = this.add.text(700, 200,"Alzheimers",{fill: "black"}).setScale(2);
-  alzheimers_img = this.add.image(800, 370, "als");
+  alzheimers = this.add.text(800, 200,"Alzheimers",{fill: "black"}).setScale(2);
+  alzheimers_img = this.add.image(900, 370, "als");
   alzheimers_img.setScale(2);
 
-  staph = this.add.text(100, 200,"Staph",{fill: "black"}).setScale(2);
-  staph_img = this.add.image(170, 380, 'staph');
+  staph = this.add.text(80, 200,"Staph",{fill: "black"}).setScale(2);
+  staph_img = this.add.image(150, 380, 'staph');
   staph_img.setScale(1.5);
 
-  tauProtein = this.add.text(1000, 200,"Tau Protein",{fill: "black"}).setScale(2);
-  tau_img = this.add.image(1090, 370, 'tau');
+  tauProtein = this.add.text(1100, 200,"Tau Protein",{fill: "black"}).setScale(2);
+  tau_img = this.add.image(1190, 370, 'tau');
   tau_img.setScale(3)
 
-  tuberculosis = this.add.text(1300, 200,"Tuberculosis",{fill: "black"}).setScale(2);
-  tb_img = this.add.image(1550, 370, "tb");
+  tuberculosis = this.add.text(1400, 200,"Tuberculosis",{fill: "black"}).setScale(2);
+  tb_img = this.add.image(1650, 370, "tb");
   tb_img.setScale(0.5);
 
-  theFlu = this.add.text(1700, 200,"Flu",{fill: "black"}).setScale(2);
-  flu_img = this.add.image(1730, 500, 'flu');
+  theFlu = this.add.text(1750, 200,"Flu",{fill: "black"}).setScale(2);
+  flu_img = this.add.image(1780, 500, 'flu');
   flu_img.setScale(5)
 
 

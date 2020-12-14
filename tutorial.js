@@ -1,22 +1,8 @@
-// let respiratory = new Phaser.Scene("respiratory");
 
 tutorial.preload = p1;
 tutorial.create = c1;
 tutorial.update = u1;
 
-// var player;
-// var ground;
-// var lookLeft = false;
-// var acceleration = 0;
-// var heroHealth = 415;
-// var villainHealth = 415;
-// var heroTakingDamage = false;
-// var villainTakingDamage = false;
-// var heroDamageIntensity = 2;
-// var villainDamageIntensity = 2;
-//
-// //For Powerups
-// var heroHealIntensity = 42;
 var progression = 0;
 var path = "none";
 var staph_still_health = 100;
@@ -30,14 +16,12 @@ function p1()
     this.load.image('red', 'Assets/Boss/redHealth.png');
     this.load.image('statusbar', 'Assets/Boss/health.png');
     this.load.image('healthpack', 'Assets/Boss/heart.png');
-    // this.load.image('staph', 'Assets/Enemy/staph.png');
     this.load.image('antibodyPowerup', 'Assets/Powers/antibodyPowerup.png');
     this.load.image('antibody', 'Assets/Powers/antibody.png');
     this.load.image('sebaceousGland', 'Assets/Tutorial/sebGland.png');
     this.load.image('slash', 'Assets/Players/slash.png');
     this.load.image('fireball', 'Assets/Players/fireball.png');
     this.load.image('pow', 'Assets/Players/damage.png');
-    // this.load.image('tb', 'Assets/Respiratory/TBSprite.png');
 
 // Audio
   this.load.audio("attack", "Assets/Powers/263011__dermotte__sword-02.mp3")
@@ -78,6 +62,7 @@ function c1()
    healthbar = this.add.image(220, 60, 'statusbar')
    redhealth.setOrigin(0.45, 0.5)
    healthbar.setOrigin(0.45, 0.5)
+
    //Max 415
    healthbar.displayWidth = 415
 
@@ -96,7 +81,6 @@ function c1()
    damage = this.sound.add('damage', {volume: 3})
    playerDamage = this.sound.add('playerDamage')
    tutorialm = this.sound.add('tutorialm')
-   //this.sound.play("tutorialm")
    tmusic.play({loop: true, volume: vm});
 
 
@@ -125,7 +109,7 @@ function c1()
    this.physics.add.collider(healthpacks, ground);
    this.physics.add.overlap(player, healthpacks, getHealth, null, this);
    this.physics.add.overlap(player, antibodyPowerup, getAntibodyPowerup, null, this);
-   //this.physics.add.overlap(theBoss, antibodyStorm, boss_antibody_damage, null, this);
+   
    antibodyStorm = this.physics.add.group({immovable: true, allowGravity: false});
 
 
@@ -530,7 +514,6 @@ function staph_still_damage(staph_still, slash){
     staph_still_health -= 1;
     hit.visible = true;
     damage.play({volume: vfx});
-    console.log(staph_still_health);
 
 
   if (staph_still_health <= 0) {
@@ -548,7 +531,6 @@ function staph_move_damage(staph_move, slash){
   if (staph_move.health <= 0) {
       staph_move.disableBody(true, true);
       num_staph -= 1;
-      console.log("num_staph:     " + num_staph);
   }
 }
 
@@ -560,7 +542,6 @@ function staph_antibody_damage(staph_move, antibodyStorm){
     if (staph_move.health <= 0) {
         staph_move.disableBody(true, true);
         num_staph -= 1;
-        console.log("num_staph:     " + num_staph);
     }
 }
 
@@ -577,14 +558,11 @@ function staph_antibody_damage(staph_move, antibodyStorm){
 
 function player_damage(player, tb_enemy)
 {
-  console.log("hey!")
   hitTimer += 1;
   healthbar.x -= 0.43 * .5
   healthbar.displayWidth -= .5
   heroHealth -= .5
-  console.log("hit!" + hitTimer)
   if (hitTimer % 10 === 0){
-    console.log("hit!" + hitTimer)
     playerDamage.play({volume: vfx});
   }
 

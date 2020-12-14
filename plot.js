@@ -7,10 +7,8 @@ function pp()
   this.load.image('plot', 'Assets/Transitions/plot.png');
   this.load.audio("titlem", "Assets/Audio/412344__michorvath__rivalry-8-bit-music-loop.mp3");
   this.load.image('sbutton', 'Assets/Boss/health.png');
-  console.log("title!!")
 }
 
-console.log("title!!")
 
 function pc()
 {

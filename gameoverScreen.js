@@ -1,4 +1,3 @@
-// FIX ME: SCENE IS BEING UNDEFINED
 gameOver.preload = preloadGO
 gameOver.create = createGO
 gameOver.update = updateGO
@@ -16,7 +15,6 @@ function preloadGO() {
 }
 
 function createGO(){
-  console.log('hello!')
   background = this.add.image(960, 540, 'environment');
   gameOver = this.add.text(0, 0, "GAME OVER!");
   var retryButton = this.add.image(480, 270, 'button');

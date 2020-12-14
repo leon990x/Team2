@@ -6,10 +6,8 @@ function pt1()
 {
   this.load.image('second_background', 'Assets/Transitions/tnervous1.png');
   this.load.audio("transitionm", "Assets/Transitions/172561__djgriffin__video-game-7.mp3");
-  console.log("transition1")
 }
 
-console.log("transition1")
 
 function ct1()
 {
@@ -32,7 +30,6 @@ function ct1()
   clickableN.on("pointerdown", () =>
     {
       this.sound.stopAll();
-      console.log("start digestive")
       this.scene.start(nervous);
     });
 
