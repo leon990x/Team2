@@ -62,5 +62,5 @@ var hitTimer = 0;
 var heroHealIntensity = 42;
 
 //Volume Mixer
-var vfx = 0.4; // controls sound effects
+var vfx = 0.3; // controls sound effects
 var vm = 0.3; // controls music
